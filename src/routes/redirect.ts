@@ -1,0 +1,34 @@
+import { FastifyPluginAsync } from 'fastify'
+import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { NotFoundError } from '../errors/notFound.js'
+import { store } from '../services/store.js'
+import { Route } from '../types/routes'
+
+export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
+	const parsedUrl = new URL(fastify.config.baseRedirectUrl)
+
+	const url = `${parsedUrl.pathname}${!parsedUrl.pathname.endsWith('/') ? '/' : ''}:id`
+	/* Retrieve URL from store by id and redirect to it */
+	fastify.route<{ Params: { id: string } }>({
+		method: 'GET',
+		url,
+		handler: async function (request, reply) {
+			if (request.validationError) throw new NotFoundError()
+
+			const url = store.getUrl(request.params.id)
+			if (typeof url === 'undefined') throw new NotFoundError()
+
+			reply.redirect(url)
+		},
+		attachValidation: true,
+		schema: {
+			params: {
+				type: 'object',
+				required: ['id'],
+				properties: {
+					id: { type: 'string', minLength: 6, maxLength: 6 },
+				},
+			},
+		},
+	})
+}
