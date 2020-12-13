@@ -43,7 +43,7 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 		},
 	},
 	attachValidation: true,
-	async handler(request, reply) {
+	async handler(request) {
 		if (request.validationError) throw new NotFoundError()
 
 		const url = store.getUrl(request.params.id)
