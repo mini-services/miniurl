@@ -32,7 +32,7 @@
 ## Devops
 
 -   Demo (Kubesail for a kubernetes namespace?)
--   Docs + README
+-   Docs + README + Export Insomnia file
 -   PRs: PR template, run tests, GitGuardian, dependabot
 -   Deployment: run tests, build docker, build helm, deploy to demo
 
