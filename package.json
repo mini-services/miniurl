@@ -28,9 +28,11 @@
   "author": "Snir Shechter",
   "license": "MIT",
   "dependencies": {
+    "crypto-random-string": "^3.3.0",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "dotenv-flow": "^3.2.0",
+    "eslint-config-prettier": "^7.0.0",
     "fastify": "^3.9.1",
     "fastify-error": "^0.2.0",
     "fastify-plugin": "^3.0.0",

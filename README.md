@@ -16,13 +16,12 @@
 
 ### auth
 
--   bearer driver
+-   [x] bearer driver
 
 ### store
 
--   postgres driver
--   mongodb driver
--   redis driver
+-   [x] in-memory driver (development)
+-   WIP postgres driver
 
 ## Tests
 
@@ -39,5 +38,9 @@
 ## Features
 
 -   Record every url retrieve/redirect to admin
+-   URL cleanup (with a threshold)
 -   Add saved url restrictions (e.g only save urls from google.com etc.)
 -   Allow to deploy with its own DB (helm chart should create a Postgres/redis/mongodb if no connection creds are given)
+-   mongodb driver
+-   redis driver
+-   fs driver

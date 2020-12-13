@@ -1,11 +1,13 @@
 import fastifyConstructor from 'fastify'
 import { config } from './services/config.js'
 import { routes } from './routes/index.js'
+import { Storage } from './services/storage/index.js'
 
 // TODO: move elsewhere
 declare module 'fastify' {
 	interface FastifyInstance {
 		config: Record<string, string>
+		storage: Storage
 	}
 }
 
@@ -15,6 +17,7 @@ const fastify = fastifyConstructor({
 })
 
 fastify.decorate('config', config)
+fastify.decorate('storage', new Storage({ url: { driverName: 'InMemory', driverConfig: {} } }))
 await fastify.register(routes)
 
 try {

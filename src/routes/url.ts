@@ -1,6 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
-import { store } from '../services/store.js'
 import { NotFoundError } from '../errors/notFound.js'
 
 /* Save URL to store and return the id */
@@ -17,7 +16,7 @@ const saveUrl: Route<{ Body: { url: string } }> = {
 		},
 	},
 	async handler(request) {
-		const id = store.saveUrl(request.body.url)
+		const id = await this.storage.url.save(request.body.url)
 		const baseUrl = this.config.baseRedirectUrl
 
 		if (!id) return ''
@@ -46,7 +45,7 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 	async handler(request) {
 		if (request.validationError) throw new NotFoundError()
 
-		const url = store.getUrl(request.params.id)
+		const url = await this.storage.url.get(request.params.id)
 		if (typeof url === 'undefined') throw new NotFoundError()
 
 		return url

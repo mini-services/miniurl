@@ -1,8 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { InvalidConfigError } from '../errors/invalidConfig.js'
 import { NotFoundError } from '../errors/notFound.js'
-import { store } from '../services/store.js'
-import { Route } from '../types/routes'
 
 export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 	const parsedUrl = new URL(fastify.config.baseRedirectUrl)
@@ -15,7 +12,7 @@ export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 		handler: async function (request, reply) {
 			if (request.validationError) throw new NotFoundError()
 
-			const url = store.getUrl(request.params.id)
+			const url = await this.storage.url.get(request.params.id)
 			if (typeof url === 'undefined') throw new NotFoundError()
 
 			reply.redirect(url)
