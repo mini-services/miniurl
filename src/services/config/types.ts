@@ -1,17 +1,19 @@
-import Knex from 'knex'
-import { StorageDriverName } from '../storage/types'
+import type { StorageConfig } from '../storage/types/config'
 
 export interface RawConfig {
 	port: string
 	appName: string
 	baseRedirectUrl: string
 	storage: {
-		driver: string
-		connection: {
-			host: string
-			user: string
-			password: string
-			database: string
+		driverName: string
+		relationalDriverConfig: {
+			client: string
+			connection: {
+				host: string
+				user: string
+				password: string
+				database: string
+			}
 		}
 	}
 }
@@ -20,9 +22,5 @@ export interface Config {
 	port: string
 	appName: string
 	baseRedirectUrl: string
-	storage: {
-		driver: StorageDriverName
-	}
-	storageDriver: StorageDriverName
-	connection: Knex.Config['connection']
+	storage: Omit<StorageConfig, 'appName'>
 }

@@ -1,9 +1,9 @@
-import { StorageConfig, StorageDriverName } from './types/config'
-import { StoredUrl } from './types/url'
-import { StorageDriver } from './types'
-import { InMemoryStorage } from './drivers/inMemory'
-import { RelationalStorage } from './drivers/relational'
-import { InvalidConfigError } from '../../errors/invalidConfig'
+import { StorageConfig, StorageDriverName } from './types/config.js'
+import type { StoredUrl } from './types/url.js'
+import type { StorageDriver } from './types/index.js'
+import { InMemoryStorage } from './drivers/inMemory/index.js'
+import { RelationalStorage } from './drivers/relational/index.js'
+import { InvalidConfigError } from '../../errors/invalidConfig.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver

@@ -2,21 +2,23 @@ import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
 import { NotFoundError } from '../../../../errors/notFound.js'
-import { StorageDriver } from '../../types'
+import type { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
-import { StoredUrl } from '../../types/url.js'
+import type { StoredUrl } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
+import { ECONNREFUSED } from 'constants'
+import { InvalidConfigError } from '../../../../errors/invalidConfig.js'
+import { ConnectionError } from '../../../../errors/connectionError.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export class RelationalStorage implements StorageDriver {
 	private db: Knex
 	constructor(private config: RelationalStorageConfig) {
-		this.config = config
 		this.db = Knex({
-			...config,
+			...config.driverConfig,
 			migrations: {
 				schemaName: config.appName,
 			},
@@ -39,7 +41,13 @@ export class RelationalStorage implements StorageDriver {
 		process.env.MIGRATIONS_RANDOM_SEED_2 = cryptoRandomString({ length: 4, type: 'numeric' })
 	}
 	public async initialize(): Promise<void> {
-		this.upMigrations()
+		try {
+			await this.upMigrations()
+		} catch (e) {
+			if (e.code === 'ECONNREFUSED') {
+				throw new ConnectionError('Could not connect to database.')
+			}
+		}
 	}
 	private async upMigrations() {
 		await this.db.schema.createSchemaIfNotExists(this.config.appName)

@@ -1,4 +1,4 @@
-import Knex from 'knex'
+import type Knex from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
 	// Based on http://wiki.postgresql.org/wiki/Pseudo_encrypt

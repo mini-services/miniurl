@@ -1,16 +1,16 @@
-import Knex from 'knex'
+import type { InMemoryStorageDriverConfig } from '../drivers/inMemory/types'
+import type { RelationalStorageDriverConfig } from '../drivers/relational/types'
 
 export enum StorageDriverName {
 	InMemory = 'InMemory',
 	Relational = 'Relational',
 }
 
-export interface PostgresStorageDriverConfig extends Knex.Config {
-	schemaName: string
-}
+// // eslint-disable-next-line @typescript-eslint/no-empty-interface
+// export interface RelationalStorageDriverConfig extends Knex.Config {}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface InMemoryStorageDriverConfig {}
+// // eslint-disable-next-line @typescript-eslint/no-empty-interface
+// export interface InMemoryStorageDriverConfig {}
 
 export interface BaseConfig {
 	appName: string
@@ -18,7 +18,7 @@ export interface BaseConfig {
 
 export interface RelationalStorageConfig extends BaseConfig {
 	driverName: StorageDriverName.Relational
-	driverConfig: PostgresStorageDriverConfig
+	driverConfig: RelationalStorageDriverConfig
 }
 
 export interface InMemoryStorageConfig extends BaseConfig {

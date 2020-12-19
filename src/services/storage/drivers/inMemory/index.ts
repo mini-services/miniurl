@@ -1,8 +1,8 @@
 import cryptoRandomString from 'crypto-random-string'
 import { NotFoundError } from '../../../../errors/notFound.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
-import { StorageDriver } from '../../types/index.js'
-import { StoredUrl } from '../../types/url.js'
+import type { StorageDriver } from '../../types/index.js'
+import type { StoredUrl } from '../../types/url.js'
 
 export class InMemoryStorage implements StorageDriver {
 	// eslint-disable-next-line

@@ -1,64 +1,63 @@
 {
-  "name": "miniurl",
-  "version": "0.0.1",
-  "type": "module",
-  "types": "src/types",
-  "description": "A url minifier",
-  "main": "index.ts",
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=production node --loader ts-node/esm ./src/index.ts",
-    "dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm\" src/index.ts",
-    "lint": "eslint --cache --fix"
-  },
-  "keywords": [
-    "url",
-    "minify",
-    "shortener",
-    "urly",
-    "urls",
-    "url-shortener",
-    "docker",
-    "kubernetes",
-    "helm",
-    "typescript",
-    "javascript"
-  ],
-  "author": "Snir Shechter",
-  "license": "MIT",
-  "dependencies": {
-    "camelcase-keys": "^6.2.2",
-    "crypto-random-string": "^3.3.0",
-    "eslint-config-prettier": "^7.0.0",
-    "fastify": "^3.9.1",
-    "fastify-error": "^0.2.0",
-    "fastify-plugin": "^3.0.0",
-    "knex": "^0.21.14",
-    "pg": "^8.5.1",
-    "snake-case": "^3.0.4",
-    "ts-node": "^9.1.1"
-  },
-  "devDependencies": {
-    "@types/node": "^14.14.12",
-    "@typescript-eslint/eslint-plugin": "^4.9.1",
-    "@typescript-eslint/parser": "^4.9.1",
-    "cross-env": "^7.0.3",
-    "env-cmd": "^10.1.0",
-    "eslint": "^7.15.0",
-    "eslint-plugin-prettier": "^3.2.0",
-    "lint-staged": "^10.5.3",
-    "nodemon": "^2.0.6",
-    "prettier": "^2.2.1",
-    "typescript": "^4.1.2",
-    "yorkie": "^2.0.0"
-  },
-  "gitHooks": {
-    "pre-commit": "env FORCE_COLOR=true lint-staged"
-  },
-  "lint-staged": {
-    "*.ts": [
-      "npm run lint"
-    ]
-  }
+	"name": "miniurl",
+	"version": "0.0.1",
+	"type": "module",
+	"types": "src/types",
+	"description": "A url minifier",
+	"main": "index.ts",
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "cross-env NODE_ENV=production node --loader ts-node/esm ./src/index.ts",
+		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --trace-warnings\" src/index.ts"
+	},
+	"keywords": [
+		"url",
+		"minify",
+		"shortener",
+		"urly",
+		"urls",
+		"url-shortener",
+		"docker",
+		"kubernetes",
+		"helm",
+		"typescript",
+		"javascript"
+	],
+	"author": "Snir Shechter",
+	"license": "MIT",
+	"dependencies": {
+		"camelcase-keys": "^6.2.2",
+		"crypto-random-string": "^3.3.0",
+		"eslint-config-prettier": "^7.0.0",
+		"fastify": "^3.9.1",
+		"fastify-error": "^0.2.0",
+		"fastify-plugin": "^3.0.0",
+		"knex": "^0.21.14",
+		"pg": "^8.5.1",
+		"snake-case": "^3.0.4",
+		"ts-node": "^9.1.1"
+	},
+	"devDependencies": {
+		"@types/node": "^14.14.12",
+		"@typescript-eslint/eslint-plugin": "^4.9.1",
+		"@typescript-eslint/parser": "^4.9.1",
+		"cross-env": "^7.0.3",
+		"env-cmd": "^10.1.0",
+		"eslint": "^7.15.0",
+		"eslint-plugin-prettier": "^3.2.0",
+		"lint-staged": "^10.5.3",
+		"nodemon": "^2.0.6",
+		"prettier": "^2.2.1",
+		"typescript": "^4.1.2",
+		"yorkie": "^2.0.0"
+	},
+	"gitHooks": {
+		"pre-commit": "env FORCE_COLOR=true lint-staged"
+	},
+	"lint-staged": {
+		"*.ts": [
+			"eslint --cache --fix"
+		]
+	}
 }

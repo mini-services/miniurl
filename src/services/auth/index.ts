@@ -1,8 +1,8 @@
 import { FastifyRequest } from 'fastify'
 import { InvalidConfigError } from '../../errors/invalidConfig'
 import { BearerTokenAuth } from './drivers/bearerToken'
-import { BearerTokenDriverConfig } from './drivers/bearerToken/types'
-import { DriverConfig, Driver, AuthDriver, Scope } from './types'
+import type { BearerTokenDriverConfig } from './drivers/bearerToken/types'
+import type { DriverConfig, Driver, AuthDriver, Scope } from './types'
 
 export class Auth implements AuthDriver {
 	private _driverName: Driver

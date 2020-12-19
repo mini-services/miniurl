@@ -21,17 +21,11 @@ fastify.decorate('config', config)
 
 // Storage
 const storage = new Storage({
-	driver: '',
-	driverConfig: {},
-	url: {
-		driverName: config.storageDriver,
-		driverConfig: {
-			schemaName: config.appName,
-			client: 'pg',
-			connection: { user: 'postgres', database: 'postgres', password: 'postgres' },
-		},
-	},
+	appName: config.appName,
+	driverName: config.storage.driverName,
+	driverConfig: config.storage.driverConfig,
 })
+
 await storage.initialize()
 fastify.decorate('storage', storage)
 

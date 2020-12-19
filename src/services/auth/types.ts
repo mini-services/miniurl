@@ -1,5 +1,5 @@
-import { BearerTokenDriverConfig } from './drivers/bearerToken/types'
-import { FastifyRequest } from 'fastify'
+import type { BearerTokenDriverConfig } from './drivers/bearerToken/types'
+import type { FastifyRequest } from 'fastify'
 
 export type DriverConfig = BearerTokenDriverConfig
 export enum Scope {

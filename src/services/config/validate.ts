@@ -1,17 +1,32 @@
-import { InvalidConfigError } from '../../errors/invalidConfig'
-import { StorageDriverName } from '../storage/types'
-import { RawConfig } from './types'
+import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { StorageDriverName } from '../storage/types/config.js'
+import type { RawConfig } from './types.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
 	validateBaseRedirectUrl(rawConfig.baseRedirectUrl, rawConfig.appName)
-	validateStorageDriver(rawConfig.storageDriver)
+	validateStorageDriver(rawConfig.storage)
 
 	return true
 }
-function validateStorageDriver(storageDriver?: string): void {
+function validateStorageDriver(storage: RawConfig['storage']): void {
 	const storageOptions = Object.values(StorageDriverName)
-	if (!storageDriver || !storageOptions.includes(storageDriver as StorageDriverName)) {
-		throw new InvalidConfigError(`Must specify a valid STORAGE_DRIVER (available options are ${storageOptions})`)
+	if (!storage.driverName || !storageOptions.includes(storage.driverName as StorageDriverName)) {
+		throw new InvalidConfigError(
+			`Must specify a valid STORAGE_DRIVER (available options are ${storageOptions.join(', ')})`,
+		)
+	}
+
+	if (storage.driverName === StorageDriverName.Relational) {
+		const { client, connection } = storage.relationalDriverConfig
+		if (!(client && connection.host && connection.user && connection.password && connection.database)) {
+			throw new InvalidConfigError(
+				`Relational storage driver must receive RELATIONAL_STORAGE_CLIENT,
+									RELATIONAL_STORAGE_HOST,
+									RELATIONAL_STORAGE_USER,
+									RELATIONAL_STORAGE_PASSWORD,
+									RELATIONAL_STORAGE_DATABASE`,
+			)
+		}
 	}
 }
 
