@@ -6,7 +6,6 @@ export interface StoredUrl {
 }
 
 export interface UrlStorageDriver {
-	initialize(): Promise<void>
 	get(id: string): Promise<StoredUrl>
 	save(url: string): Promise<StoredUrl>
 	edit(id: string, url: string): Promise<StoredUrl>

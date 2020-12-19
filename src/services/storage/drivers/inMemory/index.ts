@@ -14,7 +14,7 @@ export class InMemoryStorage implements StorageDriver {
 		return
 	}
 
-	url = new (class In {
+	url = new (class InMemoryUrlStorage {
 		constructor(public storage: InMemoryStorage) {}
 		public uuid() {
 			let id

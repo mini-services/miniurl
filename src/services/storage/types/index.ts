@@ -1,5 +1,6 @@
-import { UrlStorageDriver } from '../../../../unused/url/types'
+import { UrlStorageDriver } from './url'
 
 export interface StorageDriver {
+	initialize(): Promise<void>
 	url: UrlStorageDriver
 }

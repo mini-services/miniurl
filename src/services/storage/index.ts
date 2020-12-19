@@ -26,7 +26,7 @@ export class Storage implements StorageDriver {
 		return this._driver
 	}
 	public async initialize(): Promise<void> {
-		await this.initialize()
+		await this._driver.initialize()
 	}
 
 	url = new (class UrlStorage {
