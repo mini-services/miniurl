@@ -1,0 +1,14 @@
+apiVersion: v2
+version: v.0.1
+name: miniurl
+description: MiniUrl is an easy-to-use production-ready url shortener
+home: https://github.com/SnirShechter/miniurl
+sources:
+    - https://github.com/SnirShechter/miniurl
+keywords:
+    - url
+    - urls
+    - url shortener
+maintainers:
+    - name: Snir Shechter <me@snir.sh>
+      url: https://github.com/SnirShechter

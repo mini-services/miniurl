@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "miniurl.appName" . }}-ingress
+spec:
+  rules:
+  - host: "{{ .Values.baseRedirectUrl }}"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "miniurl.serviceName" . }}
+            port:
+              number: 80
+  - http:
+      paths:
+      - path: /miniurl
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "miniurl.serviceName" . }}
+            port:
+              number: 80

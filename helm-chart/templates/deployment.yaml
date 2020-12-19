@@ -1,0 +1,32 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ include "miniurl.appName" . }}-deployment
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "miniurl.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "miniurl.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "miniurl.appName" . }}
+      annotations:
+        version: {{ .Chart.Version }}
+    spec:
+      containers:
+        - name: {{ include "miniurl.appName" . }}
+          image: {{ required "image is required" .Values.image }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+          env:
+            - name: BASE_REDIRECT_URL
+              value: {{ required "baseRedirectUrl is required" .Values.baseRedirectUrl }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.port }}

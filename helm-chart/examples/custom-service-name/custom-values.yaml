@@ -1,0 +1,4 @@
+baseRedirectUrl: https://my-short-base.url
+service:
+    # Useful when defining an ingress and you need a specific service name for routing
+    name: miniurl-service

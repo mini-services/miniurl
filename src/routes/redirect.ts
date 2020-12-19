@@ -15,7 +15,7 @@ export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 			const url = await this.storage.url.get(request.params.id)
 			if (typeof url === 'undefined') throw new NotFoundError()
 
-			reply.redirect(url)
+			reply.redirect(url.url)
 		},
 		attachValidation: true,
 		schema: {
@@ -23,7 +23,7 @@ export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 				type: 'object',
 				required: ['id'],
 				properties: {
-					id: { type: 'string', minLength: 6, maxLength: 6 },
+					id: { type: 'string' },
 				},
 			},
 		},

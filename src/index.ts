@@ -3,23 +3,38 @@ import { config } from './services/config.js'
 import { routes } from './routes/index.js'
 import { Storage } from './services/storage/index.js'
 
-// TODO: move elsewhere
 declare module 'fastify' {
 	interface FastifyInstance {
-		config: Record<string, string>
+		config: typeof config
 		storage: Storage
 	}
 }
 
+// Fastify
 const fastify = fastifyConstructor({
 	ignoreTrailingSlash: true,
 	logger: true,
 })
 
+// Config
 fastify.decorate('config', config)
-fastify.decorate('storage', new Storage({ url: { driverName: 'InMemory', driverConfig: {} } }))
-await fastify.register(routes)
 
+// Storage
+const storage = new Storage({
+	url: {
+		driverName: 'InMemory',
+		driverConfig: {
+			schemaName: config.appName,
+			client: 'pg',
+			connection: { user: 'postgres', database: 'postgres', password: 'postgres' },
+		},
+	},
+})
+await storage.initialize()
+fastify.decorate('storage', storage)
+
+// Run
+await fastify.register(routes)
 try {
 	await fastify.listen(config.port, '0.0.0.0')
 } catch (err) {

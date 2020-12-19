@@ -1,0 +1,3 @@
+baseRedirectUrl: https://my-short-base.url
+ingress:
+    enable: true

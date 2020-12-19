@@ -1,0 +1,7 @@
+image:
+port: 80
+baseRedirectUrl:
+ingress:
+    enable: false
+service:
+    name:
