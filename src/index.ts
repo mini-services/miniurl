@@ -1,5 +1,5 @@
 import fastifyConstructor from 'fastify'
-import { config } from './services/config.js'
+import { config } from './services/config/index.js'
 import { routes } from './routes/index.js'
 import { Storage } from './services/storage/index.js'
 
@@ -21,8 +21,10 @@ fastify.decorate('config', config)
 
 // Storage
 const storage = new Storage({
+	driver: '',
+	driverConfig: {},
 	url: {
-		driverName: 'InMemory',
+		driverName: config.storageDriver,
 		driverConfig: {
 			schemaName: config.appName,
 			client: 'pg',

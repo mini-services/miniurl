@@ -1,13 +1,9 @@
-import { InMemoryUrlStorageDriverConfig } from './drivers/inMemory/types'
-import { PostgresUrlStorageDriverConfig } from './drivers/postgres/types'
 export interface StoredUrl {
 	id: string
 	url: string
 	createdAt: string
 	updatedAt: string
 }
-
-export type UrlDriverConfig = InMemoryUrlStorageDriverConfig | PostgresUrlStorageDriverConfig
 
 export interface UrlStorageDriver {
 	initialize(): Promise<void>
@@ -16,5 +12,3 @@ export interface UrlStorageDriver {
 	edit(id: string, url: string): Promise<StoredUrl>
 	delete(id: string): Promise<void>
 }
-
-export type UrlDriver = 'InMemory' | 'Postgres'

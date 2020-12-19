@@ -4,7 +4,7 @@ import { NotFoundError } from '../errors/notFound.js'
 export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 	const parsedUrl = new URL(fastify.config.baseRedirectUrl)
 
-	const url = `${parsedUrl.pathname}${!parsedUrl.pathname.endsWith('/') ? '/' : ''}:id`
+	const url = `${parsedUrl.pathname}/:id`
 	/* Retrieve URL from store by id and redirect to it */
 	fastify.route<{ Params: { id: string } }>({
 		method: 'GET',

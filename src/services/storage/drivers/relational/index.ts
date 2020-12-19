@@ -1,26 +1,26 @@
 import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
-import { NotFoundError } from '../../../../../errors/notFound.js'
-import { StoredUrl, UrlStorageDriver } from '../../types'
-import { PostgresUrlStorageDriverConfig } from './types'
+import { NotFoundError } from '../../../../errors/notFound.js'
+import { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
+import { StoredUrl } from '../../types/url.js'
+import { RelationalStorageConfig } from '../../types/config.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-export class PostgresUrlStorage implements UrlStorageDriver {
+export class RelationalStorage implements StorageDriver {
 	private db: Knex
-	private config: PostgresUrlStorageDriverConfig
-	constructor(config: PostgresUrlStorageDriverConfig) {
+	constructor(private config: RelationalStorageConfig) {
 		this.config = config
 		this.db = Knex({
 			...config,
 			migrations: {
-				schemaName: config.schemaName,
+				schemaName: config.appName,
 			},
-			searchPath: [config.schemaName],
+			searchPath: [config.appName],
 			postProcessResponse: (result) => {
 				if (Array.isArray(result)) {
 					return result.map((row) => camelcaseKeys(row))
@@ -42,7 +42,7 @@ export class PostgresUrlStorage implements UrlStorageDriver {
 		this.upMigrations()
 	}
 	private async upMigrations() {
-		await this.db.schema.createSchemaIfNotExists(this.config.schemaName)
+		await this.db.schema.createSchemaIfNotExists(this.config.appName)
 		await this.db.migrate.latest({ directory: join(__dirname, './migrations'), tableName: 'migrations' })
 	}
 	// Unused for now
@@ -58,27 +58,34 @@ export class PostgresUrlStorage implements UrlStorageDriver {
 			this.db.schema.dropTableIfExists('migrations'),
 			this.db.schema.dropTableIfExists('migrations_lock'),
 		])
-		await this.db.schema.dropSchemaIfExists(this.config.schemaName)
+		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
-	public async get(id: string): Promise<StoredUrl> {
-		const storedUrl = await this.db.table<StoredUrl>('urls').select('*').where('id', id).first()
+	url = new (class RelationalUrlStorage {
+		constructor(public storage: RelationalStorage) {}
+		public async get(id: string): Promise<StoredUrl> {
+			const storedUrl = await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()
 
-		if (!storedUrl) throw NotFoundError()
-		else return storedUrl
-	}
-	public async delete(id: string): Promise<void> {
-		await this.db.table<StoredUrl>('urls').where('id', id).delete()
-	}
-	public async edit(id: string, url: string): Promise<StoredUrl> {
-		const [storedUrl] = await this.db.table<StoredUrl>('urls').update({ url }).where('id', id).returning('*')
+			if (!storedUrl) throw NotFoundError()
+			else return storedUrl
+		}
+		public async delete(id: string): Promise<void> {
+			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+		}
+		public async edit(id: string, url: string): Promise<StoredUrl> {
+			const [storedUrl] = await this.storage.db
+				.table<StoredUrl>('urls')
+				.update({ url })
+				.where('id', id)
+				.returning('*')
 
-		if (!url) throw NotFoundError()
-		return storedUrl
-	}
-	public async save(url: string): Promise<StoredUrl> {
-		const [storedUrl] = await this.db.table<StoredUrl>('urls').insert({ url }).returning('*')
+			if (!url) throw NotFoundError()
+			return storedUrl
+		}
+		public async save(url: string): Promise<StoredUrl> {
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
 
-		if (!url) throw NotFoundError()
-		return storedUrl
-	}
+			if (!url) throw NotFoundError()
+			return storedUrl
+		}
+	})(this)
 }
