@@ -1,5 +1,5 @@
 apiVersion: v2
-version: v.0.1
+version: 0.0.1
 name: miniurl
 description: MiniUrl is an easy-to-use production-ready url shortener
 home: https://github.com/SnirShechter/miniurl
@@ -12,3 +12,8 @@ keywords:
 maintainers:
     - name: Snir Shechter <me@snir.sh>
       url: https://github.com/SnirShechter
+dependencies:
+    - name: postgresql
+      version: 10.2.0
+      repository: https://charts.bitnami.com/bitnami
+      condition: storage.deploy

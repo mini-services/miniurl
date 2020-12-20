@@ -1,0 +1,9 @@
+baseRedirectUrl: https://my-short-base.url
+storage:
+    deploy: false
+    relationalConfig:
+        client: postgres
+        host: localhost
+        user: postgres
+        password: postgres
+        database: postgres

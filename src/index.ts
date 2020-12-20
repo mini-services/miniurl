@@ -37,3 +37,10 @@ try {
 	fastify.log.error(err)
 	process.exit(1)
 }
+
+async function shutdownGracefully() {
+	await fastify.close()
+}
+
+process.on('SIGTERM', shutdownGracefully)
+process.on('SIGINT', shutdownGracefully)

@@ -17,9 +17,8 @@ const saveUrl: Route<{ Body: { url: string } }> = {
 	},
 	async handler(request) {
 		const url = await this.storage.url.save(request.body.url)
-		const baseUrl = this.config.baseRedirectUrl
 
-		return `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}${url.id}`
+		return `${this.config.baseRedirectUrl}${url.id}`
 	},
 }
 

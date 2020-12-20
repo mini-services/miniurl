@@ -20,13 +20,33 @@ spec:
       containers:
         - name: {{ include "miniurl.appName" . }}
           image: {{ required "image is required" .Values.image }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: http
               containerPort: {{ .Values.port }}
           env:
             - name: BASE_REDIRECT_URL
               value: {{ required "baseRedirectUrl is required" .Values.baseRedirectUrl }}
+            - name: STORAGE_DRIVER
+              value: {{ required "baseRedirectUrl is required" .Values.storage.driver }}
+            - name: PORT
+              value: {{ .Values.port | default 80 | quote }}
+            {{ if eq .Values.storage.driver "Relational" }}
+            - name: RELATIONAL_STORAGE_CLIENT
+              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.client }}
+            - name: RELATIONAL_STORAGE_HOST
+              value: {{ .Values.storage.deploy | ternary (print .Release.Name "-postgresql") .Values.storage.relationalConfig.host }}
+            - name: RELATIONAL_STORAGE_USER
+              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.user }}
+            - name: RELATIONAL_STORAGE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "miniurl.storageSecretName" . }}
+                  key: {{ .Values.storage.deploy | ternary "postgresql-password" "password" }}
+            - name: RELATIONAL_STORAGE_DATABASE
+              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.database }}
+            {{ end }}
           livenessProbe:
             httpGet:
               path: /healthz
-              port: {{ .Values.port }}
+              port: {{ .Values.port | default 80 }}

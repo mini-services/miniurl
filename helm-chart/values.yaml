@@ -1,7 +1,22 @@
-image:
+image: miniurl
+imagePullPolicy: Always
 port: 80
-baseRedirectUrl:
+baseRedirectUrl: http://cp.aporia.local
 ingress:
     enable: false
 service:
     name:
+storage:
+    # InMemory or Relational
+    driver: Relational
+    deploy: true
+    # If deploy is false, you should supply your own database credentials. the values correspond to a Knex.js config.
+    relationalConfig:
+        # See examples here: http://knexjs.org/#Installation-client
+        # See the Typescript type here: http://knexjs.org/#Installation-client
+        client:
+        host:
+        database:
+        user:
+        secrets:
+            password:
