@@ -3,7 +3,7 @@
 ### url
 
 -   delete (admin)
--   info - with a plus sign (/000001+), admins get more info
+-   info - with a plus sign (http://my-url.com/sOm3Id+), admins get more info
 
 ### config
 
