@@ -12,7 +12,7 @@
 -   edit (admin)
 -   dashboard (admin)
 
-## admin
+### admin
 
 -   destroy (admin) - allow the user to clean up since we might be using shared resources (database, etc.)
 
