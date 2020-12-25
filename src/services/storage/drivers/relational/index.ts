@@ -9,9 +9,6 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
-import { ECONNREFUSED } from 'constants'
-import { InvalidConfigError } from '../../../../errors/invalidConfig.js'
-import { ConnectionError } from '../../../../errors/connectionError.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export class RelationalStorage implements StorageDriver {
@@ -41,13 +38,7 @@ export class RelationalStorage implements StorageDriver {
 		process.env.MIGRATIONS_RANDOM_SEED_2 = cryptoRandomString({ length: 4, type: 'numeric' })
 	}
 	public async initialize(): Promise<void> {
-		try {
-			await this.upMigrations()
-		} catch (e) {
-			if (e.code === 'ECONNREFUSED') {
-				throw new ConnectionError('Could not connect to database.')
-			}
-		}
+		await this.upMigrations()
 	}
 	private async upMigrations() {
 		await this.db.schema.createSchemaIfNotExists(this.config.appName)

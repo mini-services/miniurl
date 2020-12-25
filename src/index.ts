@@ -16,6 +16,10 @@ const fastify = fastifyConstructor({
 	logger: true,
 })
 
+// Graceful shutdown
+const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
+signals.forEach((signal: NodeJS.Signals) => process.on(signal, shutdownGracefully))
+
 // Config
 fastify.decorate('config', config)
 
@@ -39,8 +43,6 @@ try {
 }
 
 async function shutdownGracefully() {
+	fastify.log.info('Shutting down...')
 	await fastify.close()
 }
-
-process.on('SIGTERM', shutdownGracefully)
-process.on('SIGINT', shutdownGracefully)

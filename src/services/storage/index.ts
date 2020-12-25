@@ -4,6 +4,7 @@ import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { runWithRetries } from '../../helpers/runWithRetries.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -26,7 +27,8 @@ export class Storage implements StorageDriver {
 		return this._driver
 	}
 	public async initialize(): Promise<void> {
-		await this._driver.initialize()
+		// Waits for 1 minute (6 * 10,000ms) before failing
+		return await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10_000 })
 	}
 
 	url = new (class UrlStorage {
