@@ -59,6 +59,7 @@
 - [ ] Buy a custom domain
 
 # Future
+- [ ] Allow for issuing signed signatures
 - [ ] Publish as a plugin NPM package with programmatic usage, also suitable as Fastify & Express plugins
 - [ ] RBAC - allow links to be related to certain users/groups/roles via headers/auth and used only by them
 
