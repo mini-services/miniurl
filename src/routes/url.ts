@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
 import { NotFoundError } from '../errors/notFound.js'
+import { validateUrl } from '../services/urlValidator.js'
 
 /* Save URL to store and return the new shortened url */
 const saveUrl: Route<{ Body: { url: string } }> = {
@@ -16,6 +17,7 @@ const saveUrl: Route<{ Body: { url: string } }> = {
 		},
 	},
 	async handler(request) {
+		await validateUrl(request.body.url)
 		const url = await this.storage.url.save(request.body.url)
 
 		return `${this.config.baseRedirectUrl}${url.id}`

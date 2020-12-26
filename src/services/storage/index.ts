@@ -28,7 +28,7 @@ export class Storage implements StorageDriver {
 	}
 	public async initialize(): Promise<void> {
 		// Waits for 1 minute (6 * 10,000ms) before failing
-		return await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10_000 })
+		await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
 	}
 
 	url = new (class UrlStorage {
@@ -41,6 +41,9 @@ export class Storage implements StorageDriver {
 		}
 		public async delete(id: string): Promise<void> {
 			return this.driver.url.delete(id)
+		}
+		public async deleteOverdue(timespanMs: number): Promise<number> {
+			return this.driver.url.deleteOverdue(timespanMs)
 		}
 		public async edit(id: string, url: string): Promise<StoredUrl> {
 			return this.driver.url.edit(id, url)

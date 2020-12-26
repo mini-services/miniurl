@@ -10,4 +10,5 @@ export interface UrlStorageDriver {
 	save(url: string): Promise<StoredUrl>
 	edit(id: string, url: string): Promise<StoredUrl>
 	delete(id: string): Promise<void>
+	deleteOverdue(timespanMs: number): Promise<number>
 }

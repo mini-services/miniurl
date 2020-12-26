@@ -1,8 +1,7 @@
 import fastifyConstructor from 'fastify'
-import { config } from './services/config/index.js'
+import { config } from './config/index.js'
 import { routes } from './routes/index.js'
 import { Storage } from './services/storage/index.js'
-
 declare module 'fastify' {
 	interface FastifyInstance {
 		config: typeof config
@@ -18,7 +17,12 @@ const fastify = fastifyConstructor({
 
 // Graceful shutdown
 const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
-signals.forEach((signal: NodeJS.Signals) => process.on(signal, shutdownGracefully))
+signals.forEach((signal: NodeJS.Signals) =>
+	process.on(signal, async () => {
+		fastify.log.info('Shutting down...')
+		await fastify.close()
+	}),
+)
 
 // Config
 fastify.decorate('config', config)
@@ -29,9 +33,12 @@ const storage = new Storage({
 	driverName: config.storage.driverName,
 	driverConfig: config.storage.driverConfig,
 })
-
 await storage.initialize()
 fastify.decorate('storage', storage)
+
+// URL cleanup
+await storage.url.deleteOverdue(config.url.lifetimeMs)
+setInterval(() => storage.url.deleteOverdue(config.url.lifetimeMs), config.url.cleanupIntervalMs)
 
 // Run
 await fastify.register(routes)
@@ -40,9 +47,4 @@ try {
 } catch (err) {
 	fastify.log.error(err)
 	process.exit(1)
-}
-
-async function shutdownGracefully() {
-	fastify.log.info('Shutting down...')
-	await fastify.close()
 }

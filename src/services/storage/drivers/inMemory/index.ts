@@ -7,8 +7,8 @@ import type { StoredUrl } from '../../types/url.js'
 export class InMemoryStorage implements StorageDriver {
 	// eslint-disable-next-line
 	constructor(public config: InMemoryStorageConfig) {}
-	data: { urls: Record<string, StoredUrl> } = {
-		urls: {},
+	data: { urls: Map<string, StoredUrl> } = {
+		urls: new Map(),
 	}
 	public async initialize(): Promise<void> {
 		return
@@ -18,29 +18,45 @@ export class InMemoryStorage implements StorageDriver {
 		constructor(public storage: InMemoryStorage) {}
 		public uuid() {
 			let id
-			while (!id || typeof this.storage.data.urls[id] !== 'undefined') {
+			while (!id || typeof this.storage.data.urls.get(id) !== 'undefined') {
 				id = cryptoRandomString({ length: 6, type: 'url-safe' })
 			}
 
 			return id
 		}
 		public async get(id: string): Promise<StoredUrl> {
-			if (typeof this.storage.data.urls[id] === 'undefined') throw new NotFoundError()
+			const storedUrl = this.storage.data.urls.get(id)
+			if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-			return this.storage.data.urls[id]
+			return storedUrl
 		}
 		public async delete(id: string): Promise<void> {
-			if (typeof this.storage.data.urls[id] === 'undefined') throw new NotFoundError()
+			if (typeof this.storage.data.urls.get(id) === 'undefined') throw new NotFoundError()
 
-			delete this.storage.data.urls[id]
+			this.storage.data.urls.delete(id)
+		}
+		public async deleteOverdue(timespanMs: number): Promise<number> {
+			const deleteBefore = new Date().getTime() - timespanMs
+			let deletedCount = 0
+
+			this.storage.data.urls.forEach((storedUrl) => {
+				const updatedAt = new Date(storedUrl.updatedAt).getTime()
+				if (updatedAt <= deleteBefore) {
+					this.storage.data.urls.delete(storedUrl.id)
+					deletedCount++
+				}
+			})
+
+			return deletedCount
 		}
 		public async edit(id: string, newUrl: string): Promise<StoredUrl> {
-			if (typeof this.storage.data.urls[id] === 'undefined') throw new NotFoundError()
+			const storedUrl = this.storage.data.urls.get(id)
+			if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-			this.storage.data.urls[id].url = newUrl
-			this.storage.data.urls[id].updatedAt = new Date().toISOString()
+			const newStoredUrl = { ...storedUrl, url: newUrl, updatedAt: new Date().toISOString() }
+			this.storage.data.urls.set(id, newStoredUrl)
 
-			return this.storage.data.urls[id]
+			return newStoredUrl
 		}
 		public async save(url: string): Promise<StoredUrl> {
 			const storedUrl = {
@@ -49,7 +65,7 @@ export class InMemoryStorage implements StorageDriver {
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 			}
-			this.storage.data.urls[storedUrl.id] = storedUrl
+			this.storage.data.urls.set(storedUrl.id, storedUrl)
 
 			return storedUrl
 		}

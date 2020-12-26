@@ -70,6 +70,10 @@ export class RelationalStorage implements StorageDriver {
 		public async delete(id: string): Promise<void> {
 			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
 		}
+		public async deleteOverdue(timespanMs: number): Promise<number> {
+			const deleteBefore = new Date(new Date().getTime() - timespanMs)
+			return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
+		}
 		public async edit(id: string, url: string): Promise<StoredUrl> {
 			const [storedUrl] = await this.storage.db
 				.table<StoredUrl>('urls')

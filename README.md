@@ -29,12 +29,13 @@
 -   [x] Allow to deploy with its own DB (helm chart should create a Postgres/redis/mongodb if no connection creds are given)
 -   [ ] Deployment CI/CD : run tests, build & push docker image, build & push helm, deploy docs & demo
 -   [ ] Find a suitable name for the project and change it
+-   [ ] Code Climate
 
 #### Advanced features
 
 -   [x] The microservice should wait for the storage driver (postgres) connection to be live and not crash if it doesn't respond initially
--   [ ] Add saved url restrictions (e.g only save urls from google.com or my domain, don't save urls with certain query params etc.)
--   [ ] URL cleanup (cleanup urls unused in the last X days) - use some scheduler (k8s CronJobs? what happens if it's deployed outside k8s? prefer in-code scheduler)
+-   [x] Add saved url restrictions (e.g only save urls from google.com or my domain, don't save urls with certain query params etc.)
+-   [x] URL cleanup (cleanup urls created over X time ago) - use some scheduler (k8s CronJobs? what happens if it's deployed outside k8s? prefer in-code scheduler)
 
 # v0.2.0
 
@@ -49,6 +50,7 @@
 #### Features
 
 -   [ ] Url info endpoint - used with a plus sign (?) (my-url.com/sOm3Id+), admins get more info
+-   [ ] URL cleanup - use "last used at" instead of "updated at" timestamp, allow for soft cleanup (use deleted_at instead of deleting the row) for info for admins later on
 -   [ ] fs driver
 
 #### Chores
@@ -75,7 +77,7 @@
 -   [ ] redis driver
 -   [ ] relational driver should support all other relational databases (mySQL, SQLite, etc.)
 -   [ ] Export a Postman file
--   [ ] Storage: dynamically import the drivers (prebuilt docker images? )
+-   [ ] Storage: dynamically import the drivers (on docker: prebuild many images e.g miniurl-redis, miniurl-postgres etc?)
 -   [ ] Buy a custom domain
 
 # Future

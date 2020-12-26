@@ -1,9 +1,13 @@
-import type { StorageConfig } from '../storage/types/config'
+import type { StorageConfig } from '../services/storage/types/config'
 
 export interface RawConfig {
 	port: string
 	appName: string
 	baseRedirectUrl: string
+	url: {
+		matchPattern: string
+		lifetime: string
+	}
 	storage: {
 		driverName: string
 		relationalDriverConfig: {
@@ -21,6 +25,11 @@ export interface RawConfig {
 export interface Config {
 	port: string
 	appName: string
+	url: {
+		matchPattern: string
+		lifetimeMs: number
+		cleanupIntervalMs: number
+	}
 	baseRedirectUrl: string
 	storage: Omit<StorageConfig, 'appName'>
 }

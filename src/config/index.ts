@@ -1,4 +1,4 @@
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError } from '../errors/invalidConfig.js'
 import { normalizeConfig } from './normalize.js'
 import type { RawConfig, Config } from './types.js'
 import { validateConfig } from './validate.js'
@@ -8,6 +8,10 @@ const rawConfig: RawConfig = {
 	port: process.env.PORT || '80',
 	appName: process.env.npm_package_name || 'miniurl',
 	baseRedirectUrl: process.env.BASE_REDIRECT_URL || '',
+	url: {
+		matchPattern: process.env.URL_MATCH_PATTERN || '**',
+		lifetime: process.env.URL_LIFETIME || '7 days',
+	},
 	storage: {
 		driverName: process.env.STORAGE_DRIVER || '',
 		relationalDriverConfig: {

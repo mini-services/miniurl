@@ -1,10 +1,12 @@
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
-import { StorageDriverName } from '../storage/types/config.js'
+import ms from 'ms'
+import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { StorageDriverName } from '../services/storage/types/config.js'
 import type { RawConfig } from './types.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
 	validateBaseRedirectUrl(rawConfig.baseRedirectUrl, rawConfig.appName)
 	validateStorageDriver(rawConfig.storage)
+	validateUrlLifetime(rawConfig.url.lifetime)
 
 	return true
 }
@@ -38,5 +40,11 @@ function validateBaseRedirectUrl(baseRedirectUrl?: string, appName?: string): vo
 		throw new InvalidConfigError(
 			`BASE_REDIRECT_URL path must not start with /${appName} (this is a reserved route)`,
 		)
+	}
+}
+
+function validateUrlLifetime(urlLifetime: string): void {
+	if (!urlLifetime || !ms(urlLifetime)) {
+		throw new InvalidConfigError('URL_LIFETIME specified is invalid')
 	}
 }
