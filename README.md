@@ -18,6 +18,7 @@
 -   [ ] Demo (Digital Ocean)
 -   [ ] README
 -   [ ] Export an Insomnia file
+-   [ ] Convert all tasks to issues/roadmap
 
 #### DevSecOps
 
