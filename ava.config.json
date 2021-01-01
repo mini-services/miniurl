@@ -1,0 +1,9 @@
+{
+    "ava": {
+        "files": ["**/__test__/**"],
+		"match": [],
+		"failFast": true,
+		"failWithoutAssertions": true,
+		"verbose": true,
+    }
+}
