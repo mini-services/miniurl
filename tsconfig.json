@@ -16,5 +16,5 @@
 		"pretty": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitReturns": true
-	}
+	},
 }
