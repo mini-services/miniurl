@@ -23,5 +23,3 @@ storage:
     user:
     secrets:
       password:
-container:
-  image: miniservices/miniurl:v0.1.16
