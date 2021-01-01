@@ -25,7 +25,7 @@ test:
 # Login to Dockerhub registry (must have docker running)
 docker-login:
 	@echo [!] Logging into Dockerhub
-	@echo $(DOCKERHUB_PASSWORD) | docker login --username $(DOCKERHUB_USERNAME) --password-stdin
+	@echo '$(DOCKERHUB_PASSWORD)' | docker login --username $(DOCKERHUB_USERNAME) --password-stdin
 
 # Build docker image
 docker-build:
