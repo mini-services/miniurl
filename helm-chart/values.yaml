@@ -1,4 +1,4 @@
-image: miniurl
+image: miniservices/miniurl:v0.1.17
 imagePullPolicy: Always
 port: 80
 baseRedirectUrl: http://cp.aporia.local
@@ -23,5 +23,3 @@ storage:
     user:
     secrets:
       password:
-container:
-  image: miniservices/miniurl:v0.1.16

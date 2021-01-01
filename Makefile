@@ -105,7 +105,7 @@ bump-version:
 	@git add pyproject.toml || true
 
 	yq e '.version = "$(NEW_VERSION)"' -i $(HELM_CHART)/Chart.yaml
-	yq e '.container.image = "$(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(NEW_VERSION)"' -i $(HELM_CHART)/values.yaml
+	yq e '.image = "$(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(NEW_VERSION)"' -i $(HELM_CHART)/values.yaml
 
 	git add $(HELM_CHART)/Chart.yaml $(HELM_CHART)/values.yaml
 	git commit -F /tmp/commit-message --amend --no-edit
