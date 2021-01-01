@@ -6,7 +6,6 @@
 	"description": "A url minifier",
 	"main": "index.ts",
 	"scripts": {
-		"build": "tsc -p tsconfig.json",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "cross-env NODE_ENV=production node --loader ts-node/esm ./src/index.ts",
 		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --trace-warnings\" src/index.ts"
