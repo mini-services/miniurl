@@ -5,6 +5,7 @@ HELM_CHART=./helm-chart
 HELM_CHART_REPO=mini-services/helm-charts
 DEFAULT_VERSION=0.1.0
 GITHUB_USER=snirshechter
+DOCKERHUB_USERNAME=miniservices
 # Install dependencies
 install-dependencies:
 	@echo [!] Installing Semver

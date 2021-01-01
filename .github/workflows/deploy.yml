@@ -27,7 +27,7 @@ jobs:
         id: bump-version
         run: make bump-version
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          # DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
@@ -47,7 +47,7 @@ jobs:
       - name: Deploy
         run: make deploy
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          # DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
 
