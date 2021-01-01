@@ -51,8 +51,15 @@ docker-tag:
 docker-push:
 	$(eval GIT_REVISION=$(shell git rev-parse HEAD | cut -c1-7))
 	@echo [!] Pushing $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(GIT_REVISION)
-	@docker push --all-tags $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(GIT_REVISION)
+	@docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(GIT_REVISION)
 
+	$(eval VERSION=$(shell git for-each-ref --sort=-v:refname --count=1 refs/tags/[0-9]*.[0-9]*.[0-9]* refs/tags/v[0-9]*.[0-9]*.[0-9]* | cut -d / -f 3-))
+	@if [ -n $(VERSION) ]; then \
+		echo [!] Pushing $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):latest; \
+		docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):latest; \
+		echo [!] Pushing $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(VERSION); \
+		docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(VERSION); \
+	fi
 # Build docker image and push to Docker registry
 docker-build-and-push: docker-login docker-build docker-tag docker-push
 
