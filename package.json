@@ -6,10 +6,11 @@
 	"description": "A url minifier",
 	"main": "index.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "npm run test:unit && npm run test:e2e",
 		"start": "cross-env NODE_ENV=production node --loader ts-node/esm ./src/index.ts",
 		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --trace-warnings\" src/index.ts",
-		"test:unit": "ava"
+		"test:unit": "ava",
+		"test:e2e": "exit 0"
 	},
 	"keywords": [
 		"url",
