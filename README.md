@@ -24,7 +24,7 @@
 -   [x] GitGuardian, dependabot
 -   [x] Dockerfile
 -   [x] Helm chart
--   [ ] Helm chart - fix examples, add the real image (after the CI/CD deploys it), ingress route should also take into account the path & port of baseRedirectUrl (not just host)
+-   [ ] Helm chart - add the real image (after the CI/CD deploys it), ingress route should also take into account the path & port of baseRedirectUrl (not just host)
 -   [ ] upload docker image to dockerhub, upload helm chart to helm hub (Artifact hub) and Github (our own separate helm repo)
 -   [x] Allow to deploy with its own DB (helm chart should create a Postgres/redis/mongodb if no connection creds are given)
 -   [ ] Deployment CI/CD : run tests, build & push docker image, build & push helm, deploy docs & demo
@@ -46,6 +46,7 @@
 -   [ ] Url delete endpoint (admin)
 -   [ ] Record every url retrieve/redirect to admin
 -   [ ] destroy app (admin) - allow the user to clean up since we might be using shared resources (database, etc.) - delete everything from the database and shutdown (removing a self-deployed database will be performed via `helm uninstall`)
+-   [ ] enable custom ids (e.g http://url.sh/my-nice-link)
 
 #### Features
 
@@ -85,6 +86,8 @@
 -   [ ] Allow for issuing signed signatures
 -   [ ] Publish as a plugin NPM package with programmatic usage, also suitable as Fastify & Express plugins
 -   [ ] RBAC - allow links to be related to certain users/groups/roles via headers/auth and used only by them
+-   [ ] Extract a template out of this repo (for future repos)
+-   [ ] Separate Makefile to multiple files - helm makefile, docker makefile etc.
 
 ## Development
 

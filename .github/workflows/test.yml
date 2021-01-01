@@ -1,0 +1,17 @@
+name: MiniUrl
+on:
+  push:
+    branches-ignore:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Install dependencies
+        run: make install-dependencies
+
+      - name: Test
+        run: make test

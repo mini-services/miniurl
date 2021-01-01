@@ -2,6 +2,9 @@ image: miniurl
 imagePullPolicy: Always
 port: 80
 baseRedirectUrl: http://cp.aporia.local
+url:
+    matchPattern: '**'
+    lifetime: '7 days'
 ingress:
     enable: false
 service:

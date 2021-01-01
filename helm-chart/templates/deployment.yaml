@@ -27,6 +27,10 @@ spec:
           env:
             - name: BASE_REDIRECT_URL
               value: {{ required "baseRedirectUrl is required" .Values.baseRedirectUrl }}
+            - name: URL_MATCH_PATTERN
+              value: {{ .Values.url.matchPattern | quote }}
+            - name: URL_LIFETIME
+              value: {{ .Values.url.lifetime }}
             - name: STORAGE_DRIVER
               value: {{ required "baseRedirectUrl is required" .Values.storage.driver }}
             - name: PORT
