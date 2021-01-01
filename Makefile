@@ -5,7 +5,7 @@ HELM_CHART=./helm-chart
 HELM_CHART_REPO=mini-services/helm-charts
 DEFAULT_VERSION=0.1.0
 GITHUB_USER=snirshechter
-DOCKERHUB_USERNAME=miniservices
+
 # Install dependencies
 install-dependencies:
 	@echo [!] Installing Semver
@@ -26,8 +26,6 @@ test:
 # Login to Dockerhub registry (must have docker running)
 docker-login:
 	@echo [!] Logging into Dockerhub
-	@echo '$(DOCKERHUB_PASSWORD)'
-	@echo '$(DOCKERHUB_USERNAME)'
 	@echo '$(DOCKERHUB_PASSWORD)' | docker login --username $(DOCKERHUB_USERNAME) --password-stdin
 
 # Build docker image

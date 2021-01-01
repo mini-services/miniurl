@@ -5,6 +5,14 @@
 	"types": "src/types",
 	"description": "A url minifier",
 	"main": "index.ts",
+	"homepage": "https://github.com/miniservices/miniurl",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/miniservices/miniurl.git"
+	},
+	"bugs": {
+		"url": "https://github.com/miniservices/miniurl/issues"
+	},
 	"scripts": {
 		"build": "tsc -p tsconfig.json",
 		"test": "echo \"Error: no test specified\" && exit 0",
