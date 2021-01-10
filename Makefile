@@ -136,7 +136,7 @@ build: docker-build-and-push helm-configure helm-push
 deploy:
 	@echo [!] Deploying to $(ENVIRONMENT) environment
 
-	@echo [!] Installing doctl (Digital Ocean CLI)
+	@echo [!] Installing doctl - Digital Ocean CLI
 	@sudo snap install doctl
 
 	# Uses the DIGITALOCEAN_ACCESS_TOKEN environment variable
