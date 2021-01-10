@@ -1,4 +1,4 @@
-import { validateConfig } from '../validate'
+import { validateConfig } from '../validate.js'
 import test from 'ava'
 import { RawConfig } from '../types.js'
 

@@ -5,4 +5,14 @@ export default {
 	timeout: '1m',
 	faileFast: true,
 	extensions: ['ts', 'js'],
+	nodeArguments: [
+		"--loader=ts-node/esm",
+		"--experimental-specifier-resolution=node"
+	],
+	extensions: {
+		"ts": "module"
+	},
+	nonSemVerExperiments: {
+		"configurableModuleFormat": true
+	  },
 }
