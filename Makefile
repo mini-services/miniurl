@@ -153,11 +153,11 @@ deploy:
 	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
-	$(eval POSTGRESQL_PASSWORD=$(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
+	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
 	@echo [!] Password: $(POSTGRESQL_PASSWORD)
-	@echo [!] kubectl: $(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-	@echo [!] $(kubectl get secret --namespace default miniurl-postgresql)
-	@echo [!] $(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}")
+	@echo [!] kubectl: $(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+	@echo [!] $(shell kubectl get secret --namespace default miniurl-postgresql)
+	@echo [!] $(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}")
 	@kubectl get secret --namespace default miniurl-postgresql
 	@kubectl get secret --namespace default miniurl-postgresql -o json
 	@kubectl get secret --namespace default miniurl-postgresql -o yaml
