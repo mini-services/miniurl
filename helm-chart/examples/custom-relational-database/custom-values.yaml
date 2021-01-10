@@ -1,10 +1,11 @@
 baseRedirectUrl: https://my-short-base.url
 storage:
     deploy: false
+    driver: Relational
     relationalConfig:
         client: postgres
         host: localhost
-        user: postgres
         database: postgres
+        user: postgres
         secrets:
             password: postgres
