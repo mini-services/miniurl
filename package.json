@@ -44,7 +44,7 @@
 		"crypto-random-string": "^3.3.0",
 		"eslint-config-prettier": "^7.0.0",
 		"fastify": "^3.9.1",
-		"fastify-error": "^0.2.0",
+		"fastify-error": "^0.3.0",
 		"fastify-plugin": "^3.0.0",
 		"knex": "^0.21.14",
 		"micromatch": "^4.0.2",
