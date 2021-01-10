@@ -143,8 +143,13 @@ deploy:
 	@echo [!] Authenticating to Digital Ocean
 	@doctl auth init
 
+	@echo [!] Adding permissions
+	@mkdir /home/runner/.kube -p
+	@sudo snap connect doctl:kube-config
+
 	@echo [!] Configuring kubectl to work with the remote cluster
 	@doctl kubernetes cluster kubeconfig save fd49d853-33e7-49a1-bc0a-b58b15748234
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
 	@helm upgrade --install miniurl miniservices/miniurl
+
