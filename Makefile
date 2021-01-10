@@ -148,4 +148,3 @@ deploy-demo:
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
 	@helm upgrade --install miniurl miniservices/miniurl
-	$(eval VERSION=$(shell git for-each-ref --sort=-v:refname --count=1 refs/tags/[0-9]*.[0-9]*.[0-9]* refs/tags/v[0-9]*.[0-9]*.[0-9]* | cut -d / -f 3-))
