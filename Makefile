@@ -138,17 +138,6 @@ build: docker-build-and-push helm-configure helm-push
 deploy:
 	@echo [!] Deploying to $(ENVIRONMENT) environment
 
-	@echo [!] Installing doctl - Digital Ocean CLI
-	@sudo snap install doctl
-
-	# Uses the DIGITALOCEAN_ACCESS_TOKEN environment variable
-	@echo [!] Authenticating to Digital Ocean
-	@doctl auth init
-
-	@echo [!] Adding permissions
-	@mkdir /home/runner/.kube -p
-	@sudo snap connect doctl:kube-config
-
 	@echo [!] Configuring kubectl to work with the remote cluster
 	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
 

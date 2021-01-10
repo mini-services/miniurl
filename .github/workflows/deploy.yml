@@ -17,9 +17,13 @@ jobs:
 
       - name: Install dependencies
         run: make install-dependencies
-      
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - name: Deploy
         run: make deploy
         env:
           ENVIRONMENT: ${{ github.event.inputs.environment }}
-          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
