@@ -153,5 +153,6 @@ deploy:
 	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
-	@export POSTGRESQL_PASSWORD=$(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-	@helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set postgresqlPassword=$POSTGRESQL_PASSWORD
+	POSTGRESQL_PASSWORD=$(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+	@echo $(POSTGRESQL_PASSWORD)
+	@helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set postgresqlPassword=$(POSTGRESQL_PASSWORD)
