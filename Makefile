@@ -5,6 +5,8 @@ HELM_CHART=./helm-chart
 HELM_CHART_REPO=mini-services/helm-charts
 DEFAULT_VERSION=0.1.0
 GITHUB_USER=snirshechter
+DIGITAL_OCEAN_CLUSTER_ID=fd49d853-33e7-49a1-bc0a-b58b15748234
+DEMO_URL=https://miniservices.snir.sh
 
 # Install dependencies
 install-dependencies:
@@ -122,7 +124,7 @@ bump-version:
 		trap '\
 			echo [!] Re-enabling GitHub main branch protection; \
 			curl https://api.github.com/repos/$(GITHUB_REPOSITORY)/branches/main/protection -H "Authorization: token $(PACKAGES_TOKEN)" \
-				-H "Accept:application/vnd.github.luke-cage-preview+json" -X PUT -d "{\"required_status_checks\":{\"strict\":false,\"contexts\":`echo $$BRANCH_PROTECTION | jq '.required_status_checks.contexts'`},\"restrictions\":{\"users\":[],\"teams\":[],\"apps\":[]},\"required_pull_request_reviews\":{\"dismiss_stale_reviews\":false,\"require_code_owner_reviews\":false},\"enforce_admins\":true,\"required_linear_history\":false,\"allow_force_pushes\":true,\"allow_deletions\":false}"; \
+				-H "Accept:application/vnd.github.luke-cage-preview+json" -X PUT -d "{\"required_status_checks\":{\"strict\":false,\"contexts\":`echo $$BRANCH_PROTECTION | jq '.required_status_checks.contexts'`},\"restrictions\":{\"users\":[],\"teams\":[],\"apps\":[]},\"required_pull_request_reviews\":{\"dismiss_stale_reviews\":false,\"require_code_owner_reviews\":false},\"enforce_admins\":false,\"required_linear_history\":false,\"allow_force_pushes\":true,\"allow_deletions\":false}"; \
 		' EXIT; \
 	fi; \
 	echo [!] Git Push; \
@@ -130,5 +132,18 @@ bump-version:
 
 	echo "::set-output name=bumped_version_commit_hash::`git log --pretty=format:'%H' -n 1`";
 
-# Build docker image and install helm chart
-deploy: docker-build-and-push helm-configure helm-push
+# Build docker image and helm chart
+build: docker-build-and-push helm-configure helm-push
+
+doctl-config-kubectl:
+	@echo [!] Configuring kubectl to work with the remote cluster
+	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
+deploy:
+	@echo [!] Deploying to $(ENVIRONMENT) environment
+	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
+
+	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
+
+	echo [!] Password: $(POSTGRESQL_PASSWORD)
+
+	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
