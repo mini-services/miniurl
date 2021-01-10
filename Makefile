@@ -156,5 +156,7 @@ deploy:
 	$(eval POSTGRESQL_PASSWORD=$(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
 	@echo [!] Password: $(POSTGRESQL_PASSWORD)
 	@echo [!] kubectl: $(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-	@kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode
+	@echo [!] $(kubectl get secret --namespace default miniurl-postgresql)
+	@echo [!] $(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}")
+	@kubectl get secret
 	@helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set global.postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
