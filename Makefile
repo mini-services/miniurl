@@ -153,7 +153,7 @@ deploy:
 	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
-	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
+	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --kubeconfig /home/runner/.kube/config --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
 	echo [!] Password: $(POSTGRESQL_PASSWORD)
 	$(eval ASD=$(shell echo 'asdasd'))
 	echo [!] ASD: $(ASD)
