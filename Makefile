@@ -154,8 +154,8 @@ deploy:
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
 	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
-	@echo [!] Password: $(POSTGRESQL_PASSWORD)
-	@echo [!] kubectl: $(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+	@echo [!] Password: '$(POSTGRESQL_PASSWORD)'
+	@echo [!] kubectl: '$(shell kubectl get secret miniurl-postgresql -o jsonpath="{.data.postgresql-password}")'
 	@echo [!] $(shell kubectl get secret --namespace default miniurl-postgresql)
 	@echo [!] $(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}")
 	@kubectl get secret --namespace default miniurl-postgresql
