@@ -135,17 +135,19 @@ bump-version:
 # Build docker image and helm chart
 build: docker-build-and-push helm-configure helm-push
 
-deploy:
-	@echo [!] Deploying to $(ENVIRONMENT) environment
-
+doctl-config-kubectl:
 	@echo [!] Configuring kubectl to work with the remote cluster
 	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
+deploy:
+	@echo [!] Deploying to $(ENVIRONMENT) environment
+	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
-	$(eval POSTGRESQL_PASSWORD=$(shell kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode))
+
 	echo [!] Password: $(POSTGRESQL_PASSWORD)
 	$(eval ASD=$(shell echo 'asdasd'))
 	echo [!] ASD: $(ASD)
 	echo [!] kubectl $(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
 	echo [!] kubectl $(kubectl get secret --namespace --kubeconfig /home/runner/.kube/config default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
+	
 	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set global.postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)

@@ -23,6 +23,9 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: Configure kubectl
+        run: make doctl-config-kubectl
+
       - name: Deploy
         run: make deploy
         env:
