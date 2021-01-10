@@ -133,7 +133,7 @@ bump-version:
 # Build docker image and helm chart
 build: docker-build-and-push helm-configure helm-push
 
-deploy-demo:
+deploy:
 	@echo [!] Deploying to $(ENVIRONMENT) environment
 
 	@echo [!] Installing doctl (Digital Ocean CLI)
