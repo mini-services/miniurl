@@ -5,6 +5,8 @@ HELM_CHART=./helm-chart
 HELM_CHART_REPO=mini-services/helm-charts
 DEFAULT_VERSION=0.1.0
 GITHUB_USER=snirshechter
+DIGITAL_OCEAN_CLUSTER_ID=fd49d853-33e7-49a1-bc0a-b58b15748234
+DEMO_URL=https://miniservices.snir.sh
 
 # Install dependencies
 install-dependencies:
@@ -148,8 +150,7 @@ deploy:
 	@sudo snap connect doctl:kube-config
 
 	@echo [!] Configuring kubectl to work with the remote cluster
-	@doctl kubernetes cluster kubeconfig save fd49d853-33e7-49a1-bc0a-b58b15748234
+	@doctl kubernetes cluster kubeconfig save $(DIGITAL_OCEAN_CLUSTER_ID)
 
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
-	@helm upgrade --install miniurl miniservices/miniurl
-
+	@helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL)
