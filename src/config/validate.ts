@@ -1,7 +1,7 @@
 import ms from 'ms'
-import { InvalidConfigError } from '../errors/invalidConfig'
-import { StorageDriverName } from '../services/storage/types/config'
-import type { RawConfig } from './types'
+import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { StorageDriverName } from '../services/storage/types/config.js'
+import type { RawConfig } from './types.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
 	validateBaseRedirectUrl(rawConfig.baseRedirectUrl, rawConfig.appName)
