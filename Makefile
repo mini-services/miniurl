@@ -130,5 +130,21 @@ bump-version:
 
 	echo "::set-output name=bumped_version_commit_hash::`git log --pretty=format:'%H' -n 1`";
 
-# Build docker image and install helm chart
-deploy: docker-build-and-push helm-configure helm-push
+# Build docker image and helm chart
+build: docker-build-and-push helm-configure helm-push
+
+deploy-demo:
+	@echo [!] Deploying to $(ENVIRONMENT) environment
+
+	@echo [!] Installing doctl (Digital Ocean CLI)
+	@sudo snap install doctl
+
+	# Uses the DIGITALOCEAN_ACCESS_TOKEN environment variable
+	@echo [!] Authenticating to Digital Ocean
+	@doctl auth init
+
+	@echo [!] Configuring kubectl to work with the remote cluster
+	@doctl kubernetes cluster kubeconfig save fd49d853-33e7-49a1-bc0a-b58b15748234
+
+	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
+	@helm upgrade --install miniurl miniservices/miniurl

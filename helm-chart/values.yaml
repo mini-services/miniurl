@@ -1,7 +1,7 @@
-image: miniservices/miniurl:v0.1.17
+image: miniservices/miniurl:v0.1.18
 imagePullPolicy: Always
 port: 80
-baseRedirectUrl: http://cp.aporia.local
+baseRedirectUrl:
 url:
   matchPattern: '**'
   lifetime: '7 days'
