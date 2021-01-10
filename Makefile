@@ -145,9 +145,5 @@ deploy:
 	@helm repo add miniservices https://raw.githubusercontent.com/$(HELM_CHART_REPO)/main
 
 	echo [!] Password: $(POSTGRESQL_PASSWORD)
-	$(eval ASD=$(shell echo 'asdasd'))
-	echo [!] ASD: $(ASD)
-	echo [!] kubectl $(kubectl get secret --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-	echo [!] kubectl $(kubectl get secret --namespace --kubeconfig /home/runner/.kube/config default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode)
-	
-	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set global.postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
+
+	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
