@@ -157,4 +157,5 @@ deploy:
 	echo [!] Password: $(POSTGRESQL_PASSWORD)
 	$(eval ASD=$(shell echo 'asdasd'))
 	echo [!] ASD: $(ASD)
+	kubectl get secret --kubeconfig /home/runner/.kube/config --namespace default miniurl-postgresql -o jsonpath="{.data.postgresql-password}" | base64 --decode
 	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set global.postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
