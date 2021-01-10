@@ -146,4 +146,4 @@ deploy:
 
 	echo [!] Password: $(POSTGRESQL_PASSWORD)
 
-	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL) --set postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
+	helm upgrade --install miniurl miniservices/miniurl --set ingress.enable=true --set baseRedirectUrl=$(DEMO_URL)/u --set postgresql.postgresqlPassword=$(POSTGRESQL_PASSWORD)
