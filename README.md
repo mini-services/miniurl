@@ -26,10 +26,8 @@ MiniUrl maintains an extensive production-grade Helm chart. See the [chart](http
 
 ```s
 helm repo add miniservices https://raw.githubusercontent.com/mini-services/helm-charts/main
-
 helm repo update
-
-// You may also add --set ingress.enable=true for deploying an Ingress route as well
+# You may also add --set ingress.enable=true for deploying an Ingress route as well
 helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=https://short.url
 ```
 
@@ -54,11 +52,8 @@ docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
 ### Node.js
 ```s
 git clone https://github.com/mini-services/miniurl.git
-
 cd miniurl
-
 npm install
-
 npx cross-env BASE_REDIRECT_URL=https://short.url STORAGE_DRIVER=InMemory npm start
 ```
 
