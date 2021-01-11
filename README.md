@@ -169,7 +169,7 @@ You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choo
 
 ## Contribution
 
-Refer to our [contribution guide](docs/contribution.md)
+Refer to our [contribution guide](docs/contribution.md).
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
