@@ -1,0 +1,19 @@
+{
+	"id": "719ba1fb-99e5-49b0-bc72-0290f5d36e08",
+	"name": "Local",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "localhost:3000",
+			"enabled": true
+		},
+		{
+			"key": "baseRedirectUrl",
+			"value": "localhost:3000/u",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2021-01-10T23:38:25.597Z",
+	"_postman_exported_using": "Postman/7.36.1"
+}

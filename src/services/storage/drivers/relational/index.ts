@@ -62,7 +62,13 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) {}
 		public async get(id: string): Promise<StoredUrl> {
-			const storedUrl = await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()
+			const storedUrl = await this.storage.db
+				.table<StoredUrl & { serial?: number }>('urls')
+				.select('*')
+				.where('id', id)
+				.first()
+
+			delete storedUrl?.serial
 
 			if (!storedUrl) throw NotFoundError()
 			else return storedUrl
