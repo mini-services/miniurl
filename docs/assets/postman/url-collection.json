@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "d43e29aa-f838-4d26-a0ea-85db775f4e32",
+		"name": "Url",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://google.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/miniurl/url",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"miniurl",
+						"url"
+					]
+				},
+				"description": "Save a url"
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/miniurl/url/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"miniurl",
+						"url",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "coZUC"
+						}
+					]
+				},
+				"description": "Retrieve a url (with info)"
+			},
+			"response": []
+		},
+		{
+			"name": "Redirect",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseRedirectUrl}}/:id",
+					"host": [
+						"{{baseRedirectUrl}}"
+					],
+					"path": [
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "coZUC"
+						}
+					]
+				},
+				"description": "Redirects to the saved url using the shortened url"
+			},
+			"response": []
+		}
+	]
+}

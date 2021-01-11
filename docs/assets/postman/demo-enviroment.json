@@ -1,0 +1,19 @@
+{
+	"id": "1781acb8-17e2-4a4a-84b5-8ab4be26e015",
+	"name": "Demo",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "https://miniservices.snir.sh",
+			"enabled": true
+		},
+		{
+			"key": "baseRedirectUrl",
+			"value": "https://miniservices.snir.sh/u",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2021-01-10T23:38:18.212Z",
+	"_postman_exported_using": "Postman/7.36.1"
+}
