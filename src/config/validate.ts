@@ -44,7 +44,7 @@ function validateBaseRedirectUrl(baseRedirectUrl?: string, appName?: string): vo
 }
 
 function validateUrlLifetime(urlLifetime: string): void {
-	if (!urlLifetime || !ms(urlLifetime)) {
+	if (!urlLifetime || !ms(urlLifetime) || ms(urlLifetime) <= 0) {
 		throw new InvalidConfigError('URL_LIFETIME specified is invalid')
 	}
 }

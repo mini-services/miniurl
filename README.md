@@ -10,15 +10,16 @@ MiniUrl is part of the [Mini Services Project](https://github.com/mini-services)
 
 -   Extremely efficient
 -   Production ready
+-   Zero code
 -   Easy setup
+-   Highly configurable
 -   Cloud-ready with an almost zero-config Helm chart
 -   Multiple deployment options
 
 ## Getting Started
 
 -   Run using [Helm](https://github.com/mini-services/miniurl/tree/main#helm), [Docker](https://github.com/mini-services/miniurl/tree/main#docker) or [Node.js](https://github.com/mini-services/miniurl/tree/main#nodejs)
-
-**NOTE** this deployment is NOT production ready since it uses the default InMemory storage driver which is a plain object. To run a production-grade docker image, refer to the Docker Deployment Options
+- Use the API (future: dashboard) and enjoy a zero-code microservice :upside_down_face:
 ## Deployment Options
 
 ### Helm
@@ -27,6 +28,7 @@ MiniUrl maintains an extensive production-grade Helm chart. See the [chart](http
 ```s
 helm repo add miniservices https://raw.githubusercontent.com/mini-services/helm-charts/main
 helm repo update
+
 # You may also add --set ingress.enable=true for deploying an Ingress route as well
 helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=https://short.url
 ```
@@ -61,13 +63,13 @@ npx cross-env BASE_REDIRECT_URL=https://short.url STORAGE_DRIVER=InMemory npm st
 
 ```s
 
-npx cross-env   BASE_REDIRECT_URL=https://short.url \
-                STORAGE_DRIVER=Relational \
-                RELATIONAL_STORAGE_CLIENT=postgres \
-                RELATIONAL_STORAGE_HOST=localhost:5432 \
-                RELATIONAL_STORAGE_USER=postgres \
-                RELATIONAL_STORAGE_PASSWORD=postgres \
-                npm start
+npx cross-env BASE_REDIRECT_URL=https://short.url \
+              STORAGE_DRIVER=Relational \
+              RELATIONAL_STORAGE_CLIENT=postgres \
+              RELATIONAL_STORAGE_HOST=localhost:5432 \
+              RELATIONAL_STORAGE_USER=postgres \
+              RELATIONAL_STORAGE_PASSWORD=postgres \
+              npm start
 ```
 ## API
 
@@ -134,6 +136,26 @@ Query
 Redirect 302 - redirects to the saved url.
 
 ## Configuration
+
+**BASE_REDIRECT_URL** - the shortened urls base path e.g https://youtu.be, https://bit.ly or https://example.com/u
+
+**URL_MATCH_PATTERN** - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
+
+**URL_LIFETIME** - a human-readible time (see the [ms docs](https://github.com/vercel/ms) for available options) stating the url lifetime (after which it expires). Note that the expiration mechanism runs at most once per minute and at least once per hour and so slight deviation may occur.
+
+**STORAGE_DRIVER** - the url storage driver. available options are `InMemory` (for development purposes only) and `Relational` (any Knex-complaint SQL database).
+
+**RELATIONAL_STORAGE_CLIENT** - the relational client to use, see [Knex docs](http://knexjs.org/) for the available options
+
+**RELATIONAL_STORAGE_HOST** - the relational database's host (e.g https://my-database.com:5432)
+
+**RELATIONAL_STORAGE_USER** - the relational database's username
+
+**RELATIONAL_STORAGE_PASSWORD** - the relational database's password
+
+**RELATIONAL_STORAGE_DATABASE** - the relational database's name (e.g postgres)
+
+**PORT** - the Node.js process port. In most cases your shouldn't change this
 
 ## Issues and Questions
 
