@@ -16,7 +16,7 @@ MiniUrl is part of the [Mini Services Project](https://github.com/mini-services)
 
 ## Getting Started
 
--   Run using Helm, Docker or node
+-   Run using [Helm](https://github.com/mini-services/miniurl/tree/main#helm), [Docker](https://github.com/mini-services/miniurl/tree/main#docker) or [Node.js](https://github.com/mini-services/miniurl/tree/main#nodejs)
 
 **NOTE** this deployment is NOT production ready since it uses the default InMemory storage driver which is a plain object. To run a production-grade docker image, refer to the Docker Deployment Options
 ## Deployment Options
@@ -51,7 +51,7 @@ docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
                              -e RELATIONAL_STORAGE_PASSWORD=postgres
 ```
 
-### Node
+### Node.js
 ```s
 git clone https://github.com/mini-services/miniurl.git
 
