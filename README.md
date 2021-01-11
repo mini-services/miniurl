@@ -1,7 +1,5 @@
 # MiniUrl
 
-## Introduction
-
 MiniUrl is an open-source production-ready microservice for shortening Urls. Deploy it on your personal cloud and get a fully-functional url-shortener with zero effort.
 
 MiniUrl is part of the [Mini Services Project](https://github.com/mini-services).
@@ -119,7 +117,7 @@ Body (json)
 -   `createdAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the creation time
 -   `updatedAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the last updated time
 
-### GET _{{ baseRedirectUrl }}_/:id
+### GET **<BASE_REDIRECT_URL>**/:id
 
 Redirects to a saved url.
 
@@ -137,15 +135,17 @@ Redirect 302 - redirects to the saved url.
 
 ## Configuration
 
+Since MiniUrl follows the best practices including the [12 factor app](https://12factor.net/), the microservice is entirely configurable via environment variables. Available variables are:
+
 **BASE_REDIRECT_URL** - the shortened urls base path e.g https://youtu.be, https://bit.ly or https://example.com/u
 
 **URL_MATCH_PATTERN** - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
 
 **URL_LIFETIME** - a human-readible time (see the [ms docs](https://github.com/vercel/ms) for available options) stating the url lifetime (after which it expires). Note that the expiration mechanism runs at most once per minute and at least once per hour and so slight deviation may occur.
 
-**STORAGE_DRIVER** - the url storage driver. available options are `InMemory` (for development purposes only) and `Relational` (any Knex-complaint SQL database).
+**STORAGE_DRIVER** - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Relational` (for any Knex.js-complaint SQL database).
 
-**RELATIONAL_STORAGE_CLIENT** - the relational client to use, see [Knex docs](http://knexjs.org/) for the available options
+**RELATIONAL_STORAGE_CLIENT** - the relational client to use, see [Knex.js docs](http://knexjs.org/) for the available options
 
 **RELATIONAL_STORAGE_HOST** - the relational database's host (e.g https://my-database.com:5432)
 
@@ -169,6 +169,7 @@ You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choo
 
 ## Contribution
 
+Refer to our [contribution guide](docs/contribution.md)
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
