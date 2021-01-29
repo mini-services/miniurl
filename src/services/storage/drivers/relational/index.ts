@@ -41,6 +41,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.upMigrations()
 	}
 	private async upMigrations() {
+		// For new migrations, see the contribution guide's common issues section
 		await this.db.schema.createSchemaIfNotExists(this.config.appName)
 		await this.db.migrate.latest({ directory: join(__dirname, './migrations'), tableName: 'migrations' })
 	}
