@@ -44,6 +44,7 @@ docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
                              -e BASE_REDIRECT_URL=https://short.url \
                              -e STORAGE_DRIVER=Relational \
                              -e RELATIONAL_STORAGE_CLIENT=postgres \
+                             -e RELATIONAL_STORAGE_DATABASE=postgres \
                              -e RELATIONAL_STORAGE_HOST=localhost:5432 \
                              -e RELATIONAL_STORAGE_USER=postgres \
                              -e RELATIONAL_STORAGE_PASSWORD=postgres
