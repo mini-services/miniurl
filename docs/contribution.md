@@ -22,3 +22,7 @@ This is probably due to Helm not deleting the PersistentVolumeClaims of the data
 -   Uninstall the helm chart
 -   Delete the pvc: `kubectl delete pvc data-<RELEASE_NAME>-postgresql-0` (release_name is usually miniurl)
 -   Reinstall the helm chart
+
+## Project structure
+
+![Project Structure](assets/miniurl.svg)
