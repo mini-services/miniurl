@@ -23,6 +23,16 @@ This is probably due to Helm not deleting the PersistentVolumeClaims of the data
 -   Delete the pvc: `kubectl delete pvc data-<RELEASE_NAME>-postgresql-0` (release_name is usually miniurl)
 -   Reinstall the helm chart
 
+## Common issues
+
+### How do I create a new migration in the Storage Relational driver?
+-   cd to src/services/storage/drivers/relational folder
+-   run `npx knex migrate:make <MIGRATION_NAME> -x ts --migrations-directory migrations`
+
+### How can I run a local postgres database for development purposes?
+-   Make sure you have Docker installed
+-   Run `docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres`
+-   On .env.development, comment the InMemory Storage section and uncomment the Relational Storage section
 ## Project structure
 
 ![Project Structure](assets/miniurl.svg)

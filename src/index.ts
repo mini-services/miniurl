@@ -15,15 +15,6 @@ const fastify = fastifyConstructor({
 	logger: true,
 })
 
-// Graceful shutdown
-const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
-signals.forEach((signal: NodeJS.Signals) =>
-	process.on(signal, async () => {
-		fastify.log.info('Shutting down...')
-		await fastify.close()
-	}),
-)
-
 // Config
 fastify.decorate('config', config)
 
@@ -38,7 +29,17 @@ fastify.decorate('storage', storage)
 
 // URL cleanup
 await storage.url.deleteOverdue(config.url.lifetimeMs)
-setInterval(() => storage.url.deleteOverdue(config.url.lifetimeMs), config.url.cleanupIntervalMs)
+const intervalToken = setInterval(() => storage.url.deleteOverdue(config.url.lifetimeMs), config.url.cleanupIntervalMs)
+
+// Graceful shutdown
+const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
+signals.forEach((signal: NodeJS.Signals) =>
+	process.on(signal, async () => {
+		fastify.log.info('Shutting down...')
+		clearInterval(intervalToken)
+		await fastify.close()
+	}),
+)
 
 // Run
 await fastify.register(routes)

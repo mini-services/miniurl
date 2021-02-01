@@ -45,7 +45,7 @@ docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
                              -e STORAGE_DRIVER=Relational \
                              -e RELATIONAL_STORAGE_CLIENT=postgres \
                              -e RELATIONAL_STORAGE_DATABASE=postgres \
-                             -e RELATIONAL_STORAGE_HOST=localhost:5432 \
+                             -e RELATIONAL_STORAGE_HOST=localhost \
                              -e RELATIONAL_STORAGE_USER=postgres \
                              -e RELATIONAL_STORAGE_PASSWORD=postgres
 ```
@@ -65,7 +65,7 @@ npx cross-env BASE_REDIRECT_URL=https://short.url STORAGE_DRIVER=InMemory npm st
 npx cross-env BASE_REDIRECT_URL=https://short.url \
               STORAGE_DRIVER=Relational \
               RELATIONAL_STORAGE_CLIENT=postgres \
-              RELATIONAL_STORAGE_HOST=localhost:5432 \
+              RELATIONAL_STORAGE_HOST=localhost \
               RELATIONAL_STORAGE_USER=postgres \
               RELATIONAL_STORAGE_PASSWORD=postgres \
               npm start
@@ -148,7 +148,7 @@ Since MiniUrl follows the best practices including the [12 factor app](https://1
 
 **RELATIONAL_STORAGE_CLIENT** (required if STORAGE_DRIVER is `Relational`) - the relational client to use, see [Knex.js docs](http://knexjs.org/) for the available options
 
-**RELATIONAL_STORAGE_HOST** (required if STORAGE_DRIVER is `Relational`) - the relational database's host (e.g https://my-database.com:5432)
+**RELATIONAL_STORAGE_HOST** (required if STORAGE_DRIVER is `Relational`) - the relational database's host (e.g https://my-database.com)
 
 **RELATIONAL_STORAGE_USER** (required if STORAGE_DRIVER is `Relational`) - the relational database's username
 
