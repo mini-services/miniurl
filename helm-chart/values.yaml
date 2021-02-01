@@ -1,4 +1,4 @@
-image: miniservices/miniurl:v0.1.51
+image: miniservices/miniurl:v0.1.52
 imagePullPolicy: Always
 port: 80
 baseRedirectUrl:
