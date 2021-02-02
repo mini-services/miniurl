@@ -43,7 +43,7 @@
 		"cross-env": "^7.0.3",
 		"crypto-random-string": "^3.3.0",
 		"eslint-config-prettier": "^7.1.0",
-		"fastify": "^3.9.1",
+		"fastify": "^3.9.2",
 		"fastify-error": "^0.3.0",
 		"fastify-plugin": "^3.0.0",
 		"knex": "^0.21.14",
