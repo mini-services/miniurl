@@ -6,6 +6,8 @@ This is the place to get all the necessary information to help you doing that.
 
 ## Getting Started
 
+See [running the project in development mode](README.md#development-mode).
+
 The best way to get started is to join our [Slack](https://join.slack.com/t/mini-services/shared_invite/zt-kkr2n6nl-AlboXMQO~~atqUM2Wd0oPg) or browse the existing [issues](https://github.com/mini-services/miniurl/issues/new/choose) (issues tagged as `good first issue` are highly recommended) and just pick something to work on. Open a pull request when you're done and we'll review it ASAP.
 
 ## I need help. What do I do?
@@ -28,6 +30,11 @@ This is probably due to Helm not deleting the PersistentVolumeClaims of the data
 ### How do I create a new migration in the Storage Relational driver?
 -   cd to src/services/storage/drivers/relational folder
 -   run `npx knex migrate:make <MIGRATION_NAME> -x ts --migrations-directory migrations`
+
+### My urls keep getting erased on development mode!
+That's OK. The development mode uses the InMemory storage driver, which means that it saves everything inside a simple JS object. On every server restart, that project will be erased and the data will be lost.
+
+If you want to persist the data, you can edit the .env.development file and change the storage driver.
 
 ### How can I run a local postgres database for development purposes?
 -   Make sure you have Docker installed
