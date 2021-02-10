@@ -6,7 +6,7 @@ This is the place to get all the necessary information to help you doing that.
 
 ## Getting Started
 
-See [running the project in development mode](#development-mode).
+See [running the project in development mode](/#development-mode).
 
 The best way to get started is to join our [Slack](https://join.slack.com/t/mini-services/shared_invite/zt-kkr2n6nl-AlboXMQO~~atqUM2Wd0oPg) or browse the existing [issues](https://github.com/mini-services/miniurl/issues/new/choose) (issues tagged as `good first issue` are highly recommended) and just pick something to work on. Open a pull request when you're done and we'll review it ASAP.
 
