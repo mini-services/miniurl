@@ -71,13 +71,9 @@ npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
               npm start
 ```
 
-### Development mode
-```s
-git clone https://github.com/mini-services/miniurl.git
-cd miniurl
-npm install
-npm run dev
-```
+### Development
+
+See [running the project in development mode](contribution.md#running-the-project-in-development-mode).
 ## API
 
 The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/).
