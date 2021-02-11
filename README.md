@@ -28,20 +28,20 @@ helm repo add miniservices https://raw.githubusercontent.com/mini-services/helm-
 helm repo update
 
 # You may also add --set ingress.enable=true for deploying an Ingress route as well
-helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=https://short.url
+helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=<YOUR_SHORT_URL>
 ```
 
 ### Docker
 Run MiniUrl's docker image directly. 
 ```s
-docker run -d --name miniurl -e BASE_REDIRECT_URL=https://short.url -e STORAGE_DRIVER=InMemory -p 80:8000 miniservices/miniurl
+docker run -d --name miniurl -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> -e STORAGE_DRIVER=InMemory -p 80:8000 miniservices/miniurl
 ```
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable database. A working example using Postgres:
 ```s
 docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
 docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
-                             -e BASE_REDIRECT_URL=https://short.url \
+                             -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
                              -e STORAGE_DRIVER=Relational \
                              -e RELATIONAL_STORAGE_CLIENT=postgres \
                              -e RELATIONAL_STORAGE_DATABASE=postgres \
@@ -55,14 +55,14 @@ docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
 git clone https://github.com/mini-services/miniurl.git
 cd miniurl
 npm install
-npx cross-env BASE_REDIRECT_URL=https://short.url STORAGE_DRIVER=InMemory npm start
+npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm start
 ```
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
 
 ```s
 
-npx cross-env BASE_REDIRECT_URL=https://short.url \
+npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
               STORAGE_DRIVER=Relational \
               RELATIONAL_STORAGE_CLIENT=postgres \
               RELATIONAL_STORAGE_HOST=localhost \
@@ -70,6 +70,10 @@ npx cross-env BASE_REDIRECT_URL=https://short.url \
               RELATIONAL_STORAGE_PASSWORD=postgres \
               npm start
 ```
+
+### Development
+
+See [running the project in development mode](docs/contribution.md#running-the-project-in-development-mode).
 ## API
 
 The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/).
@@ -166,7 +170,7 @@ If you found a bug or have an idea for a feature, feel free to [open an issue](h
 
 ### Questions
 
-You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choose) for questions, but it's usually faster to send a message on our [Slack](https://join.slack.com/t/mini-services/shared_invite/zt-kkr2n6nl-AlboXMQO~~atqUM2Wd0oPg)
+You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choose) for questions, but it's usually faster to send a message on our [Slack](https://join.slack.com/t/mini-services/shared_invite/zt-lu0mqw8n-HVk1Aq6yUODvJXZ6ikIA9w)
 
 ## Contribution
 
