@@ -24,9 +24,7 @@ export class Auth implements AuthDriver {
 	public async isAuthorized(request: FastifyRequest, scopes: Scope[]): Promise<boolean> {
 		return this._driver.isAuthorized(request, scopes)
 	}
-	public async allowedScopes(request: FastifyRequest): Promise<Scope[]> {
-		return this._driver.allowedScopes(request)
-	}
+
 	public authorize(request: FastifyRequest, scopes: Scope[]): Promise<void> {
 		return this._driver.authorize(request, scopes)
 	}
