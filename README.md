@@ -115,7 +115,7 @@ Body (json)
 
 -   `id: string` - The url's id
 -   `url: string` - The saved url
--   `createdAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the creation time
+-   `lastUsed: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the last time the url was accessed
 -   `updatedAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the last updated time
 
 ### GET **<BASE_REDIRECT_URL>**/:id

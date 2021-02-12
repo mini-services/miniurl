@@ -1,7 +1,7 @@
 export interface StoredUrl {
 	id: string
 	url: string
-	createdAt: string
+	lastUsed: string
 	updatedAt: string
 }
 

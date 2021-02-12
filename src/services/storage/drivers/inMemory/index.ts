@@ -62,7 +62,7 @@ export class InMemoryStorage implements StorageDriver {
 			const storedUrl = {
 				id: this.uuid(),
 				url,
-				createdAt: new Date().toISOString(),
+				lastUsed: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 			}
 			this.storage.data.urls.set(storedUrl.id, storedUrl)
