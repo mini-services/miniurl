@@ -49,4 +49,4 @@ If you want to persist the data, you can edit the .env.development file and chan
 -   On .env.development, comment the InMemory Storage section and uncomment the Relational Storage section
 ## Project structure
 
-![Project Structure](assets/miniurl.svg)
+![Project Structure](assets/project-structure.svg)
