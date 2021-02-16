@@ -32,31 +32,17 @@ test('validate config - happy flow [configuration set propely]', (t) => {
 	t.is(validateConfig(getConfig()), true)
 })
 
-test('Making sure that validateConfig throws if an invalid baseRedirectUrl is given', (t) => {
+test('validateConfig throws if an invalid baseRedirectUrl is given- validateBaseRedirectUrl function works properly', (t) => {
+	const config = getConfig()
 	const invalidUrls = [
-		{ url: 'mock.com', message: 'Throws when the baseRedirectUrl has no protocol' }, //test passes
-		{ url: 'blabla...', message: 'Throws when the baseRedirectUrl is not valid' }, //test passes
-		{ url: '', message: 'Throws when the baseRedirectUrl is empty' }, //test passes
+		{ url: 'mock.com', message: 'Throws when the baseRedirectUrl has no protocol' },
+		{ url: 'blabla...', message: 'Throws when the baseRedirectUrl is not valid' },
+		{ url: '', message: 'Throws when the baseRedirectUrl is empty' },
+		{ url: `http://mock.com/${config.appName}`, message: 'Throws when the baseRedirectUrl includes reserved path' },
 	]
 
 	invalidUrls.forEach(({ url, message }) => {
-		const config = getConfig()
 		config.baseRedirectUrl = url
-		t.throws(() => (validateConfig(config), { instanceOf: InvalidConfigError }, message)) //success- test passed
+		t.throws(() => (validateConfig(config), { instanceOf: InvalidConfigError }, message))
 	})
-})
-test('Making sure that validateConfig runs if a valid baseRedirectUrl is given', (t) => {
-	const config = getConfig()
-	config.baseRedirectUrl = 'http://google.com'
-	t.is(validateConfig(config), true)
-})
-
-test('Making sure that validateConfig throws if an illegal path is entered', (t) => {
-	const config = getConfig()
-	config.baseRedirectUrl = 'http://mock.com/mini-test'
-	t.throws(
-		() => (
-			validateConfig(config), { instanceOf: InvalidConfigError }, 'Throws if a reserved path is illegally given'
-		),
-	)
 })
