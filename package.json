@@ -67,7 +67,7 @@
 		"yorkie": "^2.0.0"
 	},
 	"gitHooks": {
-		"pre-commit": "env FORCE_COLOR=true lint-staged && npm run test:unit && npm run test:e2e"
+		"pre-commit": "env FORCE_COLOR=true lint-staged && npm run test"
 	},
 	"lint-staged": {
 		"*.ts": [
