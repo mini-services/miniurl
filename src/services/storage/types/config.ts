@@ -6,12 +6,6 @@ export enum StorageDriverName {
 	Relational = 'Relational',
 }
 
-// // eslint-disable-next-line @typescript-eslint/no-empty-interface
-// export interface RelationalStorageDriverConfig extends Knex.Config {}
-
-// // eslint-disable-next-line @typescript-eslint/no-empty-interface
-// export interface InMemoryStorageDriverConfig {}
-
 export interface BaseConfig {
 	appName: string
 }

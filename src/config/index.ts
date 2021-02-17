@@ -7,6 +7,7 @@ import { validateConfig } from './validate.js'
 const rawConfig: RawConfig = {
 	port: process.env.PORT || '80',
 	appName: process.env.npm_package_name || 'miniurl',
+	apiPrefix: process.env.API_PREFIX || '/miniurl',
 	baseRedirectUrl: process.env.BASE_REDIRECT_URL || '',
 	url: {
 		matchPattern: process.env.URL_MATCH_PATTERN || '**',
