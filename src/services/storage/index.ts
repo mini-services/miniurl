@@ -1,13 +1,15 @@
 import { StorageConfig, StorageDriverName } from './types/config.js'
-import type { StoredUrl } from './types/url.js'
+import type { StoredUrl, UrlRequestData } from './types/url.js'
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
+import { UrlResponse } from './types/url.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
+
 	constructor(private _config: StorageConfig) {
 		switch (_config.driverName) {
 			case StorageDriverName.InMemory:
@@ -33,24 +35,37 @@ export class Storage implements StorageDriver {
 
 	url = new (class UrlStorage {
 		constructor(public storage: Storage) {}
+
 		get driver() {
 			return this.storage._driver
 		}
-		public async get(id: string): Promise<StoredUrl> {
+
+		public async get(id: string): Promise<UrlResponse> {
 			return this.driver.url.get(id)
 		}
+
 		public async delete(id: string): Promise<void> {
 			return this.driver.url.delete(id)
 		}
+
 		public async deleteOverdue(timespanMs: number): Promise<number> {
 			return this.driver.url.deleteOverdue(timespanMs)
 		}
+
 		public async edit(id: string, url: string): Promise<StoredUrl> {
 			return this.driver.url.edit(id, url)
 		}
 
-		public async save(url: string): Promise<StoredUrl> {
-			return this.driver.url.save(url)
+		public async save(body: UrlRequestData): Promise<StoredUrl> {
+			return this.driver.url.save(body)
+		}
+
+		public async incVisitCount(id: string): Promise<void> {
+			return this.driver.url.incVisitCount(id)
+		}
+
+		public async incInfoCount(id: string): Promise<void> {
+			return this.driver.url.incInfoCount(id)
 		}
 	})(this)
 }

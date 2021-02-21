@@ -2,20 +2,16 @@ import cryptoRandomString from 'crypto-random-string'
 import { NotFoundError } from '../../../../errors/notFound.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
-import type { StoredUrl } from '../../types/url.js'
+import type { StoredUrl, UrlInformation, UrlRequestData, UrlResponse } from '../../types/url.js'
 
 export class InMemoryStorage implements StorageDriver {
-	// eslint-disable-next-line
-	constructor(public config: InMemoryStorageConfig) {}
-	data: { urls: Map<string, StoredUrl> } = {
+	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
+		urlInformation: new Map(),
 	}
-	public async initialize(): Promise<void> {
-		return
-	}
-
 	url = new (class InMemoryUrlStorage {
 		constructor(public storage: InMemoryStorage) {}
+
 		public uuid() {
 			let id
 			while (!id || typeof this.storage.data.urls.get(id) !== 'undefined') {
@@ -24,12 +20,17 @@ export class InMemoryStorage implements StorageDriver {
 
 			return id
 		}
-		public async get(id: string): Promise<StoredUrl> {
+
+		public async get(id: string): Promise<UrlResponse> {
 			const storedUrl = this.storage.data.urls.get(id)
 			if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-			return storedUrl
+			const urlInfo = this.storage.data.urlInformation.get(id)
+			if (typeof urlInfo === 'undefined') throw new NotFoundError()
+
+			return { storedUrl, urlInfo }
 		}
+
 		public async delete(id: string): Promise<void> {
 			if (typeof this.storage.data.urls.get(id) === 'undefined') throw new NotFoundError()
 
@@ -49,6 +50,7 @@ export class InMemoryStorage implements StorageDriver {
 
 			return deletedCount
 		}
+
 		public async edit(id: string, newUrl: string): Promise<StoredUrl> {
 			const storedUrl = this.storage.data.urls.get(id)
 			if (typeof storedUrl === 'undefined') throw new NotFoundError()
@@ -58,16 +60,59 @@ export class InMemoryStorage implements StorageDriver {
 
 			return newStoredUrl
 		}
-		public async save(url: string): Promise<StoredUrl> {
+
+		public async save(requestData: UrlRequestData): Promise<StoredUrl> {
 			const storedUrl = {
 				id: this.uuid(),
-				url,
+				url: requestData.url,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
-			}
+			} as StoredUrl
+
+			const storedUrlInfo = {
+				ip: 'localhost:MEMORY',
+				urlVisitCount: 0,
+				infoVisitCount: 0,
+				region: new Date().toISOString(),
+				mobile: false,
+				lastUse: new Date().toISOString(),
+			} as UrlInformation
 			this.storage.data.urls.set(storedUrl.id, storedUrl)
+			this.storage.data.urlInformation.set(storedUrl.id, storedUrlInfo)
 
 			return storedUrl
 		}
+
+		public async incVisitCount(id: string): Promise<void> {
+			const urlInfo = this.storage.data.urlInformation.get(id)
+			if (typeof urlInfo === 'undefined') throw new NotFoundError()
+
+			const newStoredUrl = {
+				...urlInfo,
+				urlVisitCount: ++urlInfo.urlVisitCount,
+				lastUse: new Date().toISOString(),
+			}
+			this.storage.data.urlInformation.set(id, newStoredUrl)
+		}
+
+		public async incInfoCount(id: string): Promise<void> {
+			const urlInfo = this.storage.data.urlInformation.get(id)
+			if (typeof urlInfo === 'undefined') throw new NotFoundError()
+
+			const newStoredUrl = {
+				...urlInfo,
+				infoVisitCount: ++urlInfo.infoVisitCount,
+				lastUse: new Date().toISOString(),
+			}
+			this.storage.data.urlInformation.set(id, newStoredUrl)
+		}
 	})(this)
+
+	public async initialize(): Promise<void> {
+		return
+	}
+
+	// eslint-disable-next-line
+	constructor(public config: InMemoryStorageConfig) {
+	}
 }
