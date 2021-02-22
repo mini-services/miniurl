@@ -26,16 +26,18 @@ spec:
               containerPort: {{ .Values.port }}
           env:
             - name: BASE_REDIRECT_URL
-              value: {{ required "baseRedirectUrl is required" .Values.baseRedirectUrl }}
+              value: { { required "baseRedirectUrl is required" .Values.baseRedirectUrl } }
+            - name: API_PREFIX
+              value: { { (required "apiPrefix is required" .Values.apiPrefix) | quote } }
             - name: URL_MATCH_PATTERN
-              value: {{ .Values.url.matchPattern | quote }}
+              value: { { .Values.url.matchPattern | quote } }
             - name: URL_LIFETIME
-              value: {{ .Values.url.lifetime }}
+              value: { { .Values.url.lifetime } }
             - name: STORAGE_DRIVER
-              value: {{ required "baseRedirectUrl is required" .Values.storage.driver }}
+              value: { { required "baseRedirectUrl is required" .Values.storage.driver } }
             - name: PORT
-              value: {{ .Values.port | default 80 | quote }}
-            {{ if eq .Values.storage.driver "Relational" }}
+              value: { { .Values.port | default 80 | quote } }
+            { { if eq .Values.storage.driver "Relational" } }
             - name: RELATIONAL_STORAGE_CLIENT
               value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.client }}
             - name: RELATIONAL_STORAGE_HOST
