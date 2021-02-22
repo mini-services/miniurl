@@ -5,6 +5,7 @@ import { RawConfig } from '../types.js'
 const config: RawConfig = {
 	port: 'mock-port',
 	appName: 'mini-test',
+	apiPrefix: '/miniurl',
 	baseRedirectUrl: 'http://mock.com',
 	url: {
 		matchPattern: 'mock-patter',
