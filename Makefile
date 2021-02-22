@@ -124,7 +124,7 @@ bump-version:
 		trap '\
 			echo [!] Re-enabling GitHub main branch protection; \
 			curl https://api.github.com/repos/$(GITHUB_REPOSITORY)/branches/main/protection -H "Authorization: token $(PACKAGES_TOKEN)" \
-				-H "Accept:application/vnd.github.luke-cage-preview+json" -X PUT -d "{\"required_status_checks\":{\"strict\":false,\"contexts\":`echo $$BRANCH_PROTECTION | jq '.required_status_checks.contexts'`},\"restrictions\":{\"users\":[],\"teams\":[],\"apps\":[]},\"required_pull_request_reviews\":{\"dismiss_stale_reviews\":false,\"require_code_owner_reviews\":false},\"enforce_admins\":false,\"required_linear_history\":false,\"allow_force_pushes\":true,\"allow_deletions\":false}"; \
+				-H "Accept:application/vnd.github.luke-cage-preview+json" -X PUT -d "{\"required_status_checks\":{\"strict\":false,\"contexts\":`echo $$BRANCH_PROTECTION | jq '.required_status_checks.contexts'`},\"restrictions\":{\"users\":[],\"teams\":[],\"apps\":[]},\"required_pull_request_reviews\":{\"dismiss_stale_reviews\":false,\"require_code_owner_reviews\":false},\"enforce_admins\":true,\"required_linear_history\":false,\"allow_force_pushes\":true,\"allow_deletions\":false}"; \
 		' EXIT; \
 	fi; \
 	echo [!] Git Push; \

@@ -27,6 +27,8 @@ spec:
           env:
             - name: BASE_REDIRECT_URL
               value: {{ required "baseRedirectUrl is required" .Values.baseRedirectUrl }}
+            - name: API_PREFIX
+              value: {{ (required "apiPrefix is required" .Values.apiPrefix) | quote }}
             - name: URL_MATCH_PATTERN
               value: {{ .Values.url.matchPattern | quote }}
             - name: URL_LIFETIME
