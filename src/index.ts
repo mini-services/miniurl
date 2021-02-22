@@ -2,6 +2,7 @@ import fastifyConstructor from 'fastify'
 import { config } from './config/index.js'
 import { routes } from './routes/index.js'
 import { Storage } from './services/storage/index.js'
+import { logger } from './services/logger/logger.js'
 declare module 'fastify' {
 	interface FastifyInstance {
 		config: typeof config
@@ -12,11 +13,12 @@ declare module 'fastify' {
 // Fastify
 const fastify = fastifyConstructor({
 	ignoreTrailingSlash: true,
-	logger: true,
+	logger: logger,
 })
 
 // Config
 fastify.decorate('config', config)
+fastify.log.setLevel(config.logLevel)
 
 // Storage
 const storage = new Storage({

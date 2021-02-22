@@ -1,0 +1,16 @@
+{"level":30,"time":1613688649464,"pid":2376,"hostname":"DESKTOP-AJNDNDT","msg":"Hi! Here is my first massage"}
+{"level":30,"time":1613688650342,"pid":2376,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as info"}
+{"level":30,"time":1613688650350,"pid":2376,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as debug"}
+{"level":30,"time":1613688650474,"pid":2376,"hostname":"DESKTOP-AJNDNDT","msg":"Server listening at http://0.0.0.0:3000"}
+{"level":30,"time":1613688715330,"pid":14604,"hostname":"DESKTOP-AJNDNDT","msg":"Hi! Here is my first massage"}
+{"level":30,"time":1613688715932,"pid":14604,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as info"}
+{"level":30,"time":1613688715939,"pid":14604,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as debug"}
+{"level":30,"time":1613688716043,"pid":14604,"hostname":"DESKTOP-AJNDNDT","msg":"Server listening at http://0.0.0.0:3000"}
+{"level":30,"time":1613688748492,"pid":14604,"hostname":"DESKTOP-AJNDNDT","msg":"Shutting down..."}
+{"level":30,"time":1613690848095,"pid":11664,"hostname":"DESKTOP-AJNDNDT","msg":"Hi! Here is my first massage"}
+{"level":30,"time":1613690848422,"pid":11664,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as info"}
+{"level":30,"time":1613690848428,"pid":11664,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as debug"}
+{"level":30,"time":1613690848520,"pid":11664,"hostname":"DESKTOP-AJNDNDT","msg":"Server listening at http://0.0.0.0:3000"}
+{"level":30,"time":1613690979469,"pid":11664,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as debug"}
+{"level":30,"time":1613690979471,"pid":11664,"hostname":"DESKTOP-AJNDNDT","reqId":1,"req":{"method":"POST","url":"/miniurl/url","hostname":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":53738},"msg":"incoming request"}
+{"level":30,"time":1613690979507,"pid":11664,"hostname":"DESKTOP-AJNDNDT","reqId":1,"res":{"statusCode":200},"responseTime":34.75510001182556,"msg":"request completed"}

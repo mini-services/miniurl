@@ -2,11 +2,13 @@ import ms from 'ms'
 import { InvalidConfigError } from '../errors/invalidConfig.js'
 import { StorageDriverName } from '../services/storage/types/config.js'
 import type { RawConfig } from './types.js'
+import { logger } from '../services/logger/logger.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
 	validateBaseRedirectUrl(rawConfig.baseRedirectUrl, rawConfig.appName)
 	validateStorageDriver(rawConfig.storage)
 	validateUrlLifetime(rawConfig.url.lifetime)
+	validateLevelLog(rawConfig.logLevel)
 
 	return true
 }
@@ -46,5 +48,12 @@ function validateBaseRedirectUrl(baseRedirectUrl?: string, appName?: string): vo
 function validateUrlLifetime(urlLifetime: string): void {
 	if (!urlLifetime || !ms(urlLifetime) || ms(urlLifetime) <= 0) {
 		throw new InvalidConfigError('URL_LIFETIME specified is invalid')
+	}
+}
+
+function validateLevelLog(logLevel: string) {
+	const levelValues = Object.keys(logger.levels.values)
+	if (!levelValues.includes(logLevel)) {
+		throw new InvalidConfigError(`You have to use in one of this: ${levelValues}`)
 	}
 }

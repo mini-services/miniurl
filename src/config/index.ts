@@ -6,6 +6,7 @@ import { validateConfig } from './validate.js'
 // Get config from environment variables
 const rawConfig: RawConfig = {
 	port: process.env.PORT || '80',
+	logLevel: process.env.LOG_LEVEL || 'info',
 	appName: process.env.npm_package_name || 'miniurl',
 	baseRedirectUrl: process.env.BASE_REDIRECT_URL || '',
 	url: {

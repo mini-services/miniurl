@@ -1,0 +1,4 @@
+{"level":30,"time":1613691032156,"pid":13640,"hostname":"DESKTOP-AJNDNDT","msg":"Hi! Here is my first massage"}
+{"level":30,"time":1613691032681,"pid":13640,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as info"}
+{"level":30,"time":1613691032687,"pid":13640,"hostname":"DESKTOP-AJNDNDT","msg":"the Level defined as debug"}
+{"level":30,"time":1613691032799,"pid":13640,"hostname":"DESKTOP-AJNDNDT","msg":"Server listening at http://0.0.0.0:3000"}
