@@ -54,6 +54,6 @@ function validateUrlLifetime(urlLifetime: string): void {
 function validateLevelLog(logLevel: string) {
 	const levelValues = Object.keys(logger.levels.values)
 	if (!levelValues.includes(logLevel)) {
-		throw new InvalidConfigError(`You have to use in one of this: ${levelValues}`)
+		throw new InvalidConfigError(`Must specify a valid LOG_LEVEL (available options are ${levelValues.join(', ')})`)
 	}
 }
