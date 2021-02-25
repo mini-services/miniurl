@@ -7,11 +7,11 @@ In-cluster access:
 * {{ include "miniurl.serviceName" . }}:80/miniurl/* - API
 
 External access:
-{{ if .Values.ingress.enable }}
+{{- if .Values.ingress.enable }}
 * {{ .Values.baseRedirectUrl }}/:id - redirect to the shortened URL
 * <ANY-HOST>/miniurl/* - Miniurl's API
-{{ else }}
-Since you have not enabled the ingress route, Miniurl is not accessible from outside the cluster.
+{{- else }}
+Since you have not enabled the ingress route, Miniurl is not yet accessible from outside the cluster.
 {{ end }}
 
 Enjoy!

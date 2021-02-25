@@ -13,7 +13,7 @@ declare module 'fastify' {
 // Fastify
 const fastify = fastifyConstructor({
 	ignoreTrailingSlash: true,
-	logger: logger,
+	logger,
 })
 
 // Config

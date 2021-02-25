@@ -1,6 +1,7 @@
-image: miniservices/miniurl:v0.1.53
+image: miniservices/miniurl:v0.1.59
 imagePullPolicy: Always
 port: 80
+apiPrefix: /miniurl
 baseRedirectUrl:
 url:
   matchPattern: '**'

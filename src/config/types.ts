@@ -3,6 +3,7 @@ import type { StorageConfig } from '../services/storage/types/config'
 export interface RawConfig {
 	port: string
 	logLevel: string
+	apiPrefix: string
 	appName: string
 	baseRedirectUrl: string
 	url: {
@@ -26,6 +27,7 @@ export interface RawConfig {
 export interface Config {
 	port: string
 	logLevel: string
+	apiPrefix: string
 	appName: string
 	url: {
 		matchPattern: string

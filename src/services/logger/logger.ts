@@ -1,20 +1,16 @@
-/* eslint-disable */
 import Pino from 'pino'
-const logger = Pino()
+const logger = Pino({
+	prettyPrint: true,
+})
 
-logger.info(`Hi! Here is my first massage`)
-
-logger.setLevel = function setLevel (newLevel: any) {
-    logger.level = newLevel;
+logger.setLevel = function setLevel(newLevel: string) {
+	logger.level = newLevel
 }
+
 logger.on('level-change', () => {
-  logger.info(`the Level defined as ${logger.level}`)
+	console.log(`Logger: Level changed to ${logger.level}`)
 })
 
-export { logger };
+logger.debug(`Hi, Logger started`)
 
-/*
-({
-  prettyPrint: true,
-})
-*/
+export { logger }

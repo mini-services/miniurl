@@ -17,10 +17,12 @@ MiniUrl is part of the [Mini Services Project](https://github.com/mini-services)
 ## Getting Started
 
 -   Run using [Helm](https://github.com/mini-services/miniurl/tree/main#helm), [Docker](https://github.com/mini-services/miniurl/tree/main#docker) or [Node.js](https://github.com/mini-services/miniurl/tree/main#nodejs)
-- Use the API (future: dashboard) and enjoy a zero-code microservice :upside_down_face:
+-   Use the API (future: dashboard) and enjoy a zero-code microservice :upside_down_face:
+
 ## Deployment Options
 
 ### Helm
+
 MiniUrl maintains an extensive production-grade Helm chart. See the [chart](https://github.com/mini-services/miniurl/tree/main/helm-chart) for the possible values configuration and examples.
 
 ```s
@@ -28,20 +30,23 @@ helm repo add miniservices https://raw.githubusercontent.com/mini-services/helm-
 helm repo update
 
 # You may also add --set ingress.enable=true for deploying an Ingress route as well
-helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=https://short.url
+helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=<YOUR_SHORT_URL>
 ```
 
 ### Docker
-Run MiniUrl's docker image directly. 
+
+Run MiniUrl's docker image directly.
+
 ```s
-docker run -d --name miniurl -e BASE_REDIRECT_URL=https://short.url -e STORAGE_DRIVER=InMemory -p 80:8000 miniservices/miniurl
+docker run -d --name miniurl -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> -e STORAGE_DRIVER=InMemory -p 80:8000 miniservices/miniurl
 ```
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable database. A working example using Postgres:
+
 ```s
 docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
 docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
-                             -e BASE_REDIRECT_URL=https://short.url \
+                             -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
                              -e STORAGE_DRIVER=Relational \
                              -e RELATIONAL_STORAGE_CLIENT=postgres \
                              -e RELATIONAL_STORAGE_DATABASE=postgres \
@@ -51,18 +56,30 @@ docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
 ```
 
 ### Node.js
+
+Requirements:
+
+-   Node.js 14.8+
+-   NPM 6+ or Yarn X+
+
 ```s
 git clone https://github.com/mini-services/miniurl.git
 cd miniurl
 npm install
-npx cross-env BASE_REDIRECT_URL=https://short.url STORAGE_DRIVER=InMemory npm start
+npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm start
 ```
+
+Node.js troubleshooting:
+
+for Windows OS, it is also possible to use [nvm for windows](https://github.com/coreybutler/nvm-windows/releases)
+
+refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md)
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
 
 ```s
 
-npx cross-env BASE_REDIRECT_URL=https://short.url \
+npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
               STORAGE_DRIVER=Relational \
               RELATIONAL_STORAGE_CLIENT=postgres \
               RELATIONAL_STORAGE_HOST=localhost \
@@ -70,6 +87,11 @@ npx cross-env BASE_REDIRECT_URL=https://short.url \
               RELATIONAL_STORAGE_PASSWORD=postgres \
               npm start
 ```
+
+### Development
+
+See [running the project in development mode](docs/contribution.md#running-the-project-in-development-mode).
+
 ## API
 
 The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/).
@@ -83,7 +105,6 @@ The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://i
 -   [Url collection](https://raw.githubusercontent.com/mini-services/miniurl/main/docs/assets/postman/url-collection.json)
 -   [Demo environment](https://raw.githubusercontent.com/mini-services/miniurl/main/docs/assets/postman/demo-environment.json)
 -   [Local environment](https://raw.githubusercontent.com/mini-services/miniurl/main/docs/assets/postman/local-environment.json)
-
 
 ### POST /miniurl/url
 
@@ -138,9 +159,11 @@ Redirect 302 - redirects to the saved url.
 
 Since MiniUrl follows the best practices including the [12 factor app](https://12factor.net/), the microservice is entirely configurable via environment variables. Available variables are:
 
-**BASE_REDIRECT_URL** (required) - the shortened urls base path e.g https://youtu.be, https://bit.ly or https://example.com/u
+**BASE_REDIRECT_URL** (required) - the shortened urls' base path e.g https://youtu.be, https://bit.ly or https://example.com/u
 
-**URL_MATCH_PATTERN** (default: "**") - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
+**API_PREFIX** (default: "/miniurl") - MiniUrl's prefix for the api routes (e.g for saving a url, one would POST to ${API_PREFIX}/url)
+
+**URL_MATCH_PATTERN** (default: "\*\*") - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
 
 **URL_LIFETIME** (default: "7 days") - a human-readible time (see the [ms docs](https://github.com/vercel/ms) for available options) stating the url lifetime (after which it expires). Note that the expiration mechanism runs at most once per minute and at least once per hour and so slight deviation may occur.
 
@@ -166,11 +189,12 @@ If you found a bug or have an idea for a feature, feel free to [open an issue](h
 
 ### Questions
 
-You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choose) for questions, but it's usually faster to send a message on our [Slack](https://join.slack.com/t/mini-services/shared_invite/zt-kkr2n6nl-AlboXMQO~~atqUM2Wd0oPg)
+You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choose) for questions, but it's usually faster to send a message on our [Slack](https://join.slack.com/t/mini-services/shared_invite/zt-lu0mqw8n-HVk1Aq6yUODvJXZ6ikIA9w)
 
 ## Contribution
 
 Refer to our [contribution guide](docs/contribution.md).
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
