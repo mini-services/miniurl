@@ -17,7 +17,7 @@ export class Storage implements StorageDriver {
 				this._driver = new RelationalStorage(_config)
 				break
 			default:
-				throw new InvalidConfigError(`Invalid url storage driver selected. config: ${_config}`)
+				throw new InvalidConfigError(`Invalid url storage driver selected.`)
 		}
 	}
 	get config(): StorageConfig {

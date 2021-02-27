@@ -1,7 +1,7 @@
-import { AuthDriver, Scope } from '../../types'
+import { AuthDriver } from '../../types'
 import { BearerTokenDriverConfig } from './types'
 import { FastifyRequest } from 'fastify'
-import { UnauthorizedError } from '../../../../errors/unauthorized'
+import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 
 export class BearerTokenAuth implements AuthDriver {
 	private token: string
@@ -21,10 +21,6 @@ export class BearerTokenAuth implements AuthDriver {
 		const token = this.verifyHeaderAndExtractToken(request)
 
 		return token !== null && token === this.token
-	}
-	public async allowedScopes(request: FastifyRequest): Promise<Scope[]> {
-		this.isAuthorized(request)
-		return (await this.isAuthorized(request)) ? [Scope.All] : [Scope.Basic]
 	}
 	public async authorize(request: FastifyRequest): Promise<void> {
 		if (!(await this.isAuthorized(request))) throw new UnauthorizedError()
