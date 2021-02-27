@@ -72,12 +72,6 @@ Node.js troubleshooting:
 
 for Windows OS, it is also possible to use [nvm for Windows](https://github.com/coreybutler/nvm-windows/releases). Refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md).
 
-Node.js troubleshooting:
-
-for Windows OS, it is also possible to use [nvm for windows](https://github.com/coreybutler/nvm-windows/releases)
-
-refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md)
-
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
 
 ```s
@@ -94,6 +88,7 @@ npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
 ### Development
 
 See [running the project in development mode](docs/contribution.md#running-the-project-in-development-mode).
+
 ## API
 
 The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/).
