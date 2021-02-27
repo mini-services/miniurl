@@ -68,6 +68,9 @@ cd miniurl
 npm install
 npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm start
 ```
+Node.js troubleshooting:
+
+for Windows OS, it is also possible to use [nvm for Windows](https://github.com/coreybutler/nvm-windows/releases). Refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md).
 
 Node.js troubleshooting:
 
@@ -91,7 +94,6 @@ npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
 ### Development
 
 See [running the project in development mode](docs/contribution.md#running-the-project-in-development-mode).
-
 ## API
 
 The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/).
