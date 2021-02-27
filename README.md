@@ -68,12 +68,9 @@ cd miniurl
 npm install
 npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm start
 ```
-
 Node.js troubleshooting:
 
-for Windows OS, it is also possible to use [nvm for windows](https://github.com/coreybutler/nvm-windows/releases)
-
-refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md)
+for Windows OS, it is also possible to use [nvm for Windows](https://github.com/coreybutler/nvm-windows/releases). Refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md).
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
 
