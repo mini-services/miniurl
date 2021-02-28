@@ -24,3 +24,9 @@ storage:
     user:
     secrets:
       password:
+auth:
+  # BearerToken
+  driver: BearerToken
+  bearerTokenConfig:
+    # A random token will be generated if this stays empty
+    token:

@@ -156,6 +156,8 @@ Redirect 302 - redirects to the saved url.
 
 Since MiniUrl follows the best practices including the [12 factor app](https://12factor.net/), the microservice is entirely configurable via environment variables. Available variables are:
 
+### General
+
 **BASE_REDIRECT_URL** (required) - the shortened urls' base path e.g https://youtu.be, https://bit.ly or https://example.com/u
 
 **API_PREFIX** (default: "/miniurl") - MiniUrl's prefix for the api routes (e.g for saving a url, one would POST to ${API_PREFIX}/url)
@@ -163,6 +165,10 @@ Since MiniUrl follows the best practices including the [12 factor app](https://1
 **URL_MATCH_PATTERN** (default: "\*\*") - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
 
 **URL_LIFETIME** (default: "7 days") - a human-readible time (see the [ms docs](https://github.com/vercel/ms) for available options) stating the url lifetime (after which it expires). Note that the expiration mechanism runs at most once per minute and at least once per hour and so slight deviation may occur.
+
+**PORT** (default: "80") - the Node.js process port. In most cases your shouldn't change this
+
+### Storage
 
 **STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Relational` (for any Knex.js-complaint SQL database).
 
@@ -176,7 +182,11 @@ Since MiniUrl follows the best practices including the [12 factor app](https://1
 
 **RELATIONAL_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Relational`) - the relational database's name (e.g postgres)
 
-**PORT** (default: "80") - the Node.js process port. In most cases your shouldn't change this
+### Auth
+
+**AUTH_DRIVER** (default: `BearerToken`) - MiniUrl's auth driver. Currently, the only available option is `BearerToken`.
+
+**AUTH_BEARER_TOKEN** (default: <RANDOM>) - The bearer token to use when selecting the `BearerToken` auth driver.
 
 ## Issues and Questions
 
