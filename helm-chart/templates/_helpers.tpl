@@ -10,7 +10,16 @@
 {{- end -}}
 {{- end -}}
 
-
+{{- define "miniurl.authToken" -}}
+{{- if eq .Values.auth.driver "BearerToken" -}}
+{{- if (not (empty .Values.auth.bearerTokenConfig.token)) -}}
+{{- .Values.auth.bearerTokenConfig.token -}}
+{{- else -}}
+{{- randAlphaNum 18 -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+ 
 # Sets either the default postgresql secret name (if deploying) or our own storage secret name
 {{- define "miniurl.storageSecretName" -}}
 {{- if .Values.storage.deploy -}}

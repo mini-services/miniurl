@@ -1,6 +1,6 @@
 { { if .Values.ingress.enable } }
   # Fails the templating if the baseRedirectUrl contains a port (which ingress routes do not support)
-  { { if (index (regexSplit ":" ((urlParse .Values.baseRedirectUrl).host) -1) 1) } }
+  { { if (gt (len (regexSplit ":" ((urlParse .Values.baseRedirectUrl).host) -1)) 1) } }
   { { fail "baseRedirectUrl must not contain a port when using the ingress route" } }
   { { end } }
 apiVersion: networking.k8s.io/v1

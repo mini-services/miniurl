@@ -23,7 +23,7 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.port }}
+              containerPort: { { .Values.port } }
           env:
             - name: BASE_REDIRECT_URL
               value: { { required "baseRedirectUrl is required" .Values.baseRedirectUrl } }
@@ -32,27 +32,47 @@ spec:
             - name: URL_MATCH_PATTERN
               value: { { .Values.url.matchPattern | quote } }
             - name: URL_LIFETIME
-              value: { { .Values.url.lifetime } }
-            - name: STORAGE_DRIVER
-              value: { { required "baseRedirectUrl is required" .Values.storage.driver } }
-            - name: PORT
-              value: { { .Values.port | default 80 | quote } }
-            { { if eq .Values.storage.driver "Relational" } }
-            - name: RELATIONAL_STORAGE_CLIENT
-              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.client }}
-            - name: RELATIONAL_STORAGE_HOST
-              value: {{ .Values.storage.deploy | ternary (print .Release.Name "-postgresql") .Values.storage.relationalConfig.host }}
-            - name: RELATIONAL_STORAGE_USER
-              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.user }}
-            - name: RELATIONAL_STORAGE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "miniurl.storageSecretName" . }}
-                  key: {{ .Values.storage.deploy | ternary "postgresql-password" "password" }}
-            - name: RELATIONAL_STORAGE_DATABASE
-              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.database }}
-            {{ end }}
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: {{ .Values.port | default 80 }}
+  <<<<<<< HEAD
+value: { { .Values.url.lifetime } }
+  - name: STORAGE_DRIVER
+    value: { { required "baseRedirectUrl is required" .Values.storage.driver } }
+  - name: PORT
+    value: { { .Values.port | default 80 | quote } }
+    { { if eq .Values.storage.driver "Relational" } }
+    =======
+value: { { .Values.url.lifetime } }
+  - name: PORT
+    value: { { .Values.port | default 80 | quote } }
+  # Storage driver
+  - name: STORAGE_DRIVER
+    value: { { required "storage.driver is required" .Values.storage.driver } }
+    { { if eq .Values.storage.driver "Relational" } }
+    >>>>>>> 119b065aac052b44a21450588414a650ffbca5f7
+    - name: RELATIONAL_STORAGE_CLIENT
+      value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.client }}
+    - name: RELATIONAL_STORAGE_HOST
+      value: {{ .Values.storage.deploy | ternary (print .Release.Name "-postgresql") .Values.storage.relationalConfig.host }}
+    - name: RELATIONAL_STORAGE_USER
+      value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.user }}
+    - name: RELATIONAL_STORAGE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: {{ include "miniurl.storageSecretName" . }}
+          key: {{ .Values.storage.deploy | ternary "postgresql-password" "password" }}
+    - name: RELATIONAL_STORAGE_DATABASE
+      value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.database }}
+    {{ end }}
+    # Auth driver
+    - name: AUTH_DRIVER
+      value: {{ required "auth.driver is required" .Values.auth.driver }}
+    {{ if eq .Values.auth.driver "BearerToken" }}
+    - name: AUTH_BEARER_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: {{ include "miniurl.appName" . }}-auth-secret
+          key: token
+    {{ end }}
+    livenessProbe:
+    httpGet:
+      path: /healthz
+      port: {{ .Values.port | default 80 }}
