@@ -1,11 +1,10 @@
 import { StorageConfig, StorageDriverName } from './types/config.js'
-import type { StoredUrl, UrlRequestData } from './types/url.js'
+import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.js'
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
-import { UrlResponse } from './types/url.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -40,8 +39,8 @@ export class Storage implements StorageDriver {
 			return this.storage._driver
 		}
 
-		public async get(id: string): Promise<UrlResponse> {
-			return this.driver.url.get(id)
+		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+			return this.driver.url.get(id, options)
 		}
 
 		public async delete(id: string): Promise<void> {

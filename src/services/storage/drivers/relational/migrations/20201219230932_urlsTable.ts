@@ -44,7 +44,7 @@ export async function up(knex: Knex): Promise<void> {
 	])
 	await knex.schema.createTable('urls', function (table) {
 		table.increments('serial')
-		table.text('id').unique()
+		table.text('id')
 		table.string('url')
 		table.timestamps(true, true)
 	})

@@ -7,7 +7,7 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
-import type { StoredUrl, UrlInformation, UrlRequestData, UrlResponse } from '../../types/url.js'
+import type { StoredUrl, UrlWithInformation, UrlRequestData } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -65,30 +65,34 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) {}
 
-		public async get(id: string): Promise<UrlResponse> {
-			const storedUrl = await this.storage.db
-				.table<StoredUrl & { serial?: number }>('urls')
-				.select('*')
-				.where('id', id)
-				.first()
+		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+			let storedUrl, urlInfo
+			if (!options.withInfo) {
+				storedUrl = await this.storage.db
+					.table<StoredUrl & { serial?: number }>('urls')
+					.select('*')
+					.where('id', id)
+					.first()
 
-			const urlInfo = await this.storage.db
-				.table<UrlInformation>('url_information')
-				.select('ip', 'url_visit_count', 'info_visit_count', 'region', 'mobile', 'last_use')
-				.where('url_id', id)
-				.first()
+				delete storedUrl?.serial
+				if (!storedUrl) throw NotFoundError()
+			} else {
+				urlInfo = await this.storage.db
+					.table<UrlWithInformation>('url_information')
+					.select('ip', 'url_visit_count', 'info_visit_count', 'region', 'last_use')
+					.where('url_id', id)
+					.join('urls', 'url_information.url_id', 'urls.id')
+					.first()
+			}
 
-			delete storedUrl?.serial
-
-			if (!storedUrl) throw NotFoundError()
-			else return { storedUrl, urlInfo }
+			return options.withInfo ? urlInfo : storedUrl
 		}
 
 		//All Info associated with that Urls also get deleted, automatically.
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
 		public async delete(id: string): Promise<void> {
 			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
-			// await this.storage.db.table<UrlInformation>('url_information').where('url_id', id).delete()
+			// await this.storage.db.table<UrlWithInformation>('url_information').where('url_id', id).delete()
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
@@ -109,31 +113,32 @@ export class RelationalStorage implements StorageDriver {
 
 		public async save(urlBody: UrlRequestData): Promise<StoredUrl> {
 			const url = urlBody.url
-			const urlInfo: Partial<UrlInformation> = {
+			const urlInfo: Partial<UrlWithInformation> = {
 				ip: urlBody.ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUse: new Date().toISOString(),
-				mobile: urlBody?.mobile,
-			} as UrlInformation
+			} as UrlWithInformation
 
 			if (!url) throw NotFoundError()
 			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
-			await this.storage.db.table<UrlInformation>('url_information').insert({ urlId: storedUrl.id, ...urlInfo })
+			await this.storage.db
+				.table<UrlWithInformation>('url_information')
+				.insert({ urlId: storedUrl.id, ...urlInfo })
 
 			return storedUrl
 		}
 
 		public async incVisitCount(id: string): Promise<void> {
 			await this.storage.db
-				.table<UrlInformation>('url_information')
+				.table<UrlWithInformation>('url_information')
 				.where('url_id', '=', id)
 				.increment('url_visit_count', 1)
 		}
 
 		public async incInfoCount(id: string): Promise<void> {
 			await this.storage.db
-				.table<UrlInformation>('url_information')
+				.table<UrlWithInformation>('url_information')
 				.where('url_id', '=', id)
 				.increment('info_visit_count', 1)
 				.update({ lastUse: new Date().toISOString() })

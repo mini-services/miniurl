@@ -12,7 +12,8 @@ export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 		handler: async function (request, reply) {
 			if (request.validationError) throw new NotFoundError()
 			this.storage.url.incVisitCount(request.params.id)
-			const { storedUrl } = await this.storage.url.get(request.params.id)
+			const withInfo = await this.auth.isAuthorized(request)
+			const storedUrl = await this.storage.url.get(request.params.id, { withInfo })
 			if (typeof storedUrl.url === 'undefined') throw new NotFoundError()
 
 			reply.redirect(storedUrl.url)
