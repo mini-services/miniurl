@@ -1,7 +1,7 @@
-import { AuthDriver, Scope } from '../../types'
+import { AuthDriver } from '../../types'
 import { BearerTokenDriverConfig } from './types'
 import { FastifyRequest } from 'fastify'
-import { UnauthorizedError } from '../../../../errors/unauthorized'
+import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 import { logger } from '../../../logger/logger.js'
 
 export class BearerTokenAuth implements AuthDriver {
@@ -11,7 +11,7 @@ export class BearerTokenAuth implements AuthDriver {
 		this.token = driverConfig.token
 	}
 	private verifyHeaderAndExtractToken(request: FastifyRequest): null | string {
-		logger.debug(`Running verifyHeaderAndExtractToken with ${request}`)
+		logger.debug(`Running verifyHeaderAndExtractToken`)
 		const authHeader = request.raw.headers.authorization || ''
 		const hasValidPrefix = authHeader.startsWith(this.tokenPrefix)
 		const token = authHeader.substring(this.tokenPrefix.length)
@@ -20,18 +20,13 @@ export class BearerTokenAuth implements AuthDriver {
 		return token
 	}
 	public async isAuthorized(request: FastifyRequest): Promise<boolean> {
-		logger.debug(`Running isAuthorized with ${request}`)
+		logger.debug(`Running isAuthorized`)
 		const token = this.verifyHeaderAndExtractToken(request)
 
 		return token !== null && token === this.token
 	}
-	public async allowedScopes(request: FastifyRequest): Promise<Scope[]> {
-		logger.debug(`Running allowedScopes with ${request}`)
-		this.isAuthorized(request)
-		return (await this.isAuthorized(request)) ? [Scope.All] : [Scope.Basic]
-	}
 	public async authorize(request: FastifyRequest): Promise<void> {
-		logger.debug(`Running authorize with ${request}`)
+		logger.debug(`Running authorize`)
 		if (!(await this.isAuthorized(request))) throw new UnauthorizedError()
 	}
 }

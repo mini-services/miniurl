@@ -1,7 +1,10 @@
+import cryptoRandomString from 'crypto-random-string'
 import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { AuthDriverName } from '../services/auth/types/config.js'
 import { normalizeConfig } from './normalize.js'
 import type { RawConfig, Config } from './types.js'
 import { validateConfig } from './validate.js'
+import { logger } from '../services/logger/logger.js'
 
 // Get config from environment variables
 const rawConfig: RawConfig = {
@@ -26,9 +29,27 @@ const rawConfig: RawConfig = {
 			},
 		},
 	},
+	auth: {
+		driverName: process.env.AUTH_DRIVER || '',
+		bearerTokenDriverConfig: {
+			token: process.env.AUTH_BEARER_TOKEN || '',
+		},
+	},
 }
 
-if (!validateConfig(rawConfig)) throw new InvalidConfigError()
+if (!rawConfig.auth.driverName) {
+	logger.warn(`No auth driver selected.
+	    A default BearerToken driver is selected and a random bearer token will be generated.`)
+
+	rawConfig.auth.driverName = AuthDriverName.BearerToken
+	rawConfig.auth.bearerTokenDriverConfig.token = cryptoRandomString({ length: 18, type: 'alphanumeric' })
+	console.info(`Generated bearer token is '${rawConfig.auth.bearerTokenDriverConfig.token}'`)
+}
+
+if (!validateConfig(rawConfig)) {
+	logger.error('rawConfig is not validated')
+	throw new InvalidConfigError()
+}
 const config: Config = normalizeConfig(rawConfig)
 
 export { config }

@@ -6,6 +6,7 @@ import {
 	MIN_URL_CLEANUP_INTERVAL_MS,
 	URL_CLEANUP_INTERVAL_MAX_ERROR_RATIO,
 } from './consts.js'
+import { AuthDriverName } from '../services/auth/types/config.js'
 
 export function normalizeConfig(config: RawConfig): Config {
 	if (!config.baseRedirectUrl.endsWith('/')) config.baseRedirectUrl += '/'
@@ -28,6 +29,10 @@ export function normalizeConfig(config: RawConfig): Config {
 			driverName: config.storage.driverName as StorageDriverName,
 			driverConfig:
 				config.storage.driverName === StorageDriverName.Relational ? config.storage.relationalDriverConfig : {},
+		},
+		auth: {
+			driverName: config.auth.driverName as AuthDriverName,
+			driverConfig: config.auth.bearerTokenDriverConfig,
 		},
 	}
 }

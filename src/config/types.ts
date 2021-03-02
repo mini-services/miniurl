@@ -1,4 +1,5 @@
 import type { StorageConfig } from '../services/storage/types/config'
+import type { AuthConfig } from '../services/auth/types/config'
 
 export interface RawConfig {
 	port: string
@@ -22,6 +23,12 @@ export interface RawConfig {
 			}
 		}
 	}
+	auth: {
+		driverName: string
+		bearerTokenDriverConfig: {
+			token: string
+		}
+	}
 }
 
 export interface Config {
@@ -36,4 +43,5 @@ export interface Config {
 	}
 	baseRedirectUrl: string
 	storage: Omit<StorageConfig, 'appName'>
+	auth: AuthConfig
 }

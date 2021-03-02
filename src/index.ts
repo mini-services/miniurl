@@ -3,12 +3,20 @@ import { config } from './config/index.js'
 import { routes } from './routes/index.js'
 import { Storage } from './services/storage/index.js'
 import { logger } from './services/logger/logger.js'
+import { Auth } from './services/auth/index.js'
+import { runWithGracefulShutdown } from './helpers/runWithGracefulShutdown.js'
+
 declare module 'fastify' {
 	interface FastifyInstance {
 		config: typeof config
 		storage: Storage
+		auth: Auth
 	}
 }
+
+// Logger
+logger.info(`Logger level define as ${config.logLevel}`)
+logger.setLevel(config.logLevel)
 
 // Fastify
 const fastify = fastifyConstructor({
@@ -18,7 +26,10 @@ const fastify = fastifyConstructor({
 
 // Config
 fastify.decorate('config', config)
-fastify.log.setLevel(config.logLevel)
+
+// Auth
+const auth = new Auth(config.auth)
+fastify.decorate('auth', auth)
 
 // Storage
 const storage = new Storage({
@@ -33,21 +44,8 @@ fastify.decorate('storage', storage)
 await storage.url.deleteOverdue(config.url.lifetimeMs)
 const intervalToken = setInterval(() => storage.url.deleteOverdue(config.url.lifetimeMs), config.url.cleanupIntervalMs)
 
-// Graceful shutdown
-const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
-signals.forEach((signal: NodeJS.Signals) =>
-	process.on(signal, async () => {
-		fastify.log.info('Shutting down...')
-		clearInterval(intervalToken)
-		await fastify.close()
-	}),
-)
-
-// Run
+// Register routes and start server
 await fastify.register(routes)
-try {
-	await fastify.listen(config.port, '0.0.0.0')
-} catch (err) {
-	fastify.log.error(err)
-	process.exit(1)
-}
+runWithGracefulShutdown(fastify, config.port, () => {
+	clearInterval(intervalToken)
+})

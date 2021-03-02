@@ -1,22 +1,22 @@
 import ms from 'ms'
 import { InvalidConfigError } from '../errors/invalidConfig.js'
 import { StorageDriverName } from '../services/storage/types/config.js'
+import { AuthDriverName } from '../services/auth/types/config.js'
 import type { RawConfig } from './types.js'
 import { logger } from '../services/logger/logger.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
-	const rawConfigValues = Object.values(rawConfig)
-	logger.debug(`Start validateConfig with ${rawConfigValues}`)
+	logger.debug(`Start validateConfig`)
 	validateBaseRedirectUrl(rawConfig.baseRedirectUrl, rawConfig.apiPrefix)
 	validateStorageDriver(rawConfig.storage)
+	validateAuthDriver(rawConfig.auth)
 	validateUrlLifetime(rawConfig.url.lifetime)
 	validateLevelLog(rawConfig.logLevel)
 
 	return true
 }
 function validateStorageDriver(storage: RawConfig['storage']): void {
-	const storageValues = Object.values(storage)
-	logger.debug(`Start validateStorageDriver with ${storageValues}`)
+	logger.debug(`Start validateStorageDriver`)
 	const storageOptions = Object.values(StorageDriverName)
 	if (!storage.driverName || !storageOptions.includes(storage.driverName as StorageDriverName)) {
 		throw new InvalidConfigError(
@@ -37,10 +37,27 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 		}
 	}
 }
+function validateAuthDriver(auth: RawConfig['auth']): void {
+	const authOptions = Object.values(AuthDriverName)
+	if (!auth.driverName || !authOptions.includes(auth.driverName as AuthDriverName)) {
+		throw new InvalidConfigError(
+			`Must specify a valid AUTH_DRIVER (available options are ${authOptions.join(', ')})`,
+		)
+	}
+
+	if (auth.driverName === AuthDriverName.BearerToken) {
+		const { token } = auth.bearerTokenDriverConfig
+		if (!token) {
+			throw new InvalidConfigError(
+				`When using 'BearerToken' auth driver you must specify a token (AUTH_BEARER_TOKEN)`,
+			)
+		}
+	}
+}
 
 function validateBaseRedirectUrl(baseRedirectUrl?: string, apiPrefix?: string): void {
-	// Exists
 	logger.debug(`Start validateBaseRedirectUrl with ${baseRedirectUrl} and ${apiPrefix}`)
+	// Exists
 	if (!baseRedirectUrl || !new URL(baseRedirectUrl)) {
 		throw new InvalidConfigError(`Must specify a BASE_REDIRECT_URL (received '${baseRedirectUrl}').`)
 	}

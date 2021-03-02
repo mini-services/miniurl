@@ -6,6 +6,7 @@ import { RelationalStorage } from './drivers/relational/index.js'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
+import { GeneralError } from '../../errors/generalError.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -18,7 +19,7 @@ export class Storage implements StorageDriver {
 				this._driver = new RelationalStorage(_config)
 				break
 			default:
-				throw new InvalidConfigError(`Invalid url storage driver selected. config: ${_config}`)
+				throw new InvalidConfigError(`Invalid url storage driver selected.`)
 		}
 	}
 	get config(): StorageConfig {
@@ -29,8 +30,13 @@ export class Storage implements StorageDriver {
 	}
 	public async initialize(): Promise<void> {
 		// Waits for 1 minute (6 * 10,000ms) before failing
-		logger.debug(`Running initialize`)
-		await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
+		try {
+			logger.debug(`Running Storage.initialize`)
+			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
+		} catch (err) {
+			logger.error(`Storage.initialize failed: ${err}`)
+			throw new GeneralError('Could not initialize (Storage.initialize)')
+		}
 	}
 
 	url = new (class UrlStorage {
@@ -39,26 +45,50 @@ export class Storage implements StorageDriver {
 			return this.storage._driver
 		}
 		public async get(id: string): Promise<StoredUrl> {
-			logger.debug(`Running get with ${id}`)
-			return this.driver.url.get(id)
+			try {
+				logger.debug(`Running Storage.url.get with ${id}`)
+				return this.driver.url.get(id)
+			} catch (err) {
+				logger.error(`Storage.url.get failed: ${err}`)
+				throw new GeneralError('Could not get (Storage.url.get)')
+			}
 		}
 		public async delete(id: string): Promise<void> {
-			logger.debug(`Running delete with ${id}`)
-			return this.driver.url.delete(id)
+			try {
+				logger.debug(`Running Storage.url.delete with ${id}`)
+				return this.driver.url.delete(id)
+			} catch (err) {
+				logger.error(`Storage.url.delete failed: ${err}`)
+				throw new GeneralError('Could not delete (Storage.url.delete)')
+			}
 		}
 		public async deleteOverdue(timespanMs: number): Promise<number> {
-			logger.debug(`Running deleteOverdue with ${timespanMs}`)
-			return this.driver.url.deleteOverdue(timespanMs)
+			try {
+				logger.debug(`Running deleteOverdue with ${timespanMs}`)
+				return await this.driver.url.deleteOverdue(timespanMs)
+			} catch (err) {
+				logger.error(`Storage.url.deleteOverdue failed: ${err}`)
+				throw GeneralError('Could not delete overdue')
+			}
 		}
 		public async edit(id: string, url: string): Promise<StoredUrl> {
-			logger.debug(`Running edit with ${id} and ${url}`)
-			return this.driver.url.edit(id, url)
+			try {
+				logger.debug(`Running Storage.url.edit with ${id} and ${url}`)
+				return this.driver.url.edit(id, url)
+			} catch (err) {
+				logger.error(`Storage.url.edit failed: ${err}`)
+				throw new GeneralError('Could not edit (Storage.url.edit)')
+			}
 		}
 
 		public async save(url: string): Promise<StoredUrl> {
-			// logger.debug(`Start save with ${url}`)
-			// סליחה על העברית, התוצאה שמוחזרת היא לכאורה רגישה, אז כרגע זה בקומיט
-			return this.driver.url.save(url)
+			try {
+				logger.debug(`Start Storage.url.save with ${url}`)
+				return this.driver.url.save(url)
+			} catch (err) {
+				logger.error(`Storage.url.save failed: ${err}`)
+				throw new GeneralError('Could not save (Storage.url.save)')
+			}
 		}
 	})(this)
 }

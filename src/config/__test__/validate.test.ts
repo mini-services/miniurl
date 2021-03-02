@@ -23,6 +23,12 @@ const config: RawConfig = {
 			},
 		},
 	},
+	auth: {
+		driverName: 'BearerToken',
+		bearerTokenDriverConfig: {
+			token: '123',
+		},
+	},
 }
 
 test('validate config - happy flow [configuration set propely]', (t) => {
