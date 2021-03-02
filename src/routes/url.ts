@@ -19,6 +19,7 @@ const saveUrl: Route<{ Body: { url: string } }> = {
 	},
 	async handler(request) {
 		await validateUrl(request.body.url)
+
 		const urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
 		const url = await this.storage.url.save(urlRequestData)
 
@@ -44,11 +45,13 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 	attachValidation: true,
 	async handler(request, reply) {
 		if (request.validationError) throw new NotFoundError()
+
 		const withInfo = await this.auth.isAuthorized(request)
 		const storedUrl = await this.storage.url.get(request.params.id, { withInfo })
+
 		if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-		this.storage.url.incInfoCount(request.params.id)
+		await this.storage.url.incInfoCount(request.params.id)
 
 		return storedUrl
 	},

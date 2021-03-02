@@ -11,8 +11,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.string('ip')
 		table.integer('url_visit_count')
 		table.integer('info_visit_count')
-		table.string('region')
-		table.dateTime('last_use')
+		table.dateTime('last_used')
 	})
 	await Promise.all([urlInfo, urlAlterUnique])
 }

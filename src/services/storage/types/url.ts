@@ -31,6 +31,5 @@ export interface UrlWithInformation extends StoredUrl {
 	ip: string
 	urlVisitCount: number
 	infoVisitCount: number
-	region?: string
-	lastUse: string
+	lastUsed: string
 }

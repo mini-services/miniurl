@@ -75,16 +75,15 @@ export class RelationalStorage implements StorageDriver {
 					.first()
 
 				delete storedUrl?.serial
-				if (!storedUrl) throw NotFoundError()
 			} else {
 				urlInfo = await this.storage.db
 					.table<UrlWithInformation>('url_information')
-					.select('ip', 'url_visit_count', 'info_visit_count', 'region', 'last_use')
+					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
 					.where('url_id', id)
 					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
 			}
-
+			if (!storedUrl) throw NotFoundError()
 			return options.withInfo ? urlInfo : storedUrl
 		}
 
