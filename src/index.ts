@@ -15,7 +15,7 @@ declare module 'fastify' {
 }
 
 // Logger
-logger.info(`Logger level define as ${config.logLevel}`)
+logger.info(`Logger level defined as ${config.logLevel}`)
 logger.setLevel(config.logLevel)
 
 // Fastify
