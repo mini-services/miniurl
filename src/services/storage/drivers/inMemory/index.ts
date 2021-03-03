@@ -75,7 +75,7 @@ export class InMemoryStorage implements StorageDriver {
 				ip: requestData.ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
-				lastUse: new Date().toISOString(),
+				lastUsed: new Date().toISOString(),
 			} as UrlWithInformation
 			this.storage.data.urls.set(storedUrl.id, storedUrl)
 			this.storage.data.urlInformation.set(storedUrl.id, storedUrlInfo)
@@ -87,7 +87,7 @@ export class InMemoryStorage implements StorageDriver {
 			const urlInfo = this.storage.data.urlInformation.get(id)
 			if (typeof urlInfo === 'undefined') throw new NotFoundError()
 			urlInfo.urlVisitCount++
-			urlInfo.lastUse = new Date().toISOString()
+			urlInfo.lastUsed = new Date().toISOString()
 			this.storage.data.urlInformation.set(id, urlInfo)
 		}
 
@@ -95,7 +95,7 @@ export class InMemoryStorage implements StorageDriver {
 			const urlInfo = this.storage.data.urlInformation.get(id)
 			if (typeof urlInfo === 'undefined') throw new NotFoundError()
 			urlInfo.infoVisitCount++
-			urlInfo.lastUse = new Date().toISOString()
+			urlInfo.lastUsed = new Date().toISOString()
 			this.storage.data.urlInformation.set(id, urlInfo)
 		}
 	})(this)

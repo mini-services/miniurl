@@ -116,7 +116,7 @@ export class RelationalStorage implements StorageDriver {
 				ip: urlBody.ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
-				lastUse: new Date().toISOString(),
+				lastUsed: new Date().toISOString(),
 			} as UrlWithInformation
 
 			if (!url) throw NotFoundError()
@@ -140,7 +140,7 @@ export class RelationalStorage implements StorageDriver {
 				.table<UrlWithInformation>('url_information')
 				.where('url_id', '=', id)
 				.increment('info_visit_count', 1)
-				.update({ lastUse: new Date().toISOString() })
+				.update({ lastUsed: new Date().toISOString() })
 		}
 	})(this)
 }
