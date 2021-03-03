@@ -1,31 +1,31 @@
-{ { if .Values.ingress.enable } }
-  # Fails the templating if the baseRedirectUrl contains a port (which ingress routes do not support)
-  { { if (index (regexSplit ":" ((urlParse .Values.baseRedirectUrl).host) -1) 1) } }
-  { { fail "baseRedirectUrl must not contain a port when using the ingress route" } }
-  { { end } }
+{{ if .Values.ingress.enable }}
+# Fails the templating if the baseRedirectUrl contains a port (which ingress routes do not support)
+{{ if (gt (len (regexSplit ":" ((urlParse .Values.baseRedirectUrl).host) -1)) 1) }}
+{{ fail "baseRedirectUrl must not contain a port when using the ingress route" }}
+{{ end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: { { include "miniurl.appName" . } }-ingress
+  name: {{ include "miniurl.appName" . }}-ingress
 spec:
   rules:
-    - host: "{{ first (regexSplit ": +" ((urlParse .Values.baseRedirectUrl).host) -1) }}"
+    - host: "{{ first (regexSplit ":+" ((urlParse .Values.baseRedirectUrl).host) -1) }}"
       http:
         paths:
-          - path: { { coalesce (first (regexSplit ":+" ((urlParse .Values.baseRedirectUrl).path) -1)) "/" } }
-            pathType: Prefix
-            backend:
-              service:
-                name: { { template "miniurl.serviceName" . } }
-                port:
-                  number: 80
+        - path: {{ coalesce (first (regexSplit ":+" ((urlParse .Values.baseRedirectUrl).path) -1)) "/" }}
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ template "miniurl.serviceName" . }}
+              port:
+                number: 80
     - http:
         paths:
-          - path: { { required "apiPrefix is required" .Values.apiPrefix } }
-            pathType: Prefix
-            backend:
-              service:
-                name: { { include "miniurl.serviceName" . } }
-                port:
-                  number: 80
+        - path: {{ required "apiPrefix is required" .Values.apiPrefix }}
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ include "miniurl.serviceName" . }}
+              port:
+                number: 80
 {{ end }}
