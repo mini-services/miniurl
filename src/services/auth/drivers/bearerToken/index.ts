@@ -20,13 +20,13 @@ export class BearerTokenAuth implements AuthDriver {
 		return token
 	}
 	public async isAuthorized(request: FastifyRequest): Promise<boolean> {
-		logger.debug(`Running isAuthorized`)
+		logger.debug(`Running BearerTokenAuth.isAuthorized`)
 		const token = this.verifyHeaderAndExtractToken(request)
 
 		return token !== null && token === this.token
 	}
 	public async authorize(request: FastifyRequest): Promise<void> {
-		logger.debug(`Running authorize`)
+		logger.debug(`Running BearerTokenAuth.authorize`)
 		if (!(await this.isAuthorized(request))) throw new UnauthorizedError()
 	}
 }

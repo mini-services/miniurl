@@ -26,11 +26,11 @@ export class Auth implements AuthDriver {
 	}
 
 	public async isAuthorized(request: FastifyRequest): Promise<boolean> {
-		logger.debug(`Running isAuthorized`)
+		logger.debug(`Running Auth.isAuthorized`)
 		return this._driver.isAuthorized(request)
 	}
 	public authorize(request: FastifyRequest): Promise<void> {
-		logger.debug(`Running authorize`)
+		logger.debug(`Running Auth.authorize`)
 		return this._driver.authorize(request)
 	}
 }

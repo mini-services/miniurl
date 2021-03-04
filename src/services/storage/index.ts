@@ -35,7 +35,7 @@ export class Storage implements StorageDriver {
 			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
 		} catch (err) {
 			logger.error(`Storage.initialize failed: ${err}`)
-			throw new GeneralError('Could not initialize (Storage.initialize)')
+			throw err
 		}
 	}
 
@@ -87,7 +87,7 @@ export class Storage implements StorageDriver {
 				return this.driver.url.save(url)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)
-				throw new GeneralError('Could not save (Storage.url.save)')
+				throw new GeneralError('Could not save url')
 			}
 		}
 	})(this)

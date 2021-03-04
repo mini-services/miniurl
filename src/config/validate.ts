@@ -16,7 +16,7 @@ export function validateConfig(rawConfig: RawConfig): boolean {
 	return true
 }
 function validateStorageDriver(storage: RawConfig['storage']): void {
-	logger.debug(`Start validateStorageDriver`)
+	logger.debug(`Start validateStorageDriver with`, storage)
 	const storageOptions = Object.values(StorageDriverName)
 	if (!storage.driverName || !storageOptions.includes(storage.driverName as StorageDriverName)) {
 		throw new InvalidConfigError(

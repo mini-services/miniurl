@@ -43,7 +43,7 @@ if (!rawConfig.auth.driverName) {
 
 	rawConfig.auth.driverName = AuthDriverName.BearerToken
 	rawConfig.auth.bearerTokenDriverConfig.token = cryptoRandomString({ length: 18, type: 'alphanumeric' })
-	console.info(`Generated bearer token is '${rawConfig.auth.bearerTokenDriverConfig.token}'`)
+	logger.info(`Generated bearer token is '${rawConfig.auth.bearerTokenDriverConfig.token}'`)
 }
 
 if (!validateConfig(rawConfig)) {
