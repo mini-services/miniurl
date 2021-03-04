@@ -22,15 +22,15 @@ export class InMemoryStorage implements StorageDriver {
 		}
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
-			if (options.withInfo) {
-				const urlInfo = this.storage.data.urlInformation.get(id)
-				if (typeof urlInfo === 'undefined') throw new NotFoundError()
-				return urlInfo
-			} else {
-				const storedUrl = this.storage.data.urls.get(id)
-				if (typeof storedUrl === 'undefined') throw new NotFoundError()
+			const storedUrl = this.storage.data.urls.get(id)
+			if (typeof storedUrl === 'undefined') throw new NotFoundError()
+
+			if (!options.withInfo) {
 				return storedUrl
 			}
+			const urlInfo = this.storage.data.urlInformation.get(id)
+			if (typeof urlInfo === 'undefined') throw new NotFoundError()
+			return { ...storedUrl, ...urlInfo }
 		}
 
 		public async delete(id: string): Promise<void> {
