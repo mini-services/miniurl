@@ -6,9 +6,11 @@ import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 export class BearerTokenAuth implements AuthDriver {
 	private token: string
 	private tokenPrefix = 'Bearer '
+
 	constructor(driverConfig: BearerTokenDriverConfig) {
 		this.token = driverConfig.token
 	}
+
 	private verifyHeaderAndExtractToken(request: FastifyRequest): null | string {
 		const authHeader = request.raw.headers.authorization || ''
 		const hasValidPrefix = authHeader.startsWith(this.tokenPrefix)
