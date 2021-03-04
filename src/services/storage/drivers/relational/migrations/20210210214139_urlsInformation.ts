@@ -1,7 +1,6 @@
 import * as Knex from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-	await knex.raw('PRAGMA foreign_keys = ON')
 	const urlAlterUnique = knex.schema.alterTable('urls', function (table) {
 		table.text('id').primary().alter()
 	})
