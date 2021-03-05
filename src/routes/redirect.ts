@@ -12,10 +12,13 @@ export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 		handler: async function (request, reply) {
 			if (request.validationError) throw new NotFoundError()
 
-			const url = await this.storage.url.get(request.params.id)
-			if (typeof url === 'undefined') throw new NotFoundError()
+			const storedUrl = await this.storage.url.get(request.params.id)
 
-			reply.redirect(url.url)
+			if (typeof storedUrl.url === 'undefined') throw new NotFoundError()
+
+			await this.storage.url.incVisitCount(request.params.id)
+
+			reply.redirect(storedUrl.url)
 		},
 		attachValidation: true,
 		schema: {
