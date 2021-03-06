@@ -49,20 +49,20 @@ export class Storage implements StorageDriver {
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			try {
 				logger.debug(`Running Storage.url.get with ${id}`)
-				return this.driver.url.get(id, options)
+				return await this.driver.url.get(id, options)
 			} catch (err) {
 				logger.error(`Storage.url.get failed: ${err}`)
-				throw new GeneralError('Could not get (Storage.url.get)')
+				throw new GeneralError('Could not get url')
 			}
 		}
 
 		public async delete(id: string): Promise<void> {
 			try {
 				logger.debug(`Running Storage.url.delete with ${id}`)
-				return this.driver.url.delete(id)
+				return await this.driver.url.delete(id)
 			} catch (err) {
 				logger.error(`Storage.url.delete failed: ${err}`)
-				throw new GeneralError('Could not delete (Storage.url.delete)')
+				throw new GeneralError('Could not delete url')
 			}
 		}
 
@@ -72,24 +72,24 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.deleteOverdue(timespanMs)
 			} catch (err) {
 				logger.error(`Storage.url.deleteOverdue failed: ${err}`)
-				throw GeneralError('Could not delete overdue')
+				throw GeneralError('Could not delete overdue urls')
 			}
 		}
 
 		public async edit(id: string, url: string): Promise<StoredUrl> {
 			try {
 				logger.debug(`Running Storage.url.edit with ${id} and ${url}`)
-				return this.driver.url.edit(id, url)
+				return await this.driver.url.edit(id, url)
 			} catch (err) {
 				logger.error(`Storage.url.edit failed: ${err}`)
-				throw new GeneralError('Could not edit (Storage.url.edit)')
+				throw new GeneralError('Could not edit url')
 			}
 		}
 
 		public async save(body: UrlRequestData): Promise<StoredUrl> {
 			try {
 				logger.debug(`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}`)
-				return this.driver.url.save(body)
+				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)
 				throw new GeneralError('Could not save url')
@@ -99,10 +99,10 @@ export class Storage implements StorageDriver {
 		public async incVisitCount(id: string): Promise<void> {
 			try {
 				logger.debug(`Start Storage.url.incVisitCount with id: ${id}`)
-				return this.driver.url.incVisitCount(id)
+				return await this.driver.url.incVisitCount(id)
 			} catch (err) {
 				logger.error(`Storage.url.incVisitCount failed: ${err}`)
-				throw new GeneralError('Could not incVisitCount')
+				throw new GeneralError(`Could not increase visit count for url ${id}`)
 			}
 		}
 
@@ -112,7 +112,7 @@ export class Storage implements StorageDriver {
 				return this.driver.url.incInfoCount(id)
 			} catch (err) {
 				logger.error(`Storage.url.incInfoCount failed: ${err}`)
-				throw new GeneralError('Could not incInfoCount')
+				throw new GeneralError(`Could not increase info count for url ${id}`)
 			}
 		}
 	})(this)

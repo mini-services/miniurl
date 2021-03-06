@@ -17,7 +17,7 @@ export function validateConfig(rawConfig: RawConfig): boolean {
 }
 
 function validateStorageDriver(storage: RawConfig['storage']): void {
-	logger.debug(`Start validateStorageDriver with`, storage)
+	logger.debug(`Start config.validateStorageDriver`)
 	const storageOptions = Object.values(StorageDriverName)
 	if (!storage.driverName || !storageOptions.includes(storage.driverName as StorageDriverName)) {
 		throw new InvalidConfigError(
@@ -40,6 +40,7 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 }
 
 function validateAuthDriver(auth: RawConfig['auth']): void {
+	logger.debug(`Start config.validateAuthDriver`)
 	const authOptions = Object.values(AuthDriverName)
 	if (!auth.driverName || !authOptions.includes(auth.driverName as AuthDriverName)) {
 		throw new InvalidConfigError(

@@ -13,7 +13,6 @@ export class BearerTokenAuth implements AuthDriver {
 	}
 
 	private verifyHeaderAndExtractToken(request: FastifyRequest): null | string {
-		logger.debug(`Running verifyHeaderAndExtractToken`)
 		const authHeader = request.raw.headers.authorization || ''
 		const hasValidPrefix = authHeader.startsWith(this.tokenPrefix)
 		const token = authHeader.substring(this.tokenPrefix.length)
@@ -22,13 +21,11 @@ export class BearerTokenAuth implements AuthDriver {
 		return token
 	}
 	public async isAuthorized(request: FastifyRequest): Promise<boolean> {
-		logger.debug(`Running BearerTokenAuth.isAuthorized`)
 		const token = this.verifyHeaderAndExtractToken(request)
 
 		return token !== null && token === this.token
 	}
 	public async authorize(request: FastifyRequest): Promise<void> {
-		logger.debug(`Running BearerTokenAuth.authorize`)
 		if (!(await this.isAuthorized(request))) throw new UnauthorizedError()
 	}
 }

@@ -47,7 +47,7 @@ if (!rawConfig.auth.driverName) {
 }
 
 if (!validateConfig(rawConfig)) {
-	logger.error('Recieved config is invalid')
+	logger.error('Received config is invalid')
 	throw new InvalidConfigError()
 }
 const config: Config = normalizeConfig(rawConfig)
