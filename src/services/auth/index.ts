@@ -6,7 +6,6 @@ import { AuthConfig, AuthDriverName } from './types/config.js'
 import { logger } from '../logger/logger.js'
 
 export class Auth implements AuthDriver {
-	private _driver: AuthDriver
 	constructor(private _config: AuthConfig) {
 		switch (_config.driverName) {
 			case AuthDriverName.BearerToken:
@@ -17,18 +16,21 @@ export class Auth implements AuthDriver {
 		}
 	}
 
-	get config(): AuthConfig {
-		return this._config
-	}
+	private _driver: AuthDriver
 
 	get driver(): AuthDriver {
 		return this._driver
+	}
+
+	get config(): AuthConfig {
+		return this._config
 	}
 
 	public async isAuthorized(request: FastifyRequest): Promise<boolean> {
 		logger.debug(`Running Auth.isAuthorized`)
 		return this._driver.isAuthorized(request)
 	}
+
 	public authorize(request: FastifyRequest): Promise<void> {
 		logger.debug(`Running Auth.authorize`)
 		return this._driver.authorize(request)

@@ -15,6 +15,7 @@ export function validateConfig(rawConfig: RawConfig): boolean {
 
 	return true
 }
+
 function validateStorageDriver(storage: RawConfig['storage']): void {
 	logger.debug(`Start validateStorageDriver with`, storage)
 	const storageOptions = Object.values(StorageDriverName)
@@ -37,6 +38,7 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 		}
 	}
 }
+
 function validateAuthDriver(auth: RawConfig['auth']): void {
 	const authOptions = Object.values(AuthDriverName)
 	if (!auth.driverName || !authOptions.includes(auth.driverName as AuthDriverName)) {
