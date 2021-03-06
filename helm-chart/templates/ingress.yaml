@@ -1,4 +1,8 @@
 {{ if .Values.ingress.enable }}
+# Fails the templating if the baseRedirectUrl contains a port (which ingress routes do not support)
+{{ if (gt (len (regexSplit ":" ((urlParse .Values.baseRedirectUrl).host) -1)) 1) }}
+{{ fail "baseRedirectUrl must not contain a port when using the ingress route" }}
+{{ end }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,7 +12,7 @@ spec:
     - host: "{{ first (regexSplit ":+" ((urlParse .Values.baseRedirectUrl).host) -1) }}"
       http:
         paths:
-        - path: /
+        - path: {{ coalesce (first (regexSplit ":+" ((urlParse .Values.baseRedirectUrl).path) -1)) "/" }}
           pathType: Prefix
           backend:
             service:
@@ -17,7 +21,7 @@ spec:
                 number: 80
     - http:
         paths:
-        - path: /miniurl
+        - path: {{ required "apiPrefix is required" .Values.apiPrefix }}
           pathType: Prefix
           backend:
             service:

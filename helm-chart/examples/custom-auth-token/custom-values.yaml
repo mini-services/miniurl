@@ -1,0 +1,4 @@
+baseRedirectUrl: https://my-short-base.url
+auth:
+  bearerTokenConfig:
+    token: myspecialsecrettoken
