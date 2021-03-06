@@ -14,7 +14,7 @@
 		"url": "https://github.com/miniservices/miniurl/issues"
 	},
 	"scripts": {
-		"test": "npm run test:unit && npm run test:e2e && ava",
+		"test": "npm run test:unit && npm run test:e2e",
 		"start": "cross-env NODE_ENV=production node --loader ts-node/esm ./src/index.ts",
 		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --trace-warnings\" src/index.ts",
 		"test:unit": "TS_NODE_PROJECT='./tsconfig-spec.json' ava",
