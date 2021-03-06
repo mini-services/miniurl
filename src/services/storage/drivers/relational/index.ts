@@ -7,7 +7,7 @@ import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
-import type { StoredUrl, UrlWithInformation, UrlRequestData } from '../../types/url.js'
+import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -65,7 +65,7 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) {}
 
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlInformation> {
 			let storedUrl, urlInfo
 			if (!options.withInfo) {
 				storedUrl = await this.storage.db
@@ -111,12 +111,12 @@ export class RelationalStorage implements StorageDriver {
 
 		public async save(urlBody: UrlRequestData): Promise<StoredUrl> {
 			const url = urlBody.url
-			const urlInfo: Partial<UrlWithInformation> = {
+			const urlInfo: Partial<UrlInformation> = {
 				ip: urlBody.ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
-			} as UrlWithInformation
+			} as UrlInformation
 
 			if (!url) throw NotFoundError()
 			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
