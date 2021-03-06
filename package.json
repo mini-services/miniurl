@@ -14,7 +14,7 @@
 		"url": "https://github.com/miniservices/miniurl/issues"
 	},
 	"scripts": {
-		"test": "npm run test:unit && npm run test:e2e && npm run test:coverage",
+		"test": "npm run test:unit && npm run test:e2e",
 		"start": "cross-env npm_package_type=module NODE_ENV=production node --loader ts-node/esm/transpile-only ./src/index.ts",
 		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --trace-warnings\" src/index.ts",
 		"test:unit": "cross-env TS_NODE_PROJECT='./tsconfig-spec.json' nyc --reporter=lcov ava",
@@ -54,6 +54,7 @@
 		"typescript": "^4.1.3"
 	},
 	"devDependencies": {
+		"@istanbuljs/nyc-config-typescript": "^1.0.1",
 		"@typescript-eslint/eslint-plugin": "^4.12.0",
 		"@typescript-eslint/parser": "^4.14.0",
 		"ava": "^3.15.0",
@@ -66,6 +67,7 @@
 		"nodemon": "^2.0.6",
 		"nyc": "^15.1.0",
 		"prettier": "^2.2.1",
+		"source-map-support": "^0.5.19",
 		"yorkie": "^2.0.0"
 	},
 	"gitHooks": {
