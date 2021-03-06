@@ -1,47 +1,13 @@
 import { validateConfig } from '../validate.js'
 import test from 'ava'
-import { RawConfig } from '../types.js'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { AuthDriverName } from '../../services/auth/types/config.js'
+import { logger } from '../../services/logger/logger.js'
+import { getRawConfig } from './helpers.js'
 
-function getConfig(): RawConfig {
-	return {
-		port: 'mock-port',
-		logLevel: 'debug',
-		appName: 'mini-test',
-		apiPrefix: '/miniurl',
-		baseRedirectUrl: 'http://mock.com',
-		url: {
-			matchPattern: 'mock-patter',
-			lifetime: '120',
-		},
-		storage: {
-			driverName: 'InMemory',
-			relationalDriverConfig: {
-				client: 'mock-client',
-				connection: {
-					host: 'local-host',
-					user: 'snir-hamair',
-					password: 'admin1234',
-					database: 'mock-db',
-				},
-			},
-		},
-		auth: {
-			driverName: 'BearerToken',
-			bearerTokenDriverConfig: {
-				token: '123',
-			},
-		},
-	}
-}
-test('validateConfig - Happy flow', (t) => {
-	t.is(validateConfig(getConfig()), true)
-})
-
-test('validateConfig - validateBaseRedirectUrl', (t) => {
-	const config = getConfig()
+test('validateBaseRedirectUrl properly validates baseRedirectUrl', (t) => {
+	const config = getRawConfig()
 	const invalidUrls = [
 		{ url: '', message: 'Throws when the baseRedirectUrl does not exist' },
 		{ url: 'blabla...', message: 'Throws when the baseRedirectUrl is not a valid url' },
@@ -70,8 +36,8 @@ test('validateConfig - validateBaseRedirectUrl', (t) => {
 	})
 })
 
-test('validateConfig - validateStorageDriver', (t) => {
-	const config = getConfig()
+test('validateStorageDriver properly validates storage config', (t) => {
+	const config = getRawConfig()
 	const storageDriverOptions = Object.values(StorageDriverName)
 
 	// Tests the driver types
@@ -110,8 +76,8 @@ test('validateConfig - validateStorageDriver', (t) => {
 	})
 })
 
-test('validateConfig - validateAuthDriver', (t) => {
-	const config = getConfig()
+test('validateAuthDriver properly validates auth config', (t) => {
+	const config = getRawConfig()
 	const authDriverOptions = Object.values(AuthDriverName)
 
 	// Tests the driver types
@@ -129,8 +95,8 @@ test('validateConfig - validateAuthDriver', (t) => {
 	)
 })
 
-test('validateConfig - validateUrlLifetime', (t) => {
-	const config = getConfig()
+test('validateUrlLifetime', (t) => {
+	const config = getRawConfig()
 
 	config.url.lifetime = ''
 	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when url.lifetime is empty`)
@@ -147,4 +113,23 @@ test('validateConfig - validateUrlLifetime', (t) => {
 
 	config.url.lifetime = '7 days'
 	t.true(validateConfig(config), `Accepts a valid ms time`)
+})
+
+test('validateLogLevel', (t) => {
+	const config = getRawConfig()
+
+	config.logLevel = ''
+	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when logLevel is empty`)
+
+	config.logLevel = 'not-valid'
+	t.throws(
+		() => validateConfig(config),
+		{ instanceOf: InvalidConfigError },
+		`Throws when logLevel is not a valid log level`,
+	)
+
+	Object.keys(logger.levels.values).forEach((logLevel) => {
+		config.logLevel = logLevel
+		t.true(validateConfig(config), `Accepts all valid log levels`)
+	})
 })

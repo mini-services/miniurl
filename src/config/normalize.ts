@@ -8,31 +8,43 @@ import {
 } from './consts.js'
 import { AuthDriverName } from '../services/auth/types/config.js'
 
-export function normalizeConfig(config: RawConfig): Config {
-	if (!config.baseRedirectUrl.endsWith('/')) config.baseRedirectUrl += '/'
+export function normalizeConfig({
+	baseRedirectUrl,
+	port,
+	logLevel,
+	apiPrefix,
+	appName,
+	url,
+	storage,
+	auth,
+}: RawConfig): Config {
+	if (!baseRedirectUrl.endsWith('/')) baseRedirectUrl += '/'
 
 	// Use a ratio for the ideal cleanup interval
-	const idealCleanupInterval = ms(config.url.lifetime) * URL_CLEANUP_INTERVAL_MAX_ERROR_RATIO
+	const idealCleanupInterval = ms(url.lifetime) * URL_CLEANUP_INTERVAL_MAX_ERROR_RATIO
 	// No less than the minimum
 	const minimumCleanupTime = Math.max(idealCleanupInterval, MIN_URL_CLEANUP_INTERVAL_MS)
 	// No more than the maximum
 	const cleanupIntervalMs = Math.min(minimumCleanupTime, MAX_URL_CLEANUP_INTERVAL_MS)
 
 	return {
-		...config,
+		port,
+		logLevel,
+		apiPrefix,
+		appName,
+		baseRedirectUrl,
 		url: {
-			lifetimeMs: ms(config.url.lifetime),
-			matchPattern: config.url.matchPattern,
+			lifetimeMs: ms(url.lifetime),
+			matchPattern: url.matchPattern,
 			cleanupIntervalMs,
 		},
 		storage: {
-			driverName: config.storage.driverName as StorageDriverName,
-			driverConfig:
-				config.storage.driverName === StorageDriverName.Relational ? config.storage.relationalDriverConfig : {},
+			driverName: storage.driverName as StorageDriverName,
+			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
 		},
 		auth: {
-			driverName: config.auth.driverName as AuthDriverName,
-			driverConfig: config.auth.bearerTokenDriverConfig,
+			driverName: auth.driverName as AuthDriverName,
+			driverConfig: auth.bearerTokenDriverConfig,
 		},
 	}
 }
