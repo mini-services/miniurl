@@ -2,6 +2,7 @@ import fastifyConstructor from 'fastify'
 import { config } from './config/index.js'
 import { routes } from './routes/index.js'
 import { Storage } from './services/storage/index.js'
+import { logger } from './services/logger/logger.js'
 import { Auth } from './services/auth/index.js'
 import { runWithGracefulShutdown } from './helpers/runWithGracefulShutdown.js'
 
@@ -13,10 +14,14 @@ declare module 'fastify' {
 	}
 }
 
+// Logger
+logger.info(`Logger level defined as ${config.logLevel}`)
+logger.setLevel(config.logLevel)
+
 // Fastify
 const fastify = fastifyConstructor({
 	ignoreTrailingSlash: true,
-	logger: true,
+	logger,
 })
 
 // Config
