@@ -5,6 +5,10 @@ import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
+import { RedisStorage } from './drivers/redis/index.js'
+import {RelationalStorageDriverConfig} from "./drivers/relational/types";
+import {InMemoryStorageDriverConfig} from "./drivers/inMemory/types";
+import {RedisStorageDriverConfig} from "./drivers/redis/types";
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -16,6 +20,9 @@ export class Storage implements StorageDriver {
 				break
 			case StorageDriverName.Relational:
 				this._driver = new RelationalStorage(_config)
+				break
+			case StorageDriverName.Redis:
+				this._driver = new RedisStorage(_config)
 				break
 			default:
 				throw new InvalidConfigError(`Invalid url storage driver selected.`)
@@ -43,7 +50,7 @@ export class Storage implements StorageDriver {
 			return this.driver.url.get(id, options)
 		}
 
-		public async delete(id: string): Promise<void> {
+		public async delete(id: string): Promise<void | number> {
 			return this.driver.url.delete(id)
 		}
 
