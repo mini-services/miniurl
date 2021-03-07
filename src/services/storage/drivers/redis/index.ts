@@ -6,6 +6,7 @@ import cryptoRandomString from 'crypto-random-string'
 import { IncompatibleResponse, InvalidUrl } from '../../../../errors/invalidUrl.js'
 import {RedisStorageConfig} from "../../types/config.js";
 import {config} from "../../../../config/index.js";
+import {isBoolean} from "util";
 
 export class RedisStorage implements StorageDriver {
 	private readonly redisClient: Tedis
@@ -46,7 +47,7 @@ export class RedisStorage implements StorageDriver {
 		}
 
 		async get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation>{
-			return this.redisStorage.redisHelper.fetchUrlInfoFromDB(id, {withInfo : true})
+			return this.redisStorage.redisHelper.fetchUrlInfoFromDB(id, options )
 		}
 
 		async save(url: UrlWithInformation): Promise<StoredUrl> {
