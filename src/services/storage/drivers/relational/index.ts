@@ -65,7 +65,7 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) {}
 
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlInformation> {
+		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
 			if (!options.withInfo) {
 				storedUrl = await this.storage.db
@@ -77,7 +77,7 @@ export class RelationalStorage implements StorageDriver {
 				delete storedUrl?.serial
 			} else {
 				urlInfo = await this.storage.db
-					.table<UrlWithInformation>('url_information')
+					.table<UrlInformation>('url_information')
 					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
 					.where('url_id', id)
 					.join('urls', 'url_information.url_id', 'urls.id')
@@ -113,7 +113,7 @@ export class RelationalStorage implements StorageDriver {
 
 		public async save(urlBody: UrlRequestData): Promise<StoredUrl> {
 			const url = urlBody.url
-			const urlInfo: Partial<UrlInformation> = {
+			const urlInfo: UrlInformation = {
 				ip: urlBody.ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
@@ -123,7 +123,7 @@ export class RelationalStorage implements StorageDriver {
 			if (!url) throw NotFoundError()
 			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
 			await this.storage.db
-				.table<UrlWithInformation>('url_information')
+				.table<UrlInformation & { urlId: string }>('url_information')
 				.insert({ urlId: storedUrl.id, ...urlInfo })
 
 			return storedUrl
@@ -131,14 +131,14 @@ export class RelationalStorage implements StorageDriver {
 
 		public async incVisitCount(id: string): Promise<void> {
 			await this.storage.db
-				.table<UrlWithInformation>('url_information')
+				.table<UrlInformation>('url_information')
 				.where('url_id', '=', id)
 				.increment('url_visit_count', 1)
 		}
 
 		public async incInfoCount(id: string): Promise<void> {
 			await this.storage.db
-				.table<UrlWithInformation>('url_information')
+				.table<UrlInformation>('url_information')
 				.where('url_id', '=', id)
 				.increment('info_visit_count', 1)
 				.update({ lastUsed: new Date().toISOString() })

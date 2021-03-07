@@ -6,7 +6,7 @@ export interface StoredUrl {
 }
 
 export interface UrlStorageDriver {
-	get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlInformation>
+	get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation>
 
 	save(url: UrlRequestData): Promise<StoredUrl>
 
@@ -27,7 +27,6 @@ export interface UrlRequestData {
 }
 
 export interface UrlInformation {
-	urlId: string
 	ip: string
 	urlVisitCount: number
 	infoVisitCount: number
