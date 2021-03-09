@@ -1,10 +1,10 @@
 import * as Knex from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-	const urlAlterUnique = knex.schema.alterTable('urls', function (table) {
-		table.text('id').primary().alter()
+	await knex.schema.alterTable('urls', function (table) {
+		table.text('id').unique().alter()
 	})
-	const urlInfo = knex.schema.createTable('url_information', function (table) {
+	await knex.schema.createTable('url_information', function (table) {
 		table.text('url_id')
 		table.foreign('url_id').references('id').inTable('urls').onDelete('CASCADE')
 		table.string('ip')
@@ -12,7 +12,6 @@ export async function up(knex: Knex): Promise<void> {
 		table.integer('info_visit_count')
 		table.dateTime('last_used')
 	})
-	await Promise.all([urlInfo, urlAlterUnique])
 }
 
 export async function down(knex: Knex): Promise<void> {
