@@ -3,9 +3,8 @@ import { Route } from '../types/routes.js'
 import { NotFoundError } from '../errors/notFound.js'
 import { validateUrl } from '../services/urlValidator.js'
 import { UrlRequestData } from '../services/storage/types/url'
-
 /* Save URL to store and return the new shortened url */
-const saveUrl: Route<{ Body: { url: string } }> = {
+const saveUrl: Route<{ Body: { url: string, id?: string } }> = {
 	method: 'POST',
 	url: '/url',
 	schema: {
@@ -14,13 +13,19 @@ const saveUrl: Route<{ Body: { url: string } }> = {
 			required: ['url'],
 			properties: {
 				url: { type: 'string' },
+				id: { type: 'string' }
 			},
 		},
 	},
 	async handler(request) {
 		await validateUrl(request.body.url)
 
-		const urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
+		let urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
+		// need to make sure that has admin rights
+		if (await this.auth.isAuthorized(request) && request.body.id) {
+			urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
+		}
+
 		const url = await this.storage.url.save(urlRequestData)
 
 		return `${this.config.baseRedirectUrl}${url.id}`

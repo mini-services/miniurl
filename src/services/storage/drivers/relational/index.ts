@@ -63,7 +63,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
 	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) {}
+		constructor(public storage: RelationalStorage) { }
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
@@ -90,7 +90,8 @@ export class RelationalStorage implements StorageDriver {
 		//All Info associated with that Urls also get deleted, automatically.
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
 		public async delete(id: string): Promise<void> {
-			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete();
+			return;
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
@@ -112,7 +113,9 @@ export class RelationalStorage implements StorageDriver {
 		}
 
 		public async save(urlBody: UrlRequestData): Promise<StoredUrl> {
-			const url = urlBody.url
+			const { url, id } = urlBody;
+			const urlTableEntry = { url, id: id || "" }
+
 			const urlInfo: Partial<UrlWithInformation> = {
 				ip: urlBody.ip,
 				urlVisitCount: 0,
@@ -121,7 +124,7 @@ export class RelationalStorage implements StorageDriver {
 			} as UrlWithInformation
 
 			if (!url) throw NotFoundError()
-			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert(urlTableEntry).returning('*')
 			await this.storage.db
 				.table<UrlWithInformation>('url_information')
 				.insert({ urlId: storedUrl.id, ...urlInfo })
