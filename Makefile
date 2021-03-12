@@ -24,6 +24,7 @@ install-dependencies:
 test:
 	@echo [!] Running tests
 	@npm run test
+	@npm run test:coverage
 
 # Login to Dockerhub registry (must have docker running)
 docker-login:

@@ -43,15 +43,18 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 		},
 	},
 	attachValidation: true,
-	async handler(request, reply) {
+	async handler(request) {
 		if (request.validationError) throw new NotFoundError()
 
 		const withInfo = await this.auth.isAuthorized(request)
 		const storedUrl = await this.storage.url.get(request.params.id, { withInfo })
-
 		if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-		await this.storage.url.incInfoCount(request.params.id)
+		try {
+			await this.storage.url.incInfoCount(request.params.id)
+		} catch (e) {
+			this.log.warn('incInfoCount failed in retrieveUrl endpoint')
+		}
 
 		return storedUrl
 	},

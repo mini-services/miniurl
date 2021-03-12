@@ -94,8 +94,10 @@ export class RelationalStorage implements StorageDriver {
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
-			const deleteBefore = new Date(new Date().getTime() - timespanMs)
-			return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
+			// const deleteBefore = new Date(new Date().getTime() - timespanMs)
+			// return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
+			// TODO temporary fix
+			return 0
 		}
 
 		public async edit(id: string, url: string): Promise<StoredUrl> {

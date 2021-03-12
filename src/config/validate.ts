@@ -3,17 +3,21 @@ import { InvalidConfigError } from '../errors/invalidConfig.js'
 import { StorageDriverName } from '../services/storage/types/config.js'
 import { AuthDriverName } from '../services/auth/types/config.js'
 import type { RawConfig } from './types.js'
+import { logger } from '../services/logger/logger.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
+	logger.debug(`Start validateConfig`)
 	validateBaseRedirectUrl(rawConfig.baseRedirectUrl, rawConfig.apiPrefix)
 	validateStorageDriver(rawConfig.storage)
 	validateAuthDriver(rawConfig.auth)
 	validateUrlLifetime(rawConfig.url.lifetime)
+	validateLogLevel(rawConfig.logLevel)
 
 	return true
 }
 
 function validateStorageDriver(storage: RawConfig['storage']): void {
+	logger.debug(`Start config.validateStorageDriver`)
 	const storageOptions = Object.values(StorageDriverName)
 	if (!storage.driverName || !storageOptions.includes(storage.driverName as StorageDriverName)) {
 		throw new InvalidConfigError(
@@ -36,6 +40,7 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 }
 
 function validateAuthDriver(auth: RawConfig['auth']): void {
+	logger.debug(`Start config.validateAuthDriver`)
 	const authOptions = Object.values(AuthDriverName)
 	if (!auth.driverName || !authOptions.includes(auth.driverName as AuthDriverName)) {
 		throw new InvalidConfigError(
@@ -54,8 +59,9 @@ function validateAuthDriver(auth: RawConfig['auth']): void {
 }
 
 function validateBaseRedirectUrl(baseRedirectUrl?: string, apiPrefix?: string): void {
+	logger.debug(`Start validateBaseRedirectUrl with ${baseRedirectUrl} and ${apiPrefix}`)
 	// Exists
-	if (!baseRedirectUrl || !new URL(baseRedirectUrl)) {
+	if (!baseRedirectUrl) {
 		throw new InvalidConfigError(`Must specify a BASE_REDIRECT_URL (received '${baseRedirectUrl}').`)
 	}
 
@@ -89,7 +95,16 @@ function validateBaseRedirectUrl(baseRedirectUrl?: string, apiPrefix?: string): 
 }
 
 function validateUrlLifetime(urlLifetime: string): void {
+	logger.debug(`Start validateUrlLifetime with ${urlLifetime}`)
 	if (!urlLifetime || !ms(urlLifetime) || ms(urlLifetime) <= 0) {
 		throw new InvalidConfigError(`URL_LIFETIME specified is invalid (received ${urlLifetime})`)
+	}
+}
+
+function validateLogLevel(logLevel: string) {
+	logger.debug(`Start validateLogLevel with ${logLevel}`)
+	const levelValues = Object.keys(logger.levels.values)
+	if (!levelValues.includes(logLevel)) {
+		throw new InvalidConfigError(`Must specify a valid LOG_LEVEL (available options are ${levelValues.join(', ')})`)
 	}
 }

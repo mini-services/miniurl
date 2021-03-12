@@ -3,6 +3,7 @@ import type { AuthConfig } from '../services/auth/types/config'
 
 export interface RawConfig {
 	port: string
+	logLevel: string
 	apiPrefix: string
 	appName: string
 	baseRedirectUrl: string
@@ -32,6 +33,7 @@ export interface RawConfig {
 
 export interface Config {
 	port: string
+	logLevel: string
 	apiPrefix: string
 	appName: string
 	url: {

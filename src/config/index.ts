@@ -4,10 +4,12 @@ import { AuthDriverName } from '../services/auth/types/config.js'
 import { normalizeConfig } from './normalize.js'
 import type { RawConfig, Config } from './types.js'
 import { validateConfig } from './validate.js'
+import { logger } from '../services/logger/logger.js'
 
 // Get config from environment variables
 const rawConfig: RawConfig = {
 	port: process.env.PORT || '80',
+	logLevel: process.env.LOG_LEVEL || 'info',
 	appName: process.env.npm_package_name || 'miniurl',
 	apiPrefix: process.env.API_PREFIX || '/miniurl',
 	baseRedirectUrl: process.env.BASE_REDIRECT_URL || '',
@@ -36,15 +38,18 @@ const rawConfig: RawConfig = {
 }
 
 if (!rawConfig.auth.driverName) {
-	console.warn(`No auth driver selected.
-		A default BearerToken driver is selected and a random bearer token will be generated.`)
+	logger.warn(`No auth driver selected.
+	    A default BearerToken driver is selected and a random bearer token will be generated.`)
 
 	rawConfig.auth.driverName = AuthDriverName.BearerToken
 	rawConfig.auth.bearerTokenDriverConfig.token = cryptoRandomString({ length: 18, type: 'alphanumeric' })
-	console.info(`Generated bearer token is '${rawConfig.auth.bearerTokenDriverConfig.token}'`)
+	logger.info(`Generated bearer token is '${rawConfig.auth.bearerTokenDriverConfig.token}'`)
 }
 
-if (!validateConfig(rawConfig)) throw new InvalidConfigError()
+if (!validateConfig(rawConfig)) {
+	logger.error('Received config is invalid')
+	throw new InvalidConfigError()
+}
 const config: Config = normalizeConfig(rawConfig)
 
 export { config }
