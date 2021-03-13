@@ -28,6 +28,17 @@ const rawConfig: RawConfig = {
 				database: process.env.RELATIONAL_STORAGE_DATABASE || '',
 			},
 		},
+
+		redisDriverConfig: {
+			connection: {
+				port: parseInt(<string>process.env.REDIS_STORAGE_PORT) || 6379,
+				host: process.env.REDIS_STORAGE_HOST || '',
+				username: process.env.REDIS_STORAGE_USERNAME || '',
+				password: process.env.REDIS_STORAGE_PASSWORD || '',
+				connectTimeout: parseInt(<string>process.env.REDIS_STORAGE_CONNECTION_TIMEOUT) || 10000,
+				reconnectOnError: process.env.REDIS_STORAGE_CONNECTION_TIMEOUT || '',
+			},
+		},
 	},
 	auth: {
 		driverName: process.env.AUTH_DRIVER || '',

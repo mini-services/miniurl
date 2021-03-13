@@ -40,7 +40,10 @@ export function normalizeConfig({
 		},
 		storage: {
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig:
+				storage.driverName === StorageDriverName.Relational
+					? storage.relationalDriverConfig
+					: storage.redisDriverConfig,
 		},
 		auth: {
 			driverName: auth.driverName as AuthDriverName,

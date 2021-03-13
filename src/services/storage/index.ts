@@ -8,9 +8,6 @@ import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
 import { GeneralError } from '../../errors/generalError.js'
 import { RedisStorage } from './drivers/redis/index.js'
-import {RelationalStorageDriverConfig} from "./drivers/relational/types";
-import {InMemoryStorageDriverConfig} from "./drivers/inMemory/types";
-import {RedisStorageDriverConfig} from "./drivers/redis/types";
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -63,7 +60,7 @@ export class Storage implements StorageDriver {
 			}
 		}
 
-		public async delete(id: string): Promise<void|number> {
+		public async delete(id: string): Promise<void | number> {
 			try {
 				logger.debug(`Running Storage.url.delete with ${id}`)
 				return await this.driver.url.delete(id)

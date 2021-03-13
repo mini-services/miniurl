@@ -37,6 +37,14 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 			)
 		}
 	}
+
+	if (storage.driverName === StorageDriverName.Redis) {
+		if (storage.redisDriverConfig.connection.host === 'localhost')
+			logger.warn(
+				'NO Redis HOST defined. Assuming DB running on local machine. using default setting - localhost',
+			)
+		logger.debug('Redis DB connection details:\n' + storage.redisDriverConfig.connection)
+	}
 }
 
 function validateAuthDriver(auth: RawConfig['auth']): void {

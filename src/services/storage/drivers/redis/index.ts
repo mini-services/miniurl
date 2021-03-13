@@ -1,19 +1,20 @@
-import { StorageDriver } from '../../types'
-import { StoredUrl, UrlStorageDriver, UrlWithInformation } from '../../types/url.js'
-import { Tedis } from 'tedis'
+import { StorageDriver } from '../../types/index.js'
+import { StoredUrl, UrlRequestData, UrlWithInformation } from '../../types/url.js'
 import { RedisHelper } from '../../../../helpers/redisHelper.js'
-import cryptoRandomString from 'crypto-random-string'
-import { IncompatibleResponse, InvalidUrl } from '../../../../errors/invalidUrl.js'
-import {RedisStorageConfig} from "../../types/config.js";
-import {config} from "../../../../config/index.js";
-import {isBoolean} from "util";
+import Redis from 'ioredis'
+import { RedisStorageConfig } from '../../types/config.js'
+import { url } from '../redis/url.js'
+import IORedis from 'ioredis'
 
 export class RedisStorage implements StorageDriver {
-	private readonly redisClient: Tedis
-	private redisHelper: RedisHelper
+	public redisHelper: RedisHelper
+	private _client: Redis.Redis = new Redis()
 
-	constructor(public _config: RedisStorageConfig) {
-		this.redisClient = new Tedis()
+	get client(): IORedis.Redis {
+		return this._client
+	}
+
+	constructor(_config: RedisStorageConfig) {
 		this.redisHelper = new RedisHelper(this)
 	}
 
@@ -22,71 +23,32 @@ export class RedisStorage implements StorageDriver {
 		return new Promise<void>((resolve) => resolve())
 	}
 
-	public getRedisClient(): Tedis {
-		return this.redisClient
+	url: url = new url(this)
+
+	deleteOverdue(timespanMs: number): Promise<number> {
+		return this.url.deleteOverdue(timespanMs)
 	}
 
-	url: UrlStorageDriver = new (class RedisUrlOperations {
-		constructor(public redisStorage: RedisStorage) {}
+	delete(id: string): Promise<void | number> {
+		return this.url.delete(id)
+	}
 
-		async delete(id: string): Promise<number> {
-			return this.redisStorage.redisClient.del(id)
-		}
+	edit(id: string, url: string): Promise<StoredUrl> {
+		return this.url.edit(id, url)
+	}
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		async deleteOverdue(timespanMs: number): Promise<number> {
-			// not in use since Redis has build-in mechanism to delete keys after period of time
-			return -1
-		}
-		async edit(id: string, url: string): Promise<StoredUrl> {
-			const storedUrl = await this.redisStorage.redisHelper.fetchUrlInfoFromDB(id, { withInfo: false })
-			storedUrl.updatedAt = new Date().toISOString()
-			storedUrl.url = url
-			await this.redisStorage.redisClient.set(storedUrl.id, JSON.stringify(storedUrl))
-			return storedUrl
-		}
+	get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation> {
+		return this.url.get(id, options)
+	}
 
-		async get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation>{
-			return this.redisStorage.redisHelper.fetchUrlInfoFromDB(id, options )
-		}
+	save(url: UrlRequestData): Promise<StoredUrl> {
+		return this.url.save(url)
+	}
 
-		async save(url: UrlWithInformation): Promise<StoredUrl> {
-			if (url.id === 'undefined' || url.url === 'undefined') throw new InvalidUrl()
-			const storedUrlWithInfo = {
-				id: cryptoRandomString({ length: 6, type: 'url-safe' }),
-				url: url.url,
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString(),
-				ip: url.ip != '' ? url.ip : 'undefined',
-				urlVisitCount: 0,
-				infoVisitCount: 0,
-				lastUsed: new Date().toISOString(),
-			} as UrlWithInformation
-			await this.redisStorage.redisClient.setex(
-				storedUrlWithInfo.id,
-				config.url.lifetimeMs/ 1000,
-				JSON.stringify(storedUrlWithInfo),
-			)
-			return storedUrlWithInfo
-		}
-		async incVisitCount(id: string): Promise<void> {
-			const url = await this.get(id, { withInfo: true })
-			if ('urlVisitCount' in url) {
-				url.urlVisitCount++
-				url.lastUsed = new Date().toISOString()
-			} else
-				throw new IncompatibleResponse()
-			const ttl = await this.redisStorage.redisClient.ttl(id)
-			await this.redisStorage.redisClient.setex(id, ttl, JSON.stringify(url))
-		}
-		async incInfoCount(id: string): Promise<void> {
-			const url = await this.get(id, { withInfo: true })
-			if ('infoVisitCount' in url) {
-				url.infoVisitCount++
-				url.lastUsed = new Date().toISOString()
-			} else throw new IncompatibleResponse()
-			const ttl = await this.redisStorage.redisClient.ttl(id)
-			await this.redisStorage.redisClient.setex(id, ttl, JSON.stringify(url))
-		}
-	})(this)
+	incVisitCount(id: string): Promise<void> {
+		return this.url.incVisitCount(id)
+	}
+	incInfoCount(id: string): Promise<void> {
+		return this.url.incInfoCount(id)
+	}
 }
