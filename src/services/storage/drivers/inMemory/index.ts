@@ -43,8 +43,8 @@ export class InMemoryStorage implements StorageDriver {
 			let deletedCount = 0
 
 			this.storage.data.urls.forEach((storedUrl) => {
-				const updatedAt = new Date(storedUrl.updatedAt).getTime()
-				if (updatedAt <= deleteBefore) {
+				const createdAt = new Date(storedUrl.createdAt).getTime()
+				if (createdAt <= deleteBefore) {
 					this.storage.data.urls.delete(storedUrl.id)
 					deletedCount++
 				}
