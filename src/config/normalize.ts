@@ -35,6 +35,7 @@ export function normalizeConfig({
 		baseRedirectUrl,
 		url: {
 			lifetimeMs: ms(url.lifetime),
+			urlExpireFrom : url.urlExpireFrom,
 			matchPattern: url.matchPattern,
 			cleanupIntervalMs,
 		},

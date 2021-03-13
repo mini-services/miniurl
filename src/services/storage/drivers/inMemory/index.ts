@@ -1,8 +1,17 @@
 import cryptoRandomString from 'crypto-random-string'
 import { NotFoundError } from '../../../../errors/notFound.js'
+import { InvalidConfigError } from '../../../../errors/invalidConfig.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData } from '../../types/url.js'
+import { getRawConfig } from '../../../../config/__test__/helpers'
+import { logger } from '../../../logger/logger'
+
+function validateUrlExpireFrom(deleteFrom: string) {
+	if (deleteFrom !== 'create' && deleteFrom !== 'update') {
+		throw new InvalidConfigError("URL_EXPIRE_FROM value must be 'create' or 'update'")
+	}
+}
 
 export class InMemoryStorage implements StorageDriver {
 	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlWithInformation> } = {
@@ -39,12 +48,16 @@ export class InMemoryStorage implements StorageDriver {
 			this.storage.data.urls.delete(id)
 		}
 		public async deleteOverdue(timespanMs: number): Promise<number> {
+			const deleteFrom = getRawConfig().url.urlExpireFrom
+			logger.debug('urlExpireFrom is {}', deleteFrom)
+			validateUrlExpireFrom(deleteFrom)
 			const deleteBefore = new Date().getTime() - timespanMs
 			let deletedCount = 0
 
 			this.storage.data.urls.forEach((storedUrl) => {
-				const createdAt = new Date(storedUrl.createdAt).getTime()
-				if (createdAt <= deleteBefore) {
+				let relativeDate = new Date(storedUrl.createdAt).getTime()
+				if (deleteFrom === 'update') relativeDate = new Date(storedUrl.updatedAt).getTime()
+				if (relativeDate <= deleteBefore) {
 					this.storage.data.urls.delete(storedUrl.id)
 					deletedCount++
 				}
