@@ -21,7 +21,7 @@ const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 		await validateUrl(request.body.url)
 
 		let urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
-		// need to make sure that has admin rights
+		// Custom ids require admin rights
 		if ((await this.auth.isAuthorized(request)) && request.body.id) {
 			urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
 		}
