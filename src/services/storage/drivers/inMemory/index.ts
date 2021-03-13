@@ -4,17 +4,16 @@ import { InvalidConfigError } from '../../../../errors/invalidConfig.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData } from '../../types/url.js'
-import { getRawConfig } from '../../../../config/__test__/helpers'
-import { logger } from '../../../logger/logger'
 
 function validateUrlExpireFrom(deleteFrom: string) {
 	if (deleteFrom !== 'create' && deleteFrom !== 'update') {
 		throw new InvalidConfigError("URL_EXPIRE_FROM value must be 'create' or 'update'")
 	}
 }
+import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 
 export class InMemoryStorage implements StorageDriver {
-	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlWithInformation> } = {
+	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
 		urlInformation: new Map(),
 	}
@@ -89,7 +88,7 @@ export class InMemoryStorage implements StorageDriver {
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
-			} as UrlWithInformation
+			}
 			this.storage.data.urls.set(storedUrl.id, storedUrl)
 			this.storage.data.urlInformation.set(storedUrl.id, storedUrlInfo)
 
