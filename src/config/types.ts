@@ -24,11 +24,11 @@ export interface RawConfig {
 		}
 		redisDriverConfig: {
 			connection: {
-				port: number
+				port: string
 				host: string
 				username: string
 				password: string
-				connectTimeout: number
+				connectTimeout: string
 				reconnectOnError: string
 			}
 		}

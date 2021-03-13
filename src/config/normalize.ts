@@ -27,6 +27,13 @@ export function normalizeConfig({
 	// No more than the maximum
 	const cleanupIntervalMs = Math.min(minimumCleanupTime, MAX_URL_CLEANUP_INTERVAL_MS)
 
+	const storageDriverConfig =
+		storage.driverName === StorageDriverName.Relational
+			? storage.relationalDriverConfig
+			: storage.driverName === StorageDriverName.Redis
+			? storage.redisDriverConfig
+			: {}
+
 	return {
 		port,
 		logLevel,
@@ -40,10 +47,7 @@ export function normalizeConfig({
 		},
 		storage: {
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig:
-				storage.driverName === StorageDriverName.Relational
-					? storage.relationalDriverConfig
-					: storage.redisDriverConfig,
+			driverConfig: storageDriverConfig,
 		},
 		auth: {
 			driverName: auth.driverName as AuthDriverName,

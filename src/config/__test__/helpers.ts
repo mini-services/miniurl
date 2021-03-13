@@ -22,6 +22,16 @@ export function getRawConfig(): RawConfig {
 					database: 'mock-db',
 				},
 			},
+			redisDriverConfig: {
+				connection: {
+					port: '6379',
+					host: 'localhost',
+					username: '',
+					password: '',
+					connectTimeout: '10000',
+					reconnectOnError: '',
+				},
+			},
 		},
 		auth: {
 			driverName: 'BearerToken',
