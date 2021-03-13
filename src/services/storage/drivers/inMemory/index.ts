@@ -3,15 +3,15 @@ import { GeneralError } from '../../../../errors/generalError.js'
 import { NotFoundError } from '../../../../errors/notFound.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
-import type { StoredUrl, UrlWithInformation, UrlRequestData } from '../../types/url.js'
+import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 
 export class InMemoryStorage implements StorageDriver {
-	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlWithInformation> } = {
+	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
 		urlInformation: new Map(),
 	}
 	url = new (class InMemoryUrlStorage {
-		constructor(public storage: InMemoryStorage) { }
+		constructor(public storage: InMemoryStorage) {}
 
 		public uuid() {
 			let id
@@ -80,7 +80,7 @@ export class InMemoryStorage implements StorageDriver {
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
-			} as UrlWithInformation
+			}
 			this.storage.data.urls.set(storedUrl.id, storedUrl)
 			this.storage.data.urlInformation.set(storedUrl.id, storedUrlInfo)
 

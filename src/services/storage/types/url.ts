@@ -22,15 +22,15 @@ export interface UrlStorageDriver {
 }
 
 export interface UrlRequestData {
-	url: string;
-	id?: string;
-	ip: string;
+	url: string
+	id?: string
+	ip: string
 }
 
-export interface UrlWithInformation extends StoredUrl {
-	urlId: string
+export interface UrlInformation {
 	ip: string
 	urlVisitCount: number
 	infoVisitCount: number
 	lastUsed: string
 }
+export type UrlWithInformation = StoredUrl & UrlInformation

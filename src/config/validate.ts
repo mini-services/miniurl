@@ -11,7 +11,7 @@ export function validateConfig(rawConfig: RawConfig): boolean {
 	validateStorageDriver(rawConfig.storage)
 	validateAuthDriver(rawConfig.auth)
 	validateUrlLifetime(rawConfig.url.lifetime)
-	validateLevelLog(rawConfig.logLevel)
+	validateLogLevel(rawConfig.logLevel)
 
 	return true
 }
@@ -61,7 +61,7 @@ function validateAuthDriver(auth: RawConfig['auth']): void {
 function validateBaseRedirectUrl(baseRedirectUrl?: string, apiPrefix?: string): void {
 	logger.debug(`Start validateBaseRedirectUrl with ${baseRedirectUrl} and ${apiPrefix}`)
 	// Exists
-	if (!baseRedirectUrl || !new URL(baseRedirectUrl)) {
+	if (!baseRedirectUrl) {
 		throw new InvalidConfigError(`Must specify a BASE_REDIRECT_URL (received '${baseRedirectUrl}').`)
 	}
 
@@ -101,8 +101,8 @@ function validateUrlLifetime(urlLifetime: string): void {
 	}
 }
 
-function validateLevelLog(logLevel: string) {
-	logger.debug(`Start validateLevelLog with ${logLevel}`)
+function validateLogLevel(logLevel: string) {
+	logger.debug(`Start validateLogLevel with ${logLevel}`)
 	const levelValues = Object.keys(logger.levels.values)
 	if (!levelValues.includes(logLevel)) {
 		throw new InvalidConfigError(`Must specify a valid LOG_LEVEL (available options are ${levelValues.join(', ')})`)

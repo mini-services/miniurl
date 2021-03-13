@@ -4,7 +4,7 @@ import { NotFoundError } from '../errors/notFound.js'
 import { validateUrl } from '../services/urlValidator.js'
 import { UrlRequestData } from '../services/storage/types/url'
 /* Save URL to store and return the new shortened url */
-const saveUrl: Route<{ Body: { url: string, id?: string } }> = {
+const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 	method: 'POST',
 	url: '/url',
 	schema: {
@@ -13,7 +13,7 @@ const saveUrl: Route<{ Body: { url: string, id?: string } }> = {
 			required: ['url'],
 			properties: {
 				url: { type: 'string' },
-				id: { type: 'string' }
+				id: { type: 'string' },
 			},
 		},
 	},
@@ -22,7 +22,7 @@ const saveUrl: Route<{ Body: { url: string, id?: string } }> = {
 
 		let urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
 		// need to make sure that has admin rights
-		if (await this.auth.isAuthorized(request) && request.body.id) {
+		if ((await this.auth.isAuthorized(request)) && request.body.id) {
 			urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
 		}
 
@@ -48,15 +48,18 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 		},
 	},
 	attachValidation: true,
-	async handler(request, reply) {
+	async handler(request) {
 		if (request.validationError) throw new NotFoundError()
 
 		const withInfo = await this.auth.isAuthorized(request)
 		const storedUrl = await this.storage.url.get(request.params.id, { withInfo })
-
 		if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-		await this.storage.url.incInfoCount(request.params.id)
+		try {
+			await this.storage.url.incInfoCount(request.params.id)
+		} catch (e) {
+			this.log.warn('incInfoCount failed in retrieveUrl endpoint')
+		}
 
 		return storedUrl
 	},
