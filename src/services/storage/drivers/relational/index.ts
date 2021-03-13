@@ -113,11 +113,8 @@ export class RelationalStorage implements StorageDriver {
 		}
 
 		public async save({ url, id = '', ip }: UrlRequestData): Promise<StoredUrl> {
-			const { url, id } = urlBody
-			const urlTableEntry = { url, id: id || '' }
-
 			const urlInfo: UrlInformation = {
-				ip: urlBody.ip,
+				ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
