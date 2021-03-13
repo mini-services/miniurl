@@ -118,7 +118,7 @@ export class RelationalStorage implements StorageDriver {
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
-			} as UrlInformation
+			}
 
 			if (!url) throw NotFoundError()
 			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')

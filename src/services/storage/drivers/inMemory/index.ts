@@ -76,7 +76,7 @@ export class InMemoryStorage implements StorageDriver {
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
-			} as UrlInformation
+			}
 			this.storage.data.urls.set(storedUrl.id, storedUrl)
 			this.storage.data.urlInformation.set(storedUrl.id, storedUrlInfo)
 
