@@ -13,10 +13,13 @@ export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 			if (request.validationError) throw new NotFoundError()
 
 			const storedUrl = await this.storage.url.get(request.params.id)
-
 			if (typeof storedUrl.url === 'undefined') throw new NotFoundError()
 
-			await this.storage.url.incVisitCount(request.params.id)
+			try {
+				await this.storage.url.incVisitCount(request.params.id)
+			} catch (e) {
+				this.log.warn('incVisitCount failed in redirect endpoint')
+			}
 
 			reply.redirect(storedUrl.url)
 		},
