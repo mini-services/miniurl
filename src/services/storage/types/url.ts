@@ -26,10 +26,10 @@ export interface UrlRequestData {
 	ip: string
 }
 
-export interface UrlWithInformation extends StoredUrl {
-	urlId: string
+export interface UrlInformation {
 	ip: string
 	urlVisitCount: number
 	infoVisitCount: number
 	lastUsed: string
 }
+export type UrlWithInformation = StoredUrl & UrlInformation
