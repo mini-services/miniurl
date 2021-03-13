@@ -121,7 +121,7 @@ export class RelationalStorage implements StorageDriver {
 			}
 
 			if (!url) throw NotFoundError()
-			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert(urlTableEntry).returning('*')
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
 			await this.storage.db
 				.table<UrlInformation & { urlId: string }>('url_information')
 				.insert({ urlId: storedUrl.id, ...urlInfo })
