@@ -1,23 +1,19 @@
-import test from 'ava'
 import ms from 'ms'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { normalizeConfig } from '../normalize.js'
 import { getRawConfig } from './helpers.js'
 
-test('Happy flow', (t) => {
+test('Happy flow', () => {
 	const rawConfig = getRawConfig()
 	const { port, logLevel, apiPrefix, appName, baseRedirectUrl, url, storage, auth } = rawConfig
 
 	const config = normalizeConfig(rawConfig)
 
 	// Checks that the baseRedirectUrl is unchanged and ends with a '/'
-	t.true(config.baseRedirectUrl.endsWith('/'), 'baseRedirectUrl ends with "/"')
-	t.true(
-		baseRedirectUrl === config.baseRedirectUrl || baseRedirectUrl + '/' === config.baseRedirectUrl,
-		'baseRedirectUrl is unchanged except for the trailing slash',
-	)
+	expect(config.baseRedirectUrl.endsWith('/')).toBe(true)
+	expect(baseRedirectUrl === config.baseRedirectUrl || baseRedirectUrl + '/' === config.baseRedirectUrl).toBe(true)
 
-	t.like(config, {
+	expect(config).toEqual({
 		port,
 		logLevel,
 		apiPrefix,

@@ -1,4 +1,6 @@
-export default {
+import type { Config } from '@jest/types'
+
+const config: Config.InitialOptions = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	moduleNameMapper: {
@@ -6,8 +8,10 @@ export default {
 	},
 	coverageDirectory: 'coverage',
 	coverageProvider: 'v8',
-	// coverageReporters: ['lcov'],
+	collectCoverageFrom: ['src/**/*'],
 	clearMocks: false,
-	roots: ['src/test'],
+	roots: ['src'],
 	timers: 'real',
 }
+
+export default config
