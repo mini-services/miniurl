@@ -23,14 +23,11 @@ export interface RawConfig {
 			}
 		}
 		redisDriverConfig: {
-			connection: {
-				port: string
-				host: string
-				username: string
-				password: string
-				connectTimeout: string
-				reconnectOnError: string
-			}
+			port: string
+			host: string
+			username: string
+			password: string
+			connectTimeout: string
 		}
 	}
 	auth: {
@@ -43,6 +40,13 @@ export interface RawConfig {
 
 export interface Config {
 	port: string
+	// redisDriverConfig: {
+	// 	port: number
+	// 	host: string
+	// 	username: string
+	// 	password: string
+	// 	connectTimeout: number
+	// }
 	logLevel: string
 	apiPrefix: string
 	appName: string

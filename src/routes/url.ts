@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
-import { NotFoundError } from '../errors/notFound.js'
+import { NotFoundError } from '../errors/errors.js'
 import { validateUrl } from '../services/urlValidator.js'
 import { UrlRequestData } from '../services/storage/types/url'
 

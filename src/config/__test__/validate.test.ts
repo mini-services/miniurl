@@ -1,6 +1,6 @@
 import { validateConfig } from '../validate.js'
 import test from 'ava'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError } from '../../errors/errors.js'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { AuthDriverName } from '../../services/auth/types/config.js'
 import { logger } from '../../services/logger/logger.js'
@@ -54,7 +54,7 @@ test('validateStorageDriver properly validates storage config', (t) => {
 	config.storage.relationalDriverConfig.client = ''
 	t.throws(
 		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
+		{instanceOf: InvalidConfigError},
 		`Throws when storage.relationalDriverConfig.client is empty`,
 	)
 	config.storage.relationalDriverConfig.client = originalClientValue
@@ -68,68 +68,101 @@ test('validateStorageDriver properly validates storage config', (t) => {
 
 		t.throws(
 			() => validateConfig(config),
-			{ instanceOf: InvalidConfigError },
+			{instanceOf: InvalidConfigError},
 			`Throws when storage.relationalDriverConfig.connection.${key} is empty`,
 		)
 
 		config.storage.relationalDriverConfig.connection[key] = originalValue
 	})
-})
+	//Test Redis storage driver
+	;(Object.keys(
+		config.storage.redisDriverConfig,
+	) as (keyof typeof config['storage']['redisDriverConfig'])[]).filter(prop => prop != 'username' && prop != 'password').forEach((key) => {
+		let originalValue = config.storage.redisDriverConfig[key]
+		config.storage.redisDriverConfig[key] = ''
 
-test('validateAuthDriver properly validates auth config', (t) => {
-	const config = getRawConfig()
-	const authDriverOptions = Object.values(AuthDriverName)
+		t.throws(
+			() => validateConfig(config),
+			{instanceOf: InvalidConfigError},
+			`Throws when storage.redisDriverConfig.${key} is empty`,
+		)
 
-	// Tests the driver types
-	authDriverOptions.forEach((authDriverName) => {
-		config.auth.driverName = authDriverName
-		t.true(validateConfig(config), `Accepts the ${authDriverName} driver`)
+		config.storage.redisDriverConfig[key] = originalValue
+		//missing username or password
+		originalValue = config.storage.redisDriverConfig.username
+		config.storage.redisDriverConfig.username = '';
+		config.storage.redisDriverConfig.password = '1234'
+		t.throws(
+			() => validateConfig(config),
+			{instanceOf: InvalidConfigError},
+			`Throws when password was provide however storage.redisDriverConfig.username is empty`,
+		)
+		config.storage.redisDriverConfig.username = originalValue
+		originalValue = config.storage.redisDriverConfig.password
+		config.storage.redisDriverConfig.password = ''
+		t.throws(
+			() => validateConfig(config),
+			{instanceOf: InvalidConfigError},
+			`Throws when username was provide however storage.redisDriverConfig.password is empty`,
+		)
+		config.storage.redisDriverConfig.password = originalValue;
 	})
 
-	// Tests the bearerToken driver config
-	config.auth.bearerTokenDriverConfig.token = ''
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when auth.bearerTokenDriverConfig.token is empty`,
-	)
-})
+	test('validateAuthDriver properly validates auth config', (t) => {
+		const config = getRawConfig()
+		const authDriverOptions = Object.values(AuthDriverName)
 
-test('validateUrlLifetime', (t) => {
-	const config = getRawConfig()
+		// Tests the driver types
+		authDriverOptions.forEach((authDriverName) => {
+			config.auth.driverName = authDriverName
+			t.true(validateConfig(config), `Accepts the ${authDriverName} driver`)
+		})
 
-	config.url.lifetime = ''
-	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when url.lifetime is empty`)
+		// Tests the bearerToken driver config
+		config.auth.bearerTokenDriverConfig.token = ''
+		t.throws(
+			() => validateConfig(config),
+			{instanceOf: InvalidConfigError},
+			`Throws when auth.bearerTokenDriverConfig.token is empty`,
+		)
+	})
 
-	config.url.lifetime = 'nothing'
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when url.lifetime is not a valid ms time`,
-	)
+	test('validateUrlLifetime', (t) => {
+		const config = getRawConfig()
 
-	config.url.lifetime = '-7 minutes'
-	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when url.lifetime is negative`)
+		config.url.lifetime = ''
+		t.throws(() => validateConfig(config), {instanceOf: InvalidConfigError}, `Throws when url.lifetime is empty`)
 
-	config.url.lifetime = '7 days'
-	t.true(validateConfig(config), `Accepts a valid ms time`)
-})
+		config.url.lifetime = 'nothing'
+		t.throws(
+			() => validateConfig(config),
+			{instanceOf: InvalidConfigError},
+			`Throws when url.lifetime is not a valid ms time`,
+		)
 
-test('validateLogLevel', (t) => {
-	const config = getRawConfig()
+		config.url.lifetime = '-7 minutes'
+		t.throws(() => validateConfig(config), {instanceOf: InvalidConfigError}, `Throws when url.lifetime is negative`)
 
-	config.logLevel = ''
-	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when logLevel is empty`)
+		config.url.lifetime = '7 days'
+		t.true(validateConfig(config), `Accepts a valid ms time`)
+	})
 
-	config.logLevel = 'not-valid'
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when logLevel is not a valid log level`,
-	)
+	test('validateLogLevel', (t) => {
+		const config = getRawConfig()
 
-	Object.keys(logger.levels.values).forEach((logLevel) => {
-		config.logLevel = logLevel
-		t.true(validateConfig(config), `Accepts all valid log levels`)
+		config.logLevel = ''
+		t.throws(() => validateConfig(config), {instanceOf: InvalidConfigError}, `Throws when logLevel is empty`)
+
+		config.logLevel = 'not-valid'
+		t.throws(
+			() => validateConfig(config),
+			{instanceOf: InvalidConfigError},
+			`Throws when logLevel is not a valid log level`,
+		)
+
+		Object.keys(logger.levels.values).forEach((logLevel) => {
+			config.logLevel = logLevel
+			t.true(validateConfig(config), `Accepts all valid log levels`)
+		})
 	})
 })

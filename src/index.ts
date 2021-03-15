@@ -1,10 +1,11 @@
 import fastifyConstructor from 'fastify'
-import { config } from './config/index.js'
-import { routes } from './routes/index.js'
-import { Storage } from './services/storage/index.js'
-import { logger } from './services/logger/logger.js'
-import { Auth } from './services/auth/index.js'
-import { runWithGracefulShutdown } from './helpers/runWithGracefulShutdown.js'
+import {config} from './config/index.js'
+import {routes} from './routes/index.js'
+import {Storage} from './services/storage/index.js'
+import {logger} from './services/logger/logger.js'
+import {Auth} from './services/auth/index.js'
+import {runWithGracefulShutdown} from './helpers/runWithGracefulShutdown.js'
+import {StorageDriverName} from "./services/storage/types/config";
 
 declare module 'fastify' {
 	interface FastifyInstance {

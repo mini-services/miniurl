@@ -1,7 +1,7 @@
 import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
-import { NotFoundError } from '../../../../errors/notFound.js'
+import { NotFoundError } from '../../../../errors/errors.js'
 import type { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'

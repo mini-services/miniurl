@@ -23,14 +23,11 @@ export function getRawConfig(): RawConfig {
 				},
 			},
 			redisDriverConfig: {
-				connection: {
-					port: '6379',
-					host: 'localhost',
-					username: '',
-					password: '',
-					connectTimeout: '10000',
-					reconnectOnError: '',
-				},
+				port: '6379',
+				host: 'runRemotely',
+				username: 're-this',
+				password: 're-that',
+				connectTimeout: '10000',
 			},
 		},
 		auth: {

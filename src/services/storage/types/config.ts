@@ -1,6 +1,6 @@
 import type { InMemoryStorageDriverConfig } from '../drivers/inMemory/types'
 import type { RelationalStorageDriverConfig } from '../drivers/relational/types'
-import { RedisStorageDriverConfig } from '../drivers/redis/types'
+import type { RedisStorageDriverConfig } from '../drivers/redis/types'
 
 export enum StorageDriverName {
 	InMemory = 'InMemory',

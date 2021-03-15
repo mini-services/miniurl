@@ -3,11 +3,11 @@ import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
-import { GeneralError } from '../../errors/generalError.js'
-import { RedisStorage } from './drivers/redis/index.js'
+import { generalError } from '../../errors/errors.js'
+import { RedisStorage } from './drivers/redis/index.js';
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -56,7 +56,7 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.get(id, options)
 			} catch (err) {
 				logger.error(`Storage.url.get failed: ${err}`)
-				throw new GeneralError('Could not get url')
+				throw new generalError('Could not get url')
 			}
 		}
 
@@ -66,7 +66,7 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.delete(id)
 			} catch (err) {
 				logger.error(`Storage.url.delete failed: ${err}`)
-				throw new GeneralError('Could not delete url')
+				throw new generalError('Could not delete url')
 			}
 		}
 
@@ -76,7 +76,7 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.deleteOverdue(timespanMs)
 			} catch (err) {
 				logger.error(`Storage.url.deleteOverdue failed: ${err}`)
-				throw GeneralError('Could not delete overdue urls')
+				throw generalError('Could not delete overdue urls')
 			}
 		}
 
@@ -86,7 +86,7 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.edit(id, url)
 			} catch (err) {
 				logger.error(`Storage.url.edit failed: ${err}`)
-				throw new GeneralError('Could not edit url')
+				throw new generalError('Could not edit url')
 			}
 		}
 
@@ -96,7 +96,7 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)
-				throw new GeneralError('Could not save url')
+				throw new generalError('Could not save url')
 			}
 		}
 
@@ -106,7 +106,7 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.incVisitCount(id)
 			} catch (err) {
 				logger.error(`Storage.url.incVisitCount failed: ${err}`)
-				throw new GeneralError(`Could not increase visit count for url ${id}`)
+				throw new generalError(`Could not increase visit count for url ${id}`)
 			}
 		}
 
@@ -116,7 +116,7 @@ export class Storage implements StorageDriver {
 				return this.driver.url.incInfoCount(id)
 			} catch (err) {
 				logger.error(`Storage.url.incInfoCount failed: ${err}`)
-				throw new GeneralError(`Could not increase info count for url ${id}`)
+				throw new generalError(`Could not increase info count for url ${id}`)
 			}
 		}
 	})(this)

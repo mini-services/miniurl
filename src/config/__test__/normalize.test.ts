@@ -3,6 +3,8 @@ import ms from 'ms'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { normalizeConfig } from '../normalize.js'
 import { getRawConfig } from './helpers.js'
+import isNumberObject = module
+import module from "module"
 
 test('Happy flow', (t) => {
 	const rawConfig = getRawConfig()
@@ -16,9 +18,16 @@ test('Happy flow', (t) => {
 		baseRedirectUrl === config.baseRedirectUrl || baseRedirectUrl + '/' === config.baseRedirectUrl,
 		'baseRedirectUrl is unchanged except for the trailing slash',
 	)
+	t.true(
+		+storage.redisDriverConfig.port === config.redisDriverConfig.port &&
+			+storage.redisDriverConfig.connectTimeout === config.redisDriverConfig.connectTimeout,
+		'port and connectTimeout values changed from string to number',
+	)
 
+	const redisConfig = config.redisDriverConfig
 	t.like(config, {
 		port,
+		redisConfig,
 		logLevel,
 		apiPrefix,
 		appName,
@@ -30,7 +39,12 @@ test('Happy flow', (t) => {
 		},
 		storage: {
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig:
+				storage.driverName === StorageDriverName.Relational
+					? storage.relationalDriverConfig
+					: storage.driverName === StorageDriverName.Redis
+					? storage.redisDriverConfig
+					: {},
 		},
 		auth: {
 			driverName: auth.driverName,
