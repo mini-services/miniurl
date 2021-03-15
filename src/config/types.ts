@@ -25,8 +25,8 @@ export interface RawConfig {
 		redisDriverConfig: {
 			port: string
 			host: string
-			username: string
-			password: string
+			username?: string
+			password?: string
 			connectTimeout: string
 		}
 	}
@@ -40,14 +40,14 @@ export interface RawConfig {
 
 export interface Config {
 	port: string
-	// redisDriverConfig: {
-	// 	port: number
-	// 	host: string
-	// 	username: string
-	// 	password: string
-	// 	connectTimeout: number
-	// }
 	logLevel: string
+	redisDriverConfig:{
+		port: number
+		host: string
+		username?: string
+		password?: string
+		connectTimeout: number
+}
 	apiPrefix: string
 	appName: string
 	url: {

@@ -84,7 +84,7 @@ export class RedisStorage implements StorageDriver {
 			if (!url || !ip) throw new OperationFailed('Must provide an ip & url')
 
 			const storedUrlWithInfo: UrlWithInformation = {
-				id: 'short-url:' + cryptoRandomString({ length: 6, type: 'url-safe' }),
+				id: 'miniurl:' + cryptoRandomString({ length: 6, type: 'url-safe' }),
 				url: 'url:' + url,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),

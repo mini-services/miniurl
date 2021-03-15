@@ -42,7 +42,7 @@ export function normalizeConfig({
 			: {}
 	return {
 		port,
-		//redisDriverConfig,
+		redisDriverConfig,
 		logLevel,
 		apiPrefix,
 		appName,

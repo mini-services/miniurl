@@ -1,6 +1,6 @@
 import test from 'ava'
 import ms from 'ms'
-import { StorageDriverName } from '../../services/storage/types/config.js'
+import {RedisStorageConfig, StorageDriverName} from '../../services/storage/types/config.js'
 import { normalizeConfig } from '../normalize.js'
 import { getRawConfig } from './helpers.js'
 import isNumberObject = module
@@ -24,10 +24,8 @@ test('Happy flow', (t) => {
 		'port and connectTimeout values changed from string to number',
 	)
 
-	const redisConfig = config.redisDriverConfig
 	t.like(config, {
 		port,
-		redisConfig,
 		logLevel,
 		apiPrefix,
 		appName,
