@@ -5,7 +5,7 @@ import {Storage} from './services/storage/index.js'
 import {logger} from './services/logger/logger.js'
 import {Auth} from './services/auth/index.js'
 import {runWithGracefulShutdown} from './helpers/runWithGracefulShutdown.js'
-import {StorageDriverName} from "./services/storage/types/config";
+import {StorageConfig, StorageDriverName} from "./services/storage/types/config";
 
 declare module 'fastify' {
 	interface FastifyInstance {
@@ -37,7 +37,7 @@ const storage = new Storage({
 	appName: config.appName,
 	driverName: config.storage.driverName,
 	driverConfig: config.storage.driverConfig,
-})
+} as StorageConfig)   //FIXME: possible bug. bypassing a problem by adding 'as'
 await storage.initialize()
 fastify.decorate('storage', storage)
 
