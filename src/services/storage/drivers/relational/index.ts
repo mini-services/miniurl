@@ -9,6 +9,7 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
+import { GeneralError } from '../../../../errors/generalError.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -63,7 +64,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
 	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) {}
+		constructor(public storage: RelationalStorage) { }
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
@@ -121,7 +122,17 @@ export class RelationalStorage implements StorageDriver {
 			}
 
 			if (!url) throw NotFoundError()
-			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
+
+			let storedUrl: StoredUrl;
+			try {
+				[storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
+			} catch (e) {
+				if (e.code === "23505")
+					throw new GeneralError("The specific id you chose is already in use")
+				else
+					throw new GeneralError()
+			}
+
 			await this.storage.db
 				.table<UrlInformation & { urlId: string }>('url_information')
 				.insert({ urlId: storedUrl.id, ...urlInfo })
