@@ -1,4 +1,4 @@
-name: MiniUrl
+name: Test_MiniUrl
 on:
   push:
     branches-ignore:
