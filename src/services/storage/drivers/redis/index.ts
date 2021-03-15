@@ -5,7 +5,7 @@ import IORedis from 'ioredis'
 import cryptoRandomString from 'crypto-random-string'
 import { OperationFailed } from '../../../../errors/errors.js'
 import { NotFoundError } from '../../../../errors/errors.js'
-import {urlLifeTime} from "./types.js";
+import {redisConf, urlLifeTime} from "./types.js";
 
 export class RedisStorage implements StorageDriver {
 	private readonly _client: IORedis.Redis
@@ -14,7 +14,7 @@ export class RedisStorage implements StorageDriver {
 	}
 
 	constructor(_config: RedisStorageConfig) {
-		this._client = new IORedis(_config.driverConfig)
+		this._client = new IORedis(redisConf)
 	}
 
 	initialize(): Promise<void> {
