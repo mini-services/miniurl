@@ -75,6 +75,7 @@ test('validateStorageDriver properly validates storage config', (t) => {
 		config.storage.relationalDriverConfig.connection[key] = originalValue
 	})
 	//Test Redis storage driver
+	config.storage.driverName = StorageDriverName.Redis
 	;(Object.keys(
 		config.storage.redisDriverConfig,
 	) as (keyof typeof config['storage']['redisDriverConfig'])[]).filter(prop => prop != 'username' && prop != 'password').forEach((key) => {

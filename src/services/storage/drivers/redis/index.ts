@@ -5,7 +5,7 @@ import IORedis from 'ioredis'
 import cryptoRandomString from 'crypto-random-string'
 import { OperationFailed } from '../../../../errors/errors.js'
 import { NotFoundError } from '../../../../errors/errors.js'
-import {redisConf, urlLifeTime} from "./types.js";
+import { urlLifeTime } from './types.js'
 
 export class RedisStorage implements StorageDriver {
 	private readonly _client: IORedis.Redis
@@ -13,8 +13,8 @@ export class RedisStorage implements StorageDriver {
 		return this._client
 	}
 
-	constructor(_config: RedisStorageConfig) {
-		this._client = new IORedis(redisConf)
+	constructor(private config: RedisStorageConfig) {
+		this._client = new IORedis(config.driverConfig)
 	}
 
 	initialize(): Promise<void> {
@@ -30,9 +30,7 @@ export class RedisStorage implements StorageDriver {
 		}
 
 		public async delete(id: string): Promise<void | number> {
-			return this.storage.client.del(id, (err) => {
-				throw err
-			})
+			return this.storage.client.del(id)
 		}
 
 		deleteOverdue(timespanMs: number): Promise<number> {
@@ -44,40 +42,30 @@ export class RedisStorage implements StorageDriver {
 			dbUrl.updatedAt = new Date().toISOString()
 			dbUrl.url = url
 			//TODO: set ttl according to config flag
-			await this.storage.client.setex(dbUrl.id, urlLifeTime / 1000, JSON.stringify(dbUrl), (err) => {
-				throw err
-			})
+			await this.storage.client.setex(dbUrl.id, urlLifeTime / 1000, JSON.stringify(dbUrl))
 			return dbUrl
 		}
 		async incInfoCount(id: string): Promise<void> {
 			if (!id) throw new OperationFailed('Must provide an id')
 
-			const urlFromDb: UrlWithInformation = <UrlWithInformation>(
-				await this.fetchUrlInfoFromDB(id, true)
-			)
+			const urlFromDb: UrlWithInformation = <UrlWithInformation>await this.fetchUrlInfoFromDB(id, true)
 
 			urlFromDb.updatedAt = new Date().toISOString()
 			urlFromDb.infoVisitCount = ++urlFromDb.infoVisitCount
 
 			const ttl = await this.storage.client.ttl(id)
-			await this.storage.client.setex(id, ttl, JSON.stringify(urlFromDb), (err) => {
-				throw err
-			})
+			await this.storage.client.setex(id, ttl, JSON.stringify(urlFromDb))
 		}
 
 		async incVisitCount(id: string): Promise<void> {
 			if (!id) throw new OperationFailed('Must provide an id')
 
-			const urlFromDb: UrlWithInformation = <UrlWithInformation>(
-				await this.fetchUrlInfoFromDB(id, true)
-			)
+			const urlFromDb: UrlWithInformation = <UrlWithInformation>await this.fetchUrlInfoFromDB(id, true)
 			urlFromDb.updatedAt = new Date().toISOString()
 			urlFromDb.urlVisitCount = ++urlFromDb.urlVisitCount
 
 			const ttl = await this.storage.client.ttl(id)
-			await this.storage.client.setex(id, ttl, JSON.stringify(urlFromDb), (err) => {
-				throw err
-			})
+			await this.storage.client.setex(id, ttl, JSON.stringify(urlFromDb))
 		}
 
 		async save({ ip, url }: UrlRequestData): Promise<StoredUrl> {
@@ -97,9 +85,6 @@ export class RedisStorage implements StorageDriver {
 				storedUrlWithInfo.id,
 				urlLifeTime / 1000, //TODO: set ttl according to config flag
 				JSON.stringify(storedUrlWithInfo),
-				(err) => {
-					throw err
-				},
 			)
 
 			return storedUrlWithInfo

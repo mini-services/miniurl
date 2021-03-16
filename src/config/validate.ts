@@ -39,8 +39,8 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 	}
 
 	if (storage.driverName === StorageDriverName.Redis) {
-		const {port, host, username, password, connectTimeout} = storage.redisDriverConfig
-		if (!(port || host)) {
+		const { port, host, username, password, connectTimeout } = storage.redisDriverConfig
+		if (!port || !host) {
 			throw new InvalidConfigError(
 				'When using Redis driver you must specify REDIS_STORAGE_HOST,REDIS_STORAGE_PORT',
 			)
