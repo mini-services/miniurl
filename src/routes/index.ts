@@ -11,6 +11,6 @@ export const routes: FastifyPluginAsync = async function (fastify) {
 			await fastifyInstance.register(urlRoutes)
 			await fastifyInstance.register(adminRoutes)
 		},
-		{ prefix: fastify.config.appName },
+		{ prefix: fastify.config.apiPrefix },
 	)
 }

@@ -27,14 +27,17 @@ spec:
           env:
             - name: BASE_REDIRECT_URL
               value: {{ required "baseRedirectUrl is required" .Values.baseRedirectUrl }}
+            - name: API_PREFIX
+              value: {{ (required "apiPrefix is required" .Values.apiPrefix) | quote }}
             - name: URL_MATCH_PATTERN
               value: {{ .Values.url.matchPattern | quote }}
             - name: URL_LIFETIME
               value: {{ .Values.url.lifetime }}
-            - name: STORAGE_DRIVER
-              value: {{ required "baseRedirectUrl is required" .Values.storage.driver }}
             - name: PORT
               value: {{ .Values.port | default 80 | quote }}
+            # Storage driver
+            - name: STORAGE_DRIVER
+              value: {{ required "storage.driver is required" .Values.storage.driver }}
             {{ if eq .Values.storage.driver "Relational" }}
             - name: RELATIONAL_STORAGE_CLIENT
               value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.client }}
@@ -49,6 +52,16 @@ spec:
                   key: {{ .Values.storage.deploy | ternary "postgresql-password" "password" }}
             - name: RELATIONAL_STORAGE_DATABASE
               value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.database }}
+            {{ end }}
+            # Auth driver
+            - name: AUTH_DRIVER
+              value: {{ required "auth.driver is required" .Values.auth.driver }}
+            {{ if eq .Values.auth.driver "BearerToken" }}
+            - name: AUTH_BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "miniurl.appName" . }}-auth-secret
+                  key: token
             {{ end }}
           livenessProbe:
             httpGet:

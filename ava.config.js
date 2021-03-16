@@ -3,8 +3,7 @@ export default {
 	files: ['**/*.test.[jt]s'],
 	require: ['ts-node/register'],
 	timeout: '1m',
-	faileFast: true,
-	extensions: ['ts', 'js'],
+	failFast: true,
 	nodeArguments: [
 		"--loader=ts-node/esm",
 		"--experimental-specifier-resolution=node"

@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
 import { NotFoundError } from '../errors/notFound.js'
 import { validateUrl } from '../services/urlValidator.js'
+import { UrlRequestData } from '../services/storage/types/url'
 
 /* Save URL to store and return the new shortened url */
 const saveUrl: Route<{ Body: { url: string } }> = {
@@ -18,14 +19,16 @@ const saveUrl: Route<{ Body: { url: string } }> = {
 	},
 	async handler(request) {
 		await validateUrl(request.body.url)
-		const url = await this.storage.url.save(request.body.url)
+
+		const urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
+		const url = await this.storage.url.save(urlRequestData)
 
 		return `${this.config.baseRedirectUrl}${url.id}`
 	},
 }
 
 /* Retrieve URL from store by id */
-const retrieveUrl: Route<{ Params: { id: string }; Querystring: { redirect?: string } }> = {
+const retrieveUrl: Route<{ Params: { id: string } }> = {
 	method: 'GET',
 	url: '/url/:id',
 	schema: {
@@ -40,17 +43,20 @@ const retrieveUrl: Route<{ Params: { id: string }; Querystring: { redirect?: str
 		},
 	},
 	attachValidation: true,
-	async handler(request, reply) {
+	async handler(request) {
 		if (request.validationError) throw new NotFoundError()
 
-		const url = await this.storage.url.get(request.params.id)
-		if (typeof url === 'undefined') throw new NotFoundError()
+		const withInfo = await this.auth.isAuthorized(request)
+		const storedUrl = await this.storage.url.get(request.params.id, { withInfo })
+		if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-		const falseStrings = ['false', '0']
-		const redirect = request.query.redirect
-		if (typeof redirect !== 'undefined' && !falseStrings.includes(redirect)) return reply.redirect(url.url)
+		try {
+			await this.storage.url.incInfoCount(request.params.id)
+		} catch (e) {
+			this.log.warn('incInfoCount failed in retrieveUrl endpoint')
+		}
 
-		return url
+		return storedUrl
 	},
 }
 

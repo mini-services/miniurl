@@ -1,6 +1,7 @@
 image: miniservices/miniurl:v0.1.60
 imagePullPolicy: Always
 port: 80
+apiPrefix: /miniurl
 baseRedirectUrl:
 url:
   matchPattern: '**'
@@ -23,3 +24,9 @@ storage:
     user:
     secrets:
       password:
+auth:
+  # BearerToken
+  driver: BearerToken
+  bearerTokenConfig:
+    # A random token will be generated if this stays empty
+    token:
