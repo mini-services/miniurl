@@ -10,6 +10,7 @@ export function getRawConfig(): RawConfig {
 		url: {
 			matchPattern: 'mock-patter',
 			lifetime: '120',
+			urlExpireFrom: 'create'
 		},
 		storage: {
 			driverName: 'InMemory',

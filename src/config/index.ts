@@ -16,7 +16,7 @@ const rawConfig: RawConfig = {
 	url: {
 		matchPattern: process.env.URL_MATCH_PATTERN || '**',
 		lifetime: process.env.URL_LIFETIME || '7 days',
-		urlExpireFrom: process.env.URL_EXPIRE_FROM || 'creationTime',
+		urlExpireFrom: process.env.URL_EXPIRE_FROM || 'create',
 	},
 	storage: {
 		driverName: process.env.STORAGE_DRIVER || '',

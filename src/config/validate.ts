@@ -11,6 +11,7 @@ export function validateConfig(rawConfig: RawConfig): boolean {
 	validateStorageDriver(rawConfig.storage)
 	validateAuthDriver(rawConfig.auth)
 	validateUrlLifetime(rawConfig.url.lifetime)
+	validateUrlExpireFrom(rawConfig.url.urlExpireFrom)
 	validateLogLevel(rawConfig.logLevel)
 
 	return true
@@ -98,6 +99,13 @@ function validateUrlLifetime(urlLifetime: string): void {
 	logger.debug(`Start validateUrlLifetime with ${urlLifetime}`)
 	if (!urlLifetime || !ms(urlLifetime) || ms(urlLifetime) <= 0) {
 		throw new InvalidConfigError(`URL_LIFETIME specified is invalid (received ${urlLifetime})`)
+	}
+}
+
+function validateUrlExpireFrom(urlExpire: string): void {
+	logger.debug(`Start validateUrlExpireFrom with ${urlExpire}`)
+	if (!urlExpire || (urlExpire != 'create' && urlExpire != 'update')) {
+		throw new InvalidConfigError(`URL_EXPIRE_FROM specified is invalid (received ${urlExpire})`)
 	}
 }
 
