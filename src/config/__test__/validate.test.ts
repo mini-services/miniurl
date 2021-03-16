@@ -108,6 +108,7 @@ test('validateStorageDriver properly validates storage config', (t) => {
 		)
 		config.storage.redisDriverConfig.password = originalValue;
 	})
+})
 
 	test('validateAuthDriver properly validates auth config', (t) => {
 		const config = getRawConfig()
@@ -165,5 +166,5 @@ test('validateStorageDriver properly validates storage config', (t) => {
 			config.logLevel = logLevel
 			t.true(validateConfig(config), `Accepts all valid log levels`)
 		})
-	})
+
 })
