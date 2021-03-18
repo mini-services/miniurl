@@ -127,6 +127,7 @@ Query
 
 -   `id: string` (required) - The saved url's id
 
+**Optional:** bearer token for extensive url information.
 #### Response
 
 Body (json)
@@ -135,6 +136,67 @@ Body (json)
 -   `url: string` - The saved url
 -   `createdAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the creation time
 -   `updatedAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the last updated time
+
+### PUT /miniurl/url/:id
+
+Update the URL and retrieve its information
+
+#### Request
+
+Body (json)
+
+-   `url: string` (required) - The updated url
+
+Query
+
+-   `id: string` (required) - The saved shorten url's id
+
+#### Response
+
+Body (json)
+
+-   `id: string` - The url's id
+-   `url: string` - The **updated** url
+-   `createdAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the creation time
+-   `updatedAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the last updated time
+
+### GET /miniurl/url/:id
+
+Retrieves a saved url with its information.
+
+#### Request
+
+Query
+
+-   `id: string` (required) - The saved url's id
+
+**Optional:** bearer token for extensive url information.
+#### Response
+
+Body (json)
+
+-   `id: string` - The url's id
+-   `url: string` - The saved url
+-   `createdAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the creation time
+-   `updatedAt: string` - an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date indicating the last updated time
+
+### DELETE /miniurl/url/:id
+
+Delete url with its information.
+
+#### Request
+**Required:** auth bearer token.
+
+Query
+
+-   `id: string` (required) - The saved url's id
+
+
+#### Response
+
+Header
+
+-   `status:200` - operation success
 
 ### GET **<BASE_REDIRECT_URL>**/:id
 

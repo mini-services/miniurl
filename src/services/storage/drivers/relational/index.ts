@@ -101,7 +101,7 @@ export class RelationalStorage implements StorageDriver {
 		public async edit(id: string, url: string): Promise<StoredUrl> {
 			const [storedUrl] = await this.storage.db
 				.table<StoredUrl>('urls')
-				.update({ url })
+				.update({ url, updatedAt: new Date().toISOString() })
 				.where('id', id)
 				.returning('*')
 
