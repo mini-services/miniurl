@@ -83,7 +83,7 @@ export class RelationalStorage implements StorageDriver {
 					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
 			}
-			if (!storedUrl) throw NotFoundError()
+			if (!storedUrl && !urlInfo) throw NotFoundError()
 			return options.withInfo ? urlInfo : storedUrl
 		}
 
