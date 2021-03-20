@@ -1,12 +1,11 @@
 import { validateConfig } from '../validate.js'
-import test from 'ava'
 import { InvalidConfigError } from '../../errors/invalidConfig.js'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { AuthDriverName } from '../../services/auth/types/config.js'
 import { logger } from '../../services/logger/logger.js'
 import { getRawConfig } from './helpers.js'
 
-test('validateBaseRedirectUrl properly validates baseRedirectUrl', (t) => {
+test('validateBaseRedirectUrl properly validates baseRedirectUrl', () => {
 	const config = getRawConfig()
 	const invalidUrls = [
 		{ url: '', message: 'Throws when the baseRedirectUrl does not exist' },
@@ -18,9 +17,9 @@ test('validateBaseRedirectUrl properly validates baseRedirectUrl', (t) => {
 			message: 'Throws when the baseRedirectUrl includes a reserved path',
 		},
 	]
-	invalidUrls.forEach(({ url, message }) => {
+	invalidUrls.forEach(({ url }) => {
 		config.baseRedirectUrl = url
-		t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, message)
+		expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 	})
 
 	const validUrls = [
@@ -30,20 +29,20 @@ test('validateBaseRedirectUrl properly validates baseRedirectUrl', (t) => {
 		{ url: 'http://mock.com/u/', message: 'Works with a path' },
 	]
 
-	validUrls.forEach(({ url, message }) => {
+	validUrls.forEach(({ url }) => {
 		config.baseRedirectUrl = url
-		t.true(validateConfig(config), message)
+		expect(validateConfig(config)).toBe(true)
 	})
 })
 
-test('validateStorageDriver properly validates storage config', (t) => {
+test('validateStorageDriver properly validates storage config', () => {
 	const config = getRawConfig()
 	const storageDriverOptions = Object.values(StorageDriverName)
 
 	// Tests the driver types
 	storageDriverOptions.forEach((storageDriverName) => {
 		config.storage.driverName = storageDriverName
-		t.true(validateConfig(config), `Accepts the ${storageDriverName} driver`)
+		expect(validateConfig(config)).toBe(true)
 	})
 
 	// Tests the relational driver config
@@ -52,11 +51,7 @@ test('validateStorageDriver properly validates storage config', (t) => {
 	// storage.relationalDriverConfig.client
 	const originalClientValue = config.storage.relationalDriverConfig.client
 	config.storage.relationalDriverConfig.client = ''
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when storage.relationalDriverConfig.client is empty`,
-	)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 	config.storage.relationalDriverConfig.client = originalClientValue
 
 	// storage.relationalDriverConfig.connection
@@ -66,70 +61,54 @@ test('validateStorageDriver properly validates storage config', (t) => {
 		const originalValue = config.storage.relationalDriverConfig.connection[key]
 		config.storage.relationalDriverConfig.connection[key] = ''
 
-		t.throws(
-			() => validateConfig(config),
-			{ instanceOf: InvalidConfigError },
-			`Throws when storage.relationalDriverConfig.connection.${key} is empty`,
-		)
+		expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
 		config.storage.relationalDriverConfig.connection[key] = originalValue
 	})
 })
 
-test('validateAuthDriver properly validates auth config', (t) => {
+test('validateAuthDriver properly validates auth config', () => {
 	const config = getRawConfig()
 	const authDriverOptions = Object.values(AuthDriverName)
 
 	// Tests the driver types
 	authDriverOptions.forEach((authDriverName) => {
 		config.auth.driverName = authDriverName
-		t.true(validateConfig(config), `Accepts the ${authDriverName} driver`)
+		expect(validateConfig(config)).toBe(true)
 	})
 
 	// Tests the bearerToken driver config
 	config.auth.bearerTokenDriverConfig.token = ''
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when auth.bearerTokenDriverConfig.token is empty`,
-	)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 })
 
-test('validateUrlLifetime', (t) => {
+test('validateUrlLifetime', () => {
 	const config = getRawConfig()
 
 	config.url.lifetime = ''
-	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when url.lifetime is empty`)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
 	config.url.lifetime = 'nothing'
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when url.lifetime is not a valid ms time`,
-	)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
 	config.url.lifetime = '-7 minutes'
-	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when url.lifetime is negative`)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
 	config.url.lifetime = '7 days'
-	t.true(validateConfig(config), `Accepts a valid ms time`)
+	expect(validateConfig(config)).toBe(true)
 })
 
-test('validateLogLevel', (t) => {
+test('validateLogLevel', () => {
 	const config = getRawConfig()
 
 	config.logLevel = ''
-	t.throws(() => validateConfig(config), { instanceOf: InvalidConfigError }, `Throws when logLevel is empty`)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
 	config.logLevel = 'not-valid'
-	t.throws(
-		() => validateConfig(config),
-		{ instanceOf: InvalidConfigError },
-		`Throws when logLevel is not a valid log level`,
-	)
+	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
 	Object.keys(logger.levels.values).forEach((logLevel) => {
 		config.logLevel = logLevel
-		t.true(validateConfig(config), `Accepts all valid log levels`)
+		expect(validateConfig(config)).toBe(true)
 	})
 })

@@ -23,6 +23,7 @@ export interface UrlStorageDriver {
 
 export interface UrlRequestData {
 	url: string
+	id?: string
 	ip: string
 }
 

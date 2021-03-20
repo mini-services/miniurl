@@ -41,7 +41,7 @@ export class Storage implements StorageDriver {
 	}
 
 	url = new (class UrlStorage {
-		constructor(public storage: Storage) {}
+		constructor(public storage: Storage) { }
 
 		get driver() {
 			return this.storage._driver
@@ -88,7 +88,7 @@ export class Storage implements StorageDriver {
 
 		public async save(body: UrlRequestData): Promise<StoredUrl> {
 			try {
-				logger.debug(`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}`)
+				logger.debug(`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}${body.id && `, id: ${body.id}`}`)
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)
