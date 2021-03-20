@@ -9,7 +9,7 @@ const config: Config.InitialOptions = {
 	coverageDirectory: 'coverage',
 	coverageProvider: 'v8',
 	collectCoverageFrom: ['src/**/*'],
-	clearMocks: false,
+	clearMocks: true,
 	roots: ['src'],
 	timers: 'real',
 }
