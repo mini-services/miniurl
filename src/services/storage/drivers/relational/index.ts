@@ -9,6 +9,7 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
+import { GeneralError } from '../../../../errors/generalError.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -63,7 +64,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
 	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) {}
+		constructor(public storage: RelationalStorage) { }
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
@@ -91,6 +92,7 @@ export class RelationalStorage implements StorageDriver {
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
 		public async delete(id: string): Promise<void> {
 			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			return
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
@@ -109,17 +111,22 @@ export class RelationalStorage implements StorageDriver {
 			return storedUrl
 		}
 
-		public async save(urlBody: UrlRequestData): Promise<StoredUrl> {
-			const url = urlBody.url
+		public async save({ url, id = '', ip }: UrlRequestData): Promise<StoredUrl> {
 			const urlInfo: UrlInformation = {
-				ip: urlBody.ip,
+				ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
 			}
 
 			if (!url) throw NotFoundError()
-			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
+
+			if (id && await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()) {
+				throw new GeneralError("The specific id you chose is already in use")
+			}
+
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
+
 			await this.storage.db
 				.table<UrlInformation & { urlId: string }>('url_information')
 				.insert({ urlId: storedUrl.id, ...urlInfo })
