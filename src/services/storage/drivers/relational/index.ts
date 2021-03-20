@@ -42,6 +42,9 @@ export class RelationalStorage implements StorageDriver {
 	public async initialize(): Promise<void> {
 		await this.upMigrations()
 	}
+	public async shutdown(): Promise<void> {
+		return
+	}
 	private async upMigrations() {
 		// For new migrations, see the contribution guide's common issues section
 		await this.db.schema.createSchemaIfNotExists(this.config.appName)
