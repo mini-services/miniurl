@@ -86,7 +86,7 @@ export class RelationalStorage implements StorageDriver {
 					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
 			}
-			if (!storedUrl) throw NotFoundError()
+			if (!storedUrl && !urlInfo) throw NotFoundError()
 			return options.withInfo ? urlInfo : storedUrl
 		}
 
@@ -97,10 +97,8 @@ export class RelationalStorage implements StorageDriver {
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
-			// const deleteBefore = new Date(new Date().getTime() - timespanMs)
-			// return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
-			// TODO temporary fix
-			return 0
+			const deleteBefore = new Date(new Date().getTime() - timespanMs)
+			return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
 		}
 
 		public async edit(id: string, url: string): Promise<StoredUrl> {
