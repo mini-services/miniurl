@@ -5,7 +5,6 @@ import IORedis from 'ioredis'
 import cryptoRandomString from 'crypto-random-string'
 import { OperationFailed } from '../../../../errors/errors.js'
 import { NotFoundError } from '../../../../errors/errors.js'
-import { urlLifeTime } from './types.js'
 
 export class RedisStorage implements StorageDriver {
 	private readonly _client: IORedis.Redis
@@ -33,16 +32,17 @@ export class RedisStorage implements StorageDriver {
 			return this.storage.client.del(id)
 		}
 
-		deleteOverdue(timespanMs: number): Promise<number> {
-			//not in use since Redis has build-in mechanism to delete keys after period of time
-			return Promise.resolve(-1)
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		async deleteOverdue(timespanMs: number): Promise<number> {
+			// Not in use since Redis has build-in mechanism to delete keys after period of time
+			return -1
 		}
 		async edit(id: string, url: string): Promise<StoredUrl> {
 			const dbUrl: StoredUrl = await this.fetchUrlInfoFromDB(id, false)
 			dbUrl.updatedAt = new Date().toISOString()
 			dbUrl.url = url
 			//TODO: set ttl according to config flag
-			await this.storage.client.setex(dbUrl.id, urlLifeTime / 1000, JSON.stringify(dbUrl))
+			await this.storage.client.setex(dbUrl.id, this.storage.config.urllifetimeMs / 1000, JSON.stringify(dbUrl))
 			return dbUrl
 		}
 		async incInfoCount(id: string): Promise<void> {
@@ -83,7 +83,7 @@ export class RedisStorage implements StorageDriver {
 			}
 			await this.storage.client.setex(
 				storedUrlWithInfo.id,
-				urlLifeTime / 1000, //TODO: set ttl according to config flag
+				this.storage.config.urllifetimeMs / 1000, //TODO: set ttl according to config flag
 				JSON.stringify(storedUrlWithInfo),
 			)
 

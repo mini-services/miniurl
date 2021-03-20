@@ -10,6 +10,7 @@ export enum StorageDriverName {
 
 export interface BaseConfig {
 	appName: string
+	urllifetimeMs: number
 }
 
 export interface RelationalStorageConfig extends BaseConfig {

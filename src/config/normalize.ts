@@ -40,6 +40,8 @@ export function normalizeConfig({
 			: storage.driverName === StorageDriverName.Redis
 			? redisDriverConfig
 			: {}
+
+	const urllifetimeMs = ms(url.lifetime)
 	return {
 		port,
 		redisDriverConfig,
@@ -48,11 +50,13 @@ export function normalizeConfig({
 		appName,
 		baseRedirectUrl,
 		url: {
-			lifetimeMs: ms(url.lifetime),
+			lifetimeMs: urllifetimeMs,
 			matchPattern: url.matchPattern,
 			cleanupIntervalMs,
 		},
 		storage: {
+			appName,
+			urllifetimeMs,
 			driverName: storage.driverName as StorageDriverName,
 			driverConfig: storageDriverConfig,
 		},

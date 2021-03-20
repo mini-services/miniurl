@@ -32,11 +32,7 @@ const auth = new Auth(config.auth)
 fastify.decorate('auth', auth)
 
 // Storage
-const storage = new Storage({
-	appName: config.appName,
-	driverName: config.storage.driverName,
-	driverConfig: config.storage.driverConfig,
-})
+const storage = new Storage(config.storage)
 await storage.initialize()
 fastify.decorate('storage', storage)
 
