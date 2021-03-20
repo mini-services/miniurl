@@ -123,15 +123,11 @@ export class RelationalStorage implements StorageDriver {
 
 			if (!url) throw NotFoundError()
 
-			let storedUrl: StoredUrl;
-			try {
-				[storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
-			} catch (e) {
-				if (e.code === "23505")
-					throw new GeneralError("The specific id you chose is already in use")
-				else
-					throw new GeneralError()
+			if (id && await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()) {
+				throw new GeneralError("The specific id you chose is already in use")
 			}
+
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
 
 			await this.storage.db
 				.table<UrlInformation & { urlId: string }>('url_information')
