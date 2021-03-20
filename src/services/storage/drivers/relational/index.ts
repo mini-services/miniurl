@@ -66,25 +66,25 @@ export class RelationalStorage implements StorageDriver {
 		constructor(public storage: RelationalStorage) {}
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
-			let storedUrl, urlInfo
+			const storedUrl = await this.storage.db
+				.table<StoredUrl & { serial?: number }>('urls')
+				.select('*')
+				.where('id', id)
+				.first()
+			if (typeof storedUrl === 'undefined') throw new NotFoundError()
+			delete storedUrl?.serial
 			if (!options.withInfo) {
-				storedUrl = await this.storage.db
-					.table<StoredUrl & { serial?: number }>('urls')
-					.select('*')
-					.where('id', id)
-					.first()
-
-				delete storedUrl?.serial
-			} else {
-				urlInfo = await this.storage.db
-					.table<UrlInformation>('url_information')
-					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
-					.where('url_id', id)
-					.join('urls', 'url_information.url_id', 'urls.id')
-					.first()
+				return storedUrl
 			}
-			if (!storedUrl && !urlInfo) throw NotFoundError()
-			return options.withInfo ? urlInfo : storedUrl
+			const urlInfo = await this.storage.db
+				.table<UrlInformation>('url_information')
+				.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
+				.where('url_id', id)
+				.join('urls', 'url_information.url_id', 'urls.id')
+				.first()
+
+			if (typeof urlInfo === 'undefined') throw new NotFoundError()
+			return { ...urlInfo, ...storedUrl }
 		}
 
 		//All Info associated with that Urls also get deleted, automatically.
