@@ -42,6 +42,6 @@ export interface Config {
 		cleanupIntervalMs: number
 	}
 	baseRedirectUrl: string
-	storage: Omit<StorageConfig, 'appName'>
+	storage: Omit<StorageConfig, 'appName' | 'lifetimeMs' | 'cleanupIntervalMs'>
 	auth: AuthConfig
 }

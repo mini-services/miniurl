@@ -1,4 +1,5 @@
 import cryptoRandomString from 'crypto-random-string'
+import { GeneralError } from '../../../../errors/generalError.js'
 import { NotFoundError } from '../../../../errors/notFound.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
@@ -64,8 +65,11 @@ export class InMemoryStorage implements StorageDriver {
 		}
 
 		public async save(requestData: UrlRequestData): Promise<StoredUrl> {
+			if (requestData.id && this.storage.data.urls.has(requestData.id)) {
+				throw new GeneralError('The specific id you chose is already in use')
+			}
 			const storedUrl = {
-				id: this.uuid(),
+				id: requestData.id || this.uuid(),
 				url: requestData.url,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
@@ -101,6 +105,9 @@ export class InMemoryStorage implements StorageDriver {
 	})(this)
 
 	public async initialize(): Promise<void> {
+		return
+	}
+	public async shutdown(): Promise<void> {
 		return
 	}
 
