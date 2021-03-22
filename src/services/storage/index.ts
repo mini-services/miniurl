@@ -3,10 +3,9 @@ import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError , GeneralError } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
-import { GeneralError } from '../../errors/generalError.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver

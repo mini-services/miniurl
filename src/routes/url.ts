@@ -1,9 +1,9 @@
 import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
-import { NotFoundError } from '../errors/notFound.js'
+import { NotFoundError, UnauthorizedError } from '../errors/errors.js'
 import { validateUrl } from '../services/urlValidator.js'
 import { UrlRequestData } from '../services/storage/types/url'
-import { UnauthorizedError } from '../errors/unauthorized.js'
+
 /* Save URL to store and return the new shortened url */
 const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 	method: 'POST',

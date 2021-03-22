@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify'
-import { NotFoundError } from '../errors/notFound.js'
+import { NotFoundError } from '../errors/errors.js'
 
 export const redirectRoutes: FastifyPluginAsync = async function (fastify) {
 	const parsedUrl = new URL(fastify.config.baseRedirectUrl)
