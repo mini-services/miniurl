@@ -105,7 +105,7 @@ function validateUrlLifetime(urlLifetime: string): void {
 function validateUrlExpireFrom(urlExpire: string): void {
 	logger.debug(`Start validateUrlExpireFrom with ${urlExpire}`)
 	if (!urlExpire || (urlExpire !== 'create' && urlExpire !== 'update')) {
-		throw new InvalidConfigError(`URL_EXPIRE_FROM specified is invalid (received ${urlExpire})`)
+		throw new InvalidConfigError(`URL_EXPIRE_FROM specified is invalid (received ${urlExpire}, expected 'create' or 'update')`)
 	}
 }
 
