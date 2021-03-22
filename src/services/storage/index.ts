@@ -10,6 +10,7 @@ import { GeneralError } from '../../errors/generalError.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
+	_intervalToken?: NodeJS.Timeout
 
 	constructor(private _config: StorageConfig) {
 		switch (_config.driverName) {
@@ -34,10 +35,19 @@ export class Storage implements StorageDriver {
 			logger.debug(`Running Storage.initialize`)
 			// Waits for 1 minute (6 * 10,000ms) before failing
 			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
+			await this.url.deleteOverdue(this.config.lifetimeMs)
+			this._intervalToken = setInterval(
+				() => this.url.deleteOverdue(this.config.lifetimeMs),
+				this.config.cleanupIntervalMs,
+			)
 		} catch (err) {
 			logger.error(`Storage.initialize failed: ${err}`)
 			throw err
 		}
+	}
+	public async shutdown(): Promise<void> {
+		this.driver.shutdown()
+		if (this._intervalToken) clearInterval(this._intervalToken)
 	}
 
 	url = new (class UrlStorage {
