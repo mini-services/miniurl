@@ -34,7 +34,7 @@ export function normalizeConfig({
 		connectTimeout: +storage.redisDriverConfig.connectTimeout,
 	}
 	const urlLifetimeMs = ms(url.lifetime)
-	return {
+	return <Config>{
 		port,
 		logLevel,
 		apiPrefix,
