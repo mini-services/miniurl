@@ -1,5 +1,5 @@
 import ms from 'ms'
-import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { InvalidConfigError } from '../errors/errors.js'
 import { StorageDriverName } from '../services/storage/types/config.js'
 import { AuthDriverName } from '../services/auth/types/config.js'
 import type { RawConfig } from './types.js'
@@ -35,6 +35,33 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 													RELATIONAL_STORAGE_PASSWORD,
 													RELATIONAL_STORAGE_DATABASE`,
 			)
+		}
+	}
+
+	if (storage.driverName === StorageDriverName.Redis) {
+		const {port, host, username, password, connectTimeout} = storage.redisDriverConfig
+		if (!port || !host) {
+			throw new InvalidConfigError(
+				'When using Redis driver you must specify REDIS_STORAGE_HOST,REDIS_STORAGE_PORT',
+			)
+		}
+		if ((!username && password) || (username && !password)) {
+			throw new InvalidConfigError(
+				'When specify REDIS_STORAGE_USERNAME you must specify also REDIS_STORAGE_PASSWORD and vice versa',
+			)
+		}
+		if (!connectTimeout) {
+			throw new InvalidConfigError(
+				'When using Redis driver you must specify REDIS_STORAGE_CONNECTION_TIMEOUT(ms)',
+			)
+		}
+		if (connectTimeout && isNaN(+connectTimeout)) {
+		throw new InvalidConfigError(
+			'REDIS_STORAGE_CONNECTION_TIMEOUT value must be numeric',
+		)
+	}
+		if (host === 'localhost') {
+			logger.warn('You are in developer mode, Redis DB will run locally')
 		}
 	}
 }

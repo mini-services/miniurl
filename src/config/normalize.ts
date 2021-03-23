@@ -26,7 +26,14 @@ export function normalizeConfig({
 	const minimumCleanupTime = Math.max(idealCleanupInterval, MIN_URL_CLEANUP_INTERVAL_MS)
 	// No more than the maximum
 	const cleanupIntervalMs = Math.min(minimumCleanupTime, MAX_URL_CLEANUP_INTERVAL_MS)
-
+	const redisDriverConfig = {
+		port: +storage.redisDriverConfig.port,
+		host: storage.redisDriverConfig.host,
+		username: storage.redisDriverConfig.username,
+		password: storage.redisDriverConfig.password,
+		connectTimeout: +storage.redisDriverConfig.connectTimeout,
+	}
+	const urlLifetimeMs = ms(url.lifetime)
 	return {
 		port,
 		logLevel,
@@ -34,13 +41,18 @@ export function normalizeConfig({
 		appName,
 		baseRedirectUrl,
 		url: {
-			lifetimeMs: ms(url.lifetime),
+			lifetimeMs: urlLifetimeMs,
 			matchPattern: url.matchPattern,
 			cleanupIntervalMs,
 		},
 		storage: {
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig:
+				storage.driverName === StorageDriverName.Relational
+					? storage.relationalDriverConfig
+					: storage.driverName === StorageDriverName.Redis
+					? redisDriverConfig
+					: {},
 		},
 		auth: {
 			driverName: auth.driverName as AuthDriverName,

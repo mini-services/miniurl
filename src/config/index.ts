@@ -1,5 +1,5 @@
 import cryptoRandomString from 'crypto-random-string'
-import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { InvalidConfigError } from '../errors/errors.js'
 import { AuthDriverName } from '../services/auth/types/config.js'
 import { normalizeConfig } from './normalize.js'
 import type { RawConfig, Config } from './types.js'
@@ -27,6 +27,14 @@ const rawConfig: RawConfig = {
 				password: process.env.RELATIONAL_STORAGE_PASSWORD || '',
 				database: process.env.RELATIONAL_STORAGE_DATABASE || '',
 			},
+		},
+
+		redisDriverConfig: {
+			port: process.env.REDIS_STORAGE_PORT || '',
+			host: process.env.REDIS_STORAGE_HOST || '',
+			username: process.env.REDIS_STORAGE_USERNAME || '',
+			password: process.env.REDIS_STORAGE_PASSWORD || '',
+			connectTimeout: process.env.REDIS_STORAGE_CONNECTION_TIMEOUT || '',
 		},
 	},
 	auth: {

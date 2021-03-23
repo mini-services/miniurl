@@ -22,6 +22,13 @@ export interface RawConfig {
 				database: string
 			}
 		}
+		redisDriverConfig: {
+			port: string
+			host: string
+			username: string
+			password: string
+			connectTimeout: string
+		}
 	}
 	auth: {
 		driverName: string
