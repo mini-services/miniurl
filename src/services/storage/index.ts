@@ -56,7 +56,7 @@ export class Storage implements StorageDriver {
 		get driver() {
 			return this.storage._driver
 		}
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, isAuthorized: false }): Promise<StoredUrl | UrlWithInformation> {
 			try {
 				logger.debug(`Running Storage.url.get with ${id}`)
 				return await this.driver.url.get(id, options)

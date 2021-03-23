@@ -7,7 +7,7 @@ export interface StoredUrl {
 }
 
 export interface UrlStorageDriver {
-	get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation>
+	get(id: string, options: { withInfo: boolean, isAuthorized: boolean }): Promise<StoredUrl | UrlWithInformation>
 
 	save(url: UrlRequestData): Promise<StoredUrl>
 

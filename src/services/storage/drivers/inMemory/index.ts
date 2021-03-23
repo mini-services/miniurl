@@ -1,6 +1,7 @@
 import cryptoRandomString from 'crypto-random-string'
 import { GeneralError } from '../../../../errors/generalError.js'
 import { NotFoundError } from '../../../../errors/notFound.js'
+import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
@@ -22,10 +23,10 @@ export class InMemoryStorage implements StorageDriver {
 			return id
 		}
 
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, isAuthorized: false }): Promise<StoredUrl | UrlWithInformation> {
 			const storedUrl = this.storage.data.urls.get(id)
 			if (typeof storedUrl === 'undefined') throw new NotFoundError()
-
+			if (storedUrl.deletedAt && !options.isAuthorized) throw new UnauthorizedError();
 			if (!options.withInfo) {
 				return storedUrl
 			}
