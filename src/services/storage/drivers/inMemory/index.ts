@@ -44,7 +44,7 @@ export class InMemoryStorage implements StorageDriver {
 				url,
 				createdAt,
 				updatedAt,
-				deletedAt: new Date().toUTCString()
+				deletedAt: new Date().toISOString()
 			}
 			this.storage.data.urls.set(id, newStoredUrl);
 		}
