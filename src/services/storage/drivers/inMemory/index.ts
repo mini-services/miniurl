@@ -107,6 +107,9 @@ export class InMemoryStorage implements StorageDriver {
 	public async initialize(): Promise<void> {
 		return
 	}
+	public async shutdown(): Promise<void> {
+		return
+	}
 
 	// eslint-disable-next-line
 	constructor(public config: InMemoryStorageConfig) {
