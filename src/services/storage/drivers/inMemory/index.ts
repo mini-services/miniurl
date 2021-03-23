@@ -11,7 +11,7 @@ export class InMemoryStorage implements StorageDriver {
 		urlInformation: new Map(),
 	}
 	url = new (class InMemoryUrlStorage {
-		constructor(public storage: InMemoryStorage) {}
+		constructor(public storage: InMemoryStorage) { }
 
 		public uuid() {
 			let id
@@ -35,10 +35,20 @@ export class InMemoryStorage implements StorageDriver {
 		}
 
 		public async delete(id: string): Promise<void> {
-			if (typeof this.storage.data.urls.get(id) === 'undefined') throw new NotFoundError()
+			const storedUrl = this.storage.data.urls.get(id);
+			if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-			this.storage.data.urls.delete(id)
+			const { url, createdAt, updatedAt } = storedUrl;
+			const newStoredUrl: StoredUrl = {
+				id,
+				url,
+				createdAt,
+				updatedAt,
+				deletedAt: new Date().toUTCString()
+			}
+			this.storage.data.urls.set(id, newStoredUrl);
 		}
+
 		public async deleteOverdue(timespanMs: number): Promise<number> {
 			const deleteBefore = new Date().getTime() - timespanMs
 			let deletedCount = 0
