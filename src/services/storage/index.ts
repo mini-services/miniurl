@@ -23,6 +23,10 @@ export class Storage implements StorageDriver {
 				throw new InvalidConfigError(`Invalid url storage driver selected.`)
 		}
 	}
+
+	shutdown(): Promise<void> {
+        throw new Error('Method not implemented.')
+    }
 	get config(): StorageConfig {
 		return this._config
 	}

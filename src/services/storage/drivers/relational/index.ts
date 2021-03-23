@@ -9,6 +9,7 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
+import { logger } from '../../../logger/logger'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -38,6 +39,10 @@ export class RelationalStorage implements StorageDriver {
 		// Generates a random seed for the psuedo_encrypt function found in the first migration
 		process.env.MIGRATIONS_RANDOM_SEED_1 = cryptoRandomString({ length: 6, type: 'numeric' })
 		process.env.MIGRATIONS_RANDOM_SEED_2 = cryptoRandomString({ length: 4, type: 'numeric' })
+	}
+
+	shutdown(): Promise<void> {
+		throw new Error('Method not implemented.')
 	}
 	public async initialize(): Promise<void> {
 		await this.upMigrations()
@@ -94,10 +99,20 @@ export class RelationalStorage implements StorageDriver {
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
-			// const deleteBefore = new Date(new Date().getTime() - timespanMs)
-			// return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
-			// TODO temporary fix
-			return 0
+			logger.debug('urlExpireFrom is {}', this.storage.config.driverConfig.urlExpireFrom)
+			const deleteBefore = new Date().getTime() - timespanMs
+			let deletedCount = 0
+			const urls: StoredUrl[] = await this.storage.db.table<StoredUrl>('urls')
+			urls.forEach((value) => {
+				const relativeDate = new Date(
+					this.storage.config.driverConfig.urlExpireFrom === 'update' ? value.updatedAt : value.createdAt,
+				).getTime()
+				if (relativeDate <= deleteBefore) {
+					this.delete(value.id)
+					deletedCount++
+				}
+			})
+			return deletedCount
 		}
 
 		public async edit(id: string, url: string): Promise<StoredUrl> {
