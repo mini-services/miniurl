@@ -1,10 +1,9 @@
 import cryptoRandomString from 'crypto-random-string'
 import { NotFoundError } from '../../../../errors/notFound.js'
-import { InvalidConfigError } from '../../../../errors/invalidConfig.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
-import { logger } from '../../../logger/logger'
+import { logger } from '../../../logger/logger.js'
 
 export class InMemoryStorage implements StorageDriver {
 	private urlExpireFrom

@@ -9,7 +9,7 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
-import { logger } from '../../../logger/logger'
+import { logger } from '../../../logger/logger.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
