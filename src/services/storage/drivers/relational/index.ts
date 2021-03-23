@@ -10,6 +10,7 @@ import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
 import { GeneralError } from '../../../../errors/generalError.js'
+import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -69,15 +70,15 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) { }
 
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, isAuthorized: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
+			storedUrl = await this.storage.db
+				.table<StoredUrl & { serial?: number }>('urls')
+				.select('*')
+				.where('id', id)
+				.first()
+			if (storedUrl?.deletedAt && !options.isAuthorized) throw new UnauthorizedError();
 			if (!options.withInfo) {
-				storedUrl = await this.storage.db
-					.table<StoredUrl & { serial?: number }>('urls')
-					.select('*')
-					.where('id', id)
-					.first()
-
 				delete storedUrl?.serial
 			} else {
 				urlInfo = await this.storage.db
