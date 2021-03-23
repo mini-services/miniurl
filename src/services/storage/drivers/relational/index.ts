@@ -93,9 +93,14 @@ export class RelationalStorage implements StorageDriver {
 
 		//All Info associated with that Urls also get deleted, automatically.
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
-		public async delete(id: string): Promise<void> {
-			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
-			return
+		public async delete(id: string, options: { hardDelete: false }): Promise<void> {
+			if (!await this.storage.db.table<StoredUrl>('urls').where('id', id)) throw new NotFoundError();
+
+			if (options.hardDelete) {
+				await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			} else {
+				await this.storage.db.table<StoredUrl>('urls').update({ deletedAt: new Date().toISOString() }).where('id', id)
+			}
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
