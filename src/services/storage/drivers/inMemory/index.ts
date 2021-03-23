@@ -35,19 +35,24 @@ export class InMemoryStorage implements StorageDriver {
 			return { ...storedUrl, ...urlInfo }
 		}
 
-		public async delete(id: string): Promise<void> {
+		public async delete(id: string, options: { hardDelete: false }): Promise<void> {
 			const storedUrl = this.storage.data.urls.get(id);
 			if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-			const { url, createdAt, updatedAt } = storedUrl;
-			const newStoredUrl: StoredUrl = {
-				id,
-				url,
-				createdAt,
-				updatedAt,
-				deletedAt: new Date().toISOString()
+			if (options.hardDelete) {
+				this.storage.data.urls.delete(id);
 			}
-			this.storage.data.urls.set(id, newStoredUrl);
+			else {
+				const { url, createdAt, updatedAt } = storedUrl;
+				const newStoredUrl: StoredUrl = {
+					id,
+					url,
+					createdAt,
+					updatedAt,
+					deletedAt: new Date().toISOString()
+				}
+				this.storage.data.urls.set(id, newStoredUrl);
+			}
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {

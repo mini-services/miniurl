@@ -66,10 +66,10 @@ export class Storage implements StorageDriver {
 			}
 		}
 
-		public async delete(id: string): Promise<void> {
+		public async delete(id: string, options: { hardDelete: false }): Promise<void> {
 			try {
 				logger.debug(`Running Storage.url.delete with ${id}`)
-				return await this.driver.url.delete(id)
+				return await this.driver.url.delete(id, options)
 			} catch (err) {
 				logger.error(`Storage.url.delete failed: ${err}`)
 				throw new GeneralError('Could not delete url')

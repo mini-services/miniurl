@@ -13,7 +13,7 @@ export interface UrlStorageDriver {
 
 	edit(id: string, url: string): Promise<StoredUrl>
 
-	delete(id: string): Promise<void>
+	delete(id: string, options: { hardDelete: boolean }): Promise<void>
 
 	deleteOverdue(timespanMs: number): Promise<number>
 
