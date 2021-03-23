@@ -3,6 +3,7 @@ export interface StoredUrl {
 	url: string
 	createdAt: string
 	updatedAt: string
+	deletedAt?: string
 }
 
 export interface UrlStorageDriver {
