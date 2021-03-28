@@ -23,10 +23,12 @@ test('Happy flow', () => {
 			lifetimeMs: ms(url.lifetime),
 			matchPattern: url.matchPattern,
 			cleanupIntervalMs: config.url.cleanupIntervalMs, // We're not yet testing this
+			urlExpireFrom: config.url.urlExpireFrom
 		},
 		storage: {
+			appName:appName,
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig: storage.driverName === StorageDriverName.InMemory ? url.urlExpireFrom : StorageDriverName.Relational ? storage.relationalDriverConfig : {},
 		},
 		auth: {
 			driverName: auth.driverName,

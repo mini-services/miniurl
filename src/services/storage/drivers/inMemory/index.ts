@@ -9,7 +9,7 @@ export class InMemoryStorage implements StorageDriver {
 	private urlExpireFrom
 
 	constructor(private config: InMemoryStorageConfig) {
-		this.urlExpireFrom = config.driverConfig.urlExpireFrom
+		this.urlExpireFrom = config.urlExpireFrom
 	}
 	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
@@ -45,7 +45,7 @@ export class InMemoryStorage implements StorageDriver {
 			this.storage.data.urls.delete(id)
 		}
 		public async deleteOverdue(timespanMs: number): Promise<number> {
-			logger.debug('urlExpireFrom is {}', this.storage.urlExpireFrom)
+			logger.debug('urlExpireFrom is ' + "'" + this.storage.urlExpireFrom + "'")
 			const deleteBefore = new Date().getTime() - timespanMs
 			let deletedCount = 0
 

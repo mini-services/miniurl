@@ -44,6 +44,6 @@ export interface Config {
 		cleanupIntervalMs: number
 	}
 	baseRedirectUrl: string
-	storage: StorageConfig,
+	storage: StorageConfig
 	auth: AuthConfig
 }

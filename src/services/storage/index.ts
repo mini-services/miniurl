@@ -24,9 +24,6 @@ export class Storage implements StorageDriver {
 		}
 	}
 
-	shutdown(): Promise<void> {
-        throw new Error('Method not implemented.')
-    }
 	get config(): StorageConfig {
 		return this._config
 	}

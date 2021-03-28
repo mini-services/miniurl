@@ -10,6 +10,7 @@ export interface BaseConfig {
 	appName: string
 	lifetimeMs: number
 	cleanupIntervalMs: number
+	urlExpireFrom: string
 }
 
 export interface RelationalStorageConfig extends BaseConfig {

@@ -8,15 +8,17 @@ import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
-import { RelationalStorageConfig } from '../../types/config.js'
+import {InMemoryStorageConfig, RelationalStorageConfig} from '../../types/config.js'
 import { logger } from '../../../logger/logger.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export class RelationalStorage implements StorageDriver {
 	private db: Knex
+	private urlExpireFrom
 
 	constructor(private config: RelationalStorageConfig) {
+		this.urlExpireFrom = config.urlExpireFrom
 		this.db = Knex({
 			...config.driverConfig,
 			migrations: {
@@ -98,13 +100,13 @@ export class RelationalStorage implements StorageDriver {
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
-			logger.debug('urlExpireFrom is {}', this.storage.config.driverConfig.urlExpireFrom)
+			logger.debug('urlExpireFrom is ' + "'" + this.storage.urlExpireFrom + "'")
 			const deleteBefore = new Date().getTime() - timespanMs
 			let deletedCount = 0
 			const urls: StoredUrl[] = await this.storage.db.table<StoredUrl>('urls')
 			urls.forEach((value) => {
 				const relativeDate = new Date(
-					this.storage.config.driverConfig.urlExpireFrom === 'update' ? value.updatedAt : value.createdAt,
+					this.storage.urlExpireFrom === 'update' ? value.updatedAt : value.createdAt,
 				).getTime()
 				if (relativeDate <= deleteBefore) {
 					this.delete(value.id)

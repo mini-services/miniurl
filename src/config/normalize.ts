@@ -26,7 +26,7 @@ export function normalizeConfig({
 	const minimumCleanupTime = Math.max(idealCleanupInterval, MIN_URL_CLEANUP_INTERVAL_MS)
 	// No more than the maximum
 	const cleanupIntervalMs = Math.min(minimumCleanupTime, MAX_URL_CLEANUP_INTERVAL_MS)
-	return <Config>{
+	return {
 		port,
 		logLevel,
 		apiPrefix,
@@ -39,13 +39,18 @@ export function normalizeConfig({
 			cleanupIntervalMs,
 		},
 		storage: {
-			appName: appName,
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.InMemory ? url.urlExpireFrom : StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			urlExpireFrom: url.urlExpireFrom,
+			cleanupIntervalMs: cleanupIntervalMs,
+			lifetimeMs:ms(url.lifetime),
+			appName: appName
 		},
+
 		auth: {
 			driverName: auth.driverName as AuthDriverName,
 			driverConfig: auth.bearerTokenDriverConfig,
 		},
 	}
 }
+
