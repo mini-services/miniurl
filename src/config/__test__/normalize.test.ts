@@ -26,7 +26,18 @@ test('Happy flow', () => {
 		},
 		storage: {
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig:
+				storage.driverName === StorageDriverName.Relational
+					? storage.relationalDriverConfig
+					: StorageDriverName.Redis
+					? {
+							port: 6379,
+							host: 'localhost',
+							username: 'user',
+							password: 'pass',
+							connectTimeout: 1000,
+					  }
+					: {},
 		},
 		auth: {
 			driverName: auth.driverName,

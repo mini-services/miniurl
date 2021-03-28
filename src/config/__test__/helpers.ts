@@ -12,7 +12,7 @@ export function getRawConfig(): RawConfig {
 			lifetime: '120',
 		},
 		storage: {
-			driverName: 'InMemory',
+			driverName: 'Redis',
 			relationalDriverConfig: {
 				client: 'mock-client',
 				connection: {
@@ -21,6 +21,13 @@ export function getRawConfig(): RawConfig {
 					password: 'admin1234',
 					database: 'mock-db',
 				},
+			},
+			redisDriverConfig: {
+				connectTimeout: '1000',
+				host: 'localhost',
+				port: '6379',
+				password: 'pass',
+				username: 'user',
 			},
 		},
 		auth: {
