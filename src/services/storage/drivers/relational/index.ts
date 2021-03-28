@@ -1,7 +1,7 @@
 import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
-import { NotFoundError } from '../../../../errors/notFound.js'
+import { NotFoundError, GeneralError } from '../../../../errors/errors.js'
 import type { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -40,12 +40,11 @@ export class RelationalStorage implements StorageDriver {
 		process.env.MIGRATIONS_RANDOM_SEED_1 = cryptoRandomString({ length: 6, type: 'numeric' })
 		process.env.MIGRATIONS_RANDOM_SEED_2 = cryptoRandomString({ length: 4, type: 'numeric' })
 	}
-
-	shutdown(): Promise<void> {
-		throw new Error('Method not implemented.')
-	}
 	public async initialize(): Promise<void> {
 		await this.upMigrations()
+	}
+	public async shutdown(): Promise<void> {
+		return
 	}
 	private async upMigrations() {
 		// For new migrations, see the contribution guide's common issues section
@@ -68,7 +67,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
 	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) {}
+		constructor(public storage: RelationalStorage) { }
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
@@ -88,7 +87,7 @@ export class RelationalStorage implements StorageDriver {
 					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
 			}
-			if (!storedUrl) throw NotFoundError()
+			if (!storedUrl && !urlInfo) throw NotFoundError()
 			return options.withInfo ? urlInfo : storedUrl
 		}
 
@@ -126,17 +125,22 @@ export class RelationalStorage implements StorageDriver {
 			return storedUrl
 		}
 
-		public async save(urlBody: UrlRequestData): Promise<StoredUrl> {
-			const url = urlBody.url
+		public async save({ url, id = '', ip }: UrlRequestData): Promise<StoredUrl> {
 			const urlInfo: UrlInformation = {
-				ip: urlBody.ip,
+				ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
 			}
 
 			if (!url) throw NotFoundError()
-			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
+
+			if (id && await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()) {
+				throw new GeneralError("The specific id you chose is already in use")
+			}
+
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
+
 			await this.storage.db
 				.table<UrlInformation & { urlId: string }>('url_information')
 				.insert({ urlId: storedUrl.id, ...urlInfo })

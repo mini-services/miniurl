@@ -1,5 +1,5 @@
 import cryptoRandomString from 'crypto-random-string'
-import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { InvalidConfigError } from '../errors/errors.js'
 import { AuthDriverName } from '../services/auth/types/config.js'
 import { normalizeConfig } from './normalize.js'
 import type { RawConfig, Config } from './types.js'

@@ -3,13 +3,13 @@ import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError , GeneralError } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
-import { GeneralError } from '../../errors/generalError.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
+	_intervalToken?: NodeJS.Timeout
 
 	constructor(private _config: StorageConfig) {
 		switch (_config.driverName) {
@@ -38,14 +38,23 @@ export class Storage implements StorageDriver {
 			logger.debug(`Running Storage.initialize`)
 			// Waits for 1 minute (6 * 10,000ms) before failing
 			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
+			await this.url.deleteOverdue(this.config.lifetimeMs)
+			this._intervalToken = setInterval(
+				() => this.url.deleteOverdue(this.config.lifetimeMs),
+				this.config.cleanupIntervalMs,
+			)
 		} catch (err) {
 			logger.error(`Storage.initialize failed: ${err}`)
 			throw err
 		}
 	}
+	public async shutdown(): Promise<void> {
+		this.driver.shutdown()
+		if (this._intervalToken) clearInterval(this._intervalToken)
+	}
 
 	url = new (class UrlStorage {
-		constructor(public storage: Storage) {}
+		constructor(public storage: Storage) { }
 
 		get driver() {
 			return this.storage._driver
@@ -92,7 +101,7 @@ export class Storage implements StorageDriver {
 
 		public async save(body: UrlRequestData): Promise<StoredUrl> {
 			try {
-				logger.debug(`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}`)
+				logger.debug(`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}${body.id && `, id: ${body.id}`}`)
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)

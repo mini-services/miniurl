@@ -8,6 +8,8 @@ export enum StorageDriverName {
 
 export interface BaseConfig {
 	appName: string
+	lifetimeMs: number
+	cleanupIntervalMs: number
 }
 
 export interface RelationalStorageConfig extends BaseConfig {

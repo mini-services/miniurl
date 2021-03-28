@@ -1,5 +1,5 @@
 import ms from 'ms'
-import { InvalidConfigError } from '../errors/invalidConfig.js'
+import { InvalidConfigError } from '../errors/errors.js'
 import { StorageDriverName } from '../services/storage/types/config.js'
 import { AuthDriverName } from '../services/auth/types/config.js'
 import type { RawConfig } from './types.js'
