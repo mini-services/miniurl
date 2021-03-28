@@ -26,9 +26,12 @@ test('Happy flow', () => {
 			urlExpireFrom: config.url.urlExpireFrom
 		},
 		storage: {
-			appName:appName,
+			appName: appName,
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.InMemory ? url.urlExpireFrom : StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			cleanupIntervalMs: config.url.cleanupIntervalMs,
+			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			urlExpireFrom: url.urlExpireFrom,
+			lifetimeMs: ms(url.lifetime),
 		},
 		auth: {
 			driverName: auth.driverName,
