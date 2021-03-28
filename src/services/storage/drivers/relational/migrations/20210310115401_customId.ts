@@ -1,8 +1,7 @@
-import * as Knex from "knex";
-
+import * as Knex from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.raw(`
+	await knex.raw(`
   DROP TRIGGER IF EXISTS on_new_url ON urls;
 	CREATE OR REPLACE FUNCTION on_url_before_insert()
 	RETURNS trigger
@@ -22,9 +21,8 @@ export async function up(knex: Knex): Promise<void> {
 		EXECUTE PROCEDURE on_url_before_insert();`)
 }
 
-
 export async function down(knex: Knex): Promise<void> {
-  await knex.raw(`
+	await knex.raw(`
   DROP TRIGGER IF EXISTS on_new_url ON urls;
 	CREATE OR REPLACE FUNCTION on_url_before_insert()
 	RETURNS trigger
@@ -41,4 +39,3 @@ export async function down(knex: Knex): Promise<void> {
 		FOR EACH ROW
 		EXECUTE PROCEDURE on_url_before_insert();`)
 }
-
