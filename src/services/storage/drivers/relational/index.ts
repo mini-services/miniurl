@@ -1,7 +1,7 @@
 import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
-import { NotFoundError } from '../../../../errors/notFound.js'
+import { NotFoundError, GeneralError } from '../../../../errors/errors.js'
 import type { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -9,7 +9,6 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
-import { GeneralError } from '../../../../errors/generalError.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
