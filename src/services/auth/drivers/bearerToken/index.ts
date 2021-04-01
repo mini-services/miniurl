@@ -2,7 +2,6 @@ import { AuthDriver } from '../../types'
 import { BearerTokenDriverConfig } from './types'
 import { FastifyRequest } from 'fastify'
 import { UnauthorizedError } from '../../../../errors/unauthorized.js'
-import { logger } from '../../../logger/logger.js'
 
 export class BearerTokenAuth implements AuthDriver {
 	private token: string
