@@ -9,6 +9,17 @@ export class InMemoryStorage implements StorageDriver {
 		urls: new Map(),
 		urlInformation: new Map(),
 	}
+	private async softDelete(storedUrl: StoredUrl): Promise<void> {
+		const { id, url, createdAt, updatedAt } = storedUrl;
+		const newStoredUrl: StoredUrl = {
+			id,
+			url,
+			createdAt,
+			updatedAt,
+			deletedAt: new Date().toISOString()
+		}
+		this.data.urls.set(id, newStoredUrl);
+	}
 	url = new (class InMemoryUrlStorage {
 		constructor(public storage: InMemoryStorage) { }
 
@@ -33,17 +44,7 @@ export class InMemoryStorage implements StorageDriver {
 			return { ...storedUrl, ...urlInfo }
 		}
 
-		public async softDelete(storedUrl: StoredUrl): Promise<void> {
-			const { id, url, createdAt, updatedAt } = storedUrl;
-			const newStoredUrl: StoredUrl = {
-				id,
-				url,
-				createdAt,
-				updatedAt,
-				deletedAt: new Date().toISOString()
-			}
-			this.storage.data.urls.set(id, newStoredUrl);
-		}
+
 
 		public async delete(id: string, options: { softDelete: boolean }): Promise<void> {
 			const storedUrl = this.storage.data.urls.get(id);
@@ -52,7 +53,7 @@ export class InMemoryStorage implements StorageDriver {
 			if (!options.softDelete) {
 				this.storage.data.urls.delete(id);
 			} else {
-				this.softDelete(storedUrl);
+				this.storage.softDelete(storedUrl);
 			}
 		}
 
@@ -131,4 +132,5 @@ export class InMemoryStorage implements StorageDriver {
 	// eslint-disable-next-line
 	constructor(public config: InMemoryStorageConfig) {
 	}
+
 }
