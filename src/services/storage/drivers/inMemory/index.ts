@@ -3,14 +3,13 @@ import { NotFoundError , GeneralError } from '../../../../errors/errors.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
-
 export class InMemoryStorage implements StorageDriver {
 	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
 		urlInformation: new Map(),
 	}
 	url = new (class InMemoryUrlStorage {
-		constructor(public storage: InMemoryStorage) {}
+		constructor(public storage: InMemoryStorage) { }
 
 		public uuid() {
 			let id
@@ -21,9 +20,9 @@ export class InMemoryStorage implements StorageDriver {
 			return id
 		}
 
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, includeDeleted: true }): Promise<StoredUrl | UrlWithInformation> {
 			const storedUrl = this.storage.data.urls.get(id)
-			if (typeof storedUrl === 'undefined') throw new NotFoundError()
+			if (typeof storedUrl === 'undefined' || storedUrl.deletedAt) throw new NotFoundError()
 
 			if (!options.withInfo) {
 				return storedUrl
@@ -33,19 +32,37 @@ export class InMemoryStorage implements StorageDriver {
 			return { ...storedUrl, ...urlInfo }
 		}
 
-		public async delete(id: string): Promise<void> {
-			if (typeof this.storage.data.urls.get(id) === 'undefined') throw new NotFoundError()
-
-			this.storage.data.urls.delete(id)
+		public async softDelete(storedUrl: StoredUrl): Promise<void> {
+			const { id, url, createdAt, updatedAt } = storedUrl;
+			const newStoredUrl: StoredUrl = {
+				id,
+				url,
+				createdAt,
+				updatedAt,
+				deletedAt: new Date().toISOString()
+			}
+			this.storage.data.urls.set(id, newStoredUrl);
 		}
+
+		public async delete(id: string, options: { softDelete: boolean }): Promise<void> {
+			const storedUrl = this.storage.data.urls.get(id);
+			if (typeof storedUrl === 'undefined') throw new NotFoundError()
+
+			if (!options.softDelete) {
+				this.storage.data.urls.delete(id);
+			} else {
+				this.softDelete(storedUrl);
+			}
+		}
+
 		public async deleteOverdue(timespanMs: number): Promise<number> {
 			const deleteBefore = new Date().getTime() - timespanMs
 			let deletedCount = 0
 
 			this.storage.data.urls.forEach((storedUrl) => {
-				const updatedAt = new Date(storedUrl.updatedAt).getTime()
-				if (updatedAt <= deleteBefore) {
-					this.storage.data.urls.delete(storedUrl.id)
+				const updatedAtDate = new Date(storedUrl.updatedAt).getTime()
+				if (!storedUrl.deletedAt && updatedAtDate <= deleteBefore) {
+					this.softDelete(storedUrl);
 					deletedCount++
 				}
 			})

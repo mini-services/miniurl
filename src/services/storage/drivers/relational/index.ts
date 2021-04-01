@@ -68,15 +68,15 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) { }
 
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, includeDeleted: true }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
+			storedUrl = await this.storage.db
+				.table<StoredUrl & { serial?: number }>('urls')
+				.select('*')
+				.where('id', id)
+				.first()
+			if (storedUrl?.deletedAt) throw new NotFoundError();
 			if (!options.withInfo) {
-				storedUrl = await this.storage.db
-					.table<StoredUrl & { serial?: number }>('urls')
-					.select('*')
-					.where('id', id)
-					.first()
-
 				delete storedUrl?.serial
 			} else {
 				urlInfo = await this.storage.db
@@ -92,14 +92,19 @@ export class RelationalStorage implements StorageDriver {
 
 		//All Info associated with that Urls also get deleted, automatically.
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
-		public async delete(id: string): Promise<void> {
-			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
-			return
+		public async delete(id: string, options: { softDelete: true }): Promise<void> {
+			if (!await this.storage.db.table<StoredUrl>('urls').where('id', id)) throw new NotFoundError();
+
+			if (options.softDelete) {
+				await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			} else {
+				await this.storage.db.table<StoredUrl>('urls').update({ deletedAt: new Date().toISOString() }).where('id', id)
+			}
 		}
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
 			const deleteBefore = new Date(new Date().getTime() - timespanMs)
-			return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
+			return await this.storage.db.table<StoredUrl>('urls').update({ deletedAt: new Date().toISOString() }).where('updatedAt', '<', deleteBefore);
 		}
 
 		public async edit(id: string, url: string): Promise<StoredUrl> {

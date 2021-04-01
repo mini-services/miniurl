@@ -34,9 +34,12 @@ export class Storage implements StorageDriver {
 			logger.debug(`Running Storage.initialize`)
 			// Waits for 1 minute (6 * 10,000ms) before failing
 			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
-			await this.url.deleteOverdue(this.config.lifetimeMs)
+
+			const { lifetimeMs } = this.config;
+			await this.url.deleteOverdue(lifetimeMs)
+
 			this._intervalToken = setInterval(
-				() => this.url.deleteOverdue(this.config.lifetimeMs),
+				() => this.url.deleteOverdue(lifetimeMs),
 				this.config.cleanupIntervalMs,
 			)
 		} catch (err) {
@@ -55,7 +58,7 @@ export class Storage implements StorageDriver {
 		get driver() {
 			return this.storage._driver
 		}
-		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, includeDeleted: true }): Promise<StoredUrl | UrlWithInformation> {
 			try {
 				logger.debug(`Running Storage.url.get with ${id}`)
 				return await this.driver.url.get(id, options)
@@ -65,10 +68,10 @@ export class Storage implements StorageDriver {
 			}
 		}
 
-		public async delete(id: string): Promise<void> {
+		public async delete(id: string, options: { softDelete: boolean }): Promise<void> {
 			try {
 				logger.debug(`Running Storage.url.delete with ${id}`)
-				return await this.driver.url.delete(id)
+				return await this.driver.url.delete(id, options)
 			} catch (err) {
 				logger.error(`Storage.url.delete failed: ${err}`)
 				throw new GeneralError('Could not delete url')
