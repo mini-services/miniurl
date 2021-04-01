@@ -1,11 +1,9 @@
 import cryptoRandomString from 'crypto-random-string'
 import { GeneralError } from '../../../../errors/generalError.js'
 import { NotFoundError } from '../../../../errors/notFound.js'
-import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
-
 export class InMemoryStorage implements StorageDriver {
 	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
@@ -23,10 +21,10 @@ export class InMemoryStorage implements StorageDriver {
 			return id
 		}
 
-		public async get(id: string, options = { withInfo: false, isAuthorized: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, includeDeleted: true }): Promise<StoredUrl | UrlWithInformation> {
 			const storedUrl = this.storage.data.urls.get(id)
-			if (typeof storedUrl === 'undefined') throw new NotFoundError()
-			if (storedUrl.deletedAt && !options.isAuthorized) throw new UnauthorizedError();
+			if (typeof storedUrl === 'undefined' || storedUrl.deletedAt) throw new NotFoundError()
+
 			if (!options.withInfo) {
 				return storedUrl
 			}
@@ -35,23 +33,26 @@ export class InMemoryStorage implements StorageDriver {
 			return { ...storedUrl, ...urlInfo }
 		}
 
-		public async delete(id: string, options: { hardDelete: false }): Promise<void> {
+		public async softDelete(storedUrl: StoredUrl): Promise<void> {
+			const { id, url, createdAt, updatedAt } = storedUrl;
+			const newStoredUrl: StoredUrl = {
+				id,
+				url,
+				createdAt,
+				updatedAt,
+				deletedAt: new Date().toISOString()
+			}
+			this.storage.data.urls.set(id, newStoredUrl);
+		}
+
+		public async delete(id: string, options: { softDelete: boolean }): Promise<void> {
 			const storedUrl = this.storage.data.urls.get(id);
 			if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
-			if (options.hardDelete) {
+			if (!options.softDelete) {
 				this.storage.data.urls.delete(id);
-			}
-			else {
-				const { url, createdAt, updatedAt } = storedUrl;
-				const newStoredUrl: StoredUrl = {
-					id,
-					url,
-					createdAt,
-					updatedAt,
-					deletedAt: new Date().toISOString()
-				}
-				this.storage.data.urls.set(id, newStoredUrl);
+			} else {
+				this.softDelete(storedUrl);
 			}
 		}
 
@@ -60,9 +61,9 @@ export class InMemoryStorage implements StorageDriver {
 			let deletedCount = 0
 
 			this.storage.data.urls.forEach((storedUrl) => {
-				const updatedAt = new Date(storedUrl.updatedAt).getTime()
-				if (updatedAt <= deleteBefore) {
-					this.storage.data.urls.delete(storedUrl.id)
+				const updatedAtDate = new Date(storedUrl.updatedAt).getTime()
+				if (!storedUrl.deletedAt && updatedAtDate <= deleteBefore) {
+					this.softDelete(storedUrl);
 					deletedCount++
 				}
 			})

@@ -58,7 +58,7 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 		if (request.validationError) throw new NotFoundError()
 
 		const isAuthorized = await this.auth.isAuthorized(request)
-		const storedUrl = await this.storage.url.get(request.params.id, { withInfo: isAuthorized, isAuthorized })
+		const storedUrl = await this.storage.url.get(request.params.id, { withInfo: isAuthorized, includeDeleted: isAuthorized })
 		if (typeof storedUrl === 'undefined') throw new NotFoundError()
 
 		try {

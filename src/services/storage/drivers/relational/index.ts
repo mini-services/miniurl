@@ -10,7 +10,6 @@ import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
 import { GeneralError } from '../../../../errors/generalError.js'
-import { UnauthorizedError } from '../../../../errors/unauthorized.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -70,14 +69,14 @@ export class RelationalStorage implements StorageDriver {
 	url = new (class RelationalUrlStorage {
 		constructor(public storage: RelationalStorage) { }
 
-		public async get(id: string, options = { withInfo: false, isAuthorized: false }): Promise<StoredUrl | UrlWithInformation> {
+		public async get(id: string, options = { withInfo: false, includeDeleted: true }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
 			storedUrl = await this.storage.db
 				.table<StoredUrl & { serial?: number }>('urls')
 				.select('*')
 				.where('id', id)
 				.first()
-			if (storedUrl?.deletedAt && !options.isAuthorized) throw new UnauthorizedError();
+			if (storedUrl?.deletedAt) throw new NotFoundError();
 			if (!options.withInfo) {
 				delete storedUrl?.serial
 			} else {
@@ -94,10 +93,10 @@ export class RelationalStorage implements StorageDriver {
 
 		//All Info associated with that Urls also get deleted, automatically.
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
-		public async delete(id: string, options: { hardDelete: false }): Promise<void> {
+		public async delete(id: string, options: { softDelete: true }): Promise<void> {
 			if (!await this.storage.db.table<StoredUrl>('urls').where('id', id)) throw new NotFoundError();
 
-			if (options.hardDelete) {
+			if (options.softDelete) {
 				await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
 			} else {
 				await this.storage.db.table<StoredUrl>('urls').update({ deletedAt: new Date().toISOString() }).where('id', id)
@@ -106,7 +105,7 @@ export class RelationalStorage implements StorageDriver {
 
 		public async deleteOverdue(timespanMs: number): Promise<number> {
 			const deleteBefore = new Date(new Date().getTime() - timespanMs)
-			return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
+			return await this.storage.db.table<StoredUrl>('urls').update({ deletedAt: new Date().toISOString() }).where('updatedAt', '<', deleteBefore);
 		}
 
 		public async edit(id: string, url: string): Promise<StoredUrl> {

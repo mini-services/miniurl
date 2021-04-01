@@ -7,13 +7,13 @@ export interface StoredUrl {
 }
 
 export interface UrlStorageDriver {
-	get(id: string, options: { withInfo: boolean, isAuthorized: boolean }): Promise<StoredUrl | UrlWithInformation>
+	get(id: string, options: { withInfo: boolean, includeDeleted: boolean }): Promise<StoredUrl | UrlWithInformation>
 
 	save(url: UrlRequestData): Promise<StoredUrl>
 
 	edit(id: string, url: string): Promise<StoredUrl>
 
-	delete(id: string, options: { hardDelete: boolean }): Promise<void>
+	delete(id: string, options: { softDelete: boolean }): Promise<void>
 
 	deleteOverdue(timespanMs: number): Promise<number>
 
