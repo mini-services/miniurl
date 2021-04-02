@@ -64,7 +64,7 @@ export class InMemoryStorage implements StorageDriver {
 			this.storage.data.urls.forEach((storedUrl) => {
 				const updatedAtDate = new Date(storedUrl.updatedAt).getTime()
 				if (!storedUrl.deletedAt && updatedAtDate <= deleteBefore) {
-					this.softDelete(storedUrl);
+					this.storage.softDelete(storedUrl);
 					deletedCount++
 				}
 			})
