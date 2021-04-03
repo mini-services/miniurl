@@ -1,3 +1,22 @@
+
+
+
+<p align="center">
+    <img src="https://img.shields.io/github/workflow/status/mini-services/miniurl/MiniUrl" alt="Build">
+    <img src="https://img.shields.io/github/workflow/status/mini-services/miniurl/Test?label=test" alt="Test">
+    <a href="https://codecov.io/gh/mini-services/miniurl"><img src="https://codecov.io/gh/mini-services/miniurl/branch/release/0.2.0/graph/badge.svg?token=YE7LE819HK" alt="Codecov"></a>
+    <a href="https://join.slack.com/t/mini-services/shared_invite/zt-lu0mqw8n-HVk1Aq6yUODvJXZ6ikIA9w"><img src="https://img.shields.io/badge/Chat-Slack-blue" alt="Slack Chat"></a>
+    <img src="https://img.shields.io/github/license/mini-services/miniurl" alt="License">
+     <a href="https://github.com/mini-services/miniurl/issues"><img src="https://img.shields.io/github/issues/mini-services/miniurl" alt="Issues"></a>
+     <img src="https://img.shields.io/snyk/vulnerabilities/github/mini-services/miniurl" alt="Analysis">
+     <img src="https://img.shields.io/github/last-commit/mini-services/miniurl" alt="Last Commit">
+    <a href="https://hub.docker.com/r/miniservices/miniurl">
+    <img src="https://img.shields.io/docker/pulls/miniservices/miniurl" alt="Docker Pulls"></a>   
+     <img src="https://img.shields.io/docker/image-size/miniservices/miniurl" alt="Docker Image Size"></a>
+     <img src="https://img.shields.io/docker/v/miniservices/miniurl" alt="Docker Version"></a>
+</p>
+
+
 # MiniUrl
 
 MiniUrl is an open-source production-ready microservice for shortening Urls. Deploy it on your personal cloud and get a fully-functional url-shortener with zero effort.
