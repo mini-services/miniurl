@@ -1,7 +1,7 @@
 import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
-import { NotFoundError } from '../../../../errors/notFound.js'
+import { NotFoundError, GeneralError } from '../../../../errors/errors.js'
 import type { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -9,7 +9,6 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { RelationalStorageConfig } from '../../types/config.js'
-import { GeneralError } from '../../../../errors/generalError.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -67,7 +66,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
 	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) { }
+		constructor(public storage: RelationalStorage) {}
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
@@ -94,7 +93,8 @@ export class RelationalStorage implements StorageDriver {
 		//All Info associated with that Urls also get deleted, automatically.
 		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
 		public async delete(id: string): Promise<void> {
-			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			const numOfRows = await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			if (!numOfRows) throw Error('url not found!')
 			return
 		}
 
@@ -124,8 +124,8 @@ export class RelationalStorage implements StorageDriver {
 
 			if (!url) throw NotFoundError()
 
-			if (id && await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()) {
-				throw new GeneralError("The specific id you chose is already in use")
+			if (id && (await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first())) {
+				throw new GeneralError('The specific id you chose is already in use')
 			}
 
 			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')

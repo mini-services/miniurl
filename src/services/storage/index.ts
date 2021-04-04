@@ -3,10 +3,9 @@ import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { RelationalStorage } from './drivers/relational/index.js'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError, GeneralError } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
-import { GeneralError } from '../../errors/generalError.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -51,7 +50,7 @@ export class Storage implements StorageDriver {
 	}
 
 	url = new (class UrlStorage {
-		constructor(public storage: Storage) { }
+		constructor(public storage: Storage) {}
 
 		get driver() {
 			return this.storage._driver
@@ -98,7 +97,9 @@ export class Storage implements StorageDriver {
 
 		public async save(body: UrlRequestData): Promise<StoredUrl> {
 			try {
-				logger.debug(`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}${body.id && `, id: ${body.id}`}`)
+				logger.debug(
+					`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}${body.id && `, id: ${body.id}`}`,
+				)
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)

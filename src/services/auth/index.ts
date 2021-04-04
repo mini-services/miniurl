@@ -1,5 +1,5 @@
 import { FastifyRequest } from 'fastify'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError } from '../../errors/errors.js'
 import { BearerTokenAuth } from './drivers/bearerToken/index.js'
 import type { AuthDriver } from './types'
 import { AuthConfig, AuthDriverName } from './types/config.js'
@@ -31,7 +31,7 @@ export class Auth implements AuthDriver {
 		return this._driver.isAuthorized(request)
 	}
 
-	public authorize(request: FastifyRequest): Promise<void> {
+	public async authorize(request: FastifyRequest): Promise<void> {
 		logger.debug(`Running Auth.authorize`)
 		return this._driver.authorize(request)
 	}

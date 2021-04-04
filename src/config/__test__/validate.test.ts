@@ -1,5 +1,5 @@
 import { validateConfig } from '../validate.js'
-import { InvalidConfigError } from '../../errors/invalidConfig.js'
+import { InvalidConfigError } from '../../errors/errors.js'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { AuthDriverName } from '../../services/auth/types/config.js'
 import { logger } from '../../services/logger/logger.js'

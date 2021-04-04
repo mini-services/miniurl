@@ -1,4 +1,4 @@
-name: MiniUrl
+name: Build
 on:
   push:
     branches:

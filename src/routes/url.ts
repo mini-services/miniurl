@@ -1,8 +1,9 @@
 import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
-import { NotFoundError } from '../errors/notFound.js'
 import { validateUrl } from '../services/urlValidator.js'
 import { UrlRequestData } from '../services/storage/types/url'
+import { GeneralError, NotFoundError } from '../errors/errors.js'
+
 /* Save URL to store and return the new shortened url */
 const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 	method: 'POST',
@@ -103,15 +104,16 @@ const deleteUrl: Route<{ Params: { id: string } }> = {
 			},
 		},
 	},
-	async handler(request, repl) {
+	async handler(request) {
 		await this.auth.authorize(request)
 		try {
 			await this.storage.url.delete(request.params.id)
 		} catch (e) {
 			this.log.warn('delete url failed in deleteUrl endpoint')
 			this.log.error(e.message)
+			throw new GeneralError(e.message)
 		}
-		return repl.code(200).send()
+		return Promise.resolve('success')
 	},
 }
 
