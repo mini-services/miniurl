@@ -192,12 +192,6 @@ Query
 -   `id: string` (required) - The saved url's id
 
 
-#### Response
-
-Header
-
--   `status:200` - operation success
-
 ### GET **<BASE_REDIRECT_URL>**/:id
 
 Redirects to a saved url.

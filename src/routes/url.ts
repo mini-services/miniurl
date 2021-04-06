@@ -113,7 +113,7 @@ const deleteUrl: Route<{ Params: { id: string } }> = {
 			this.log.error(e.message)
 			throw new GeneralError(e.message)
 		}
-		return Promise.resolve('success')
+		return Promise.resolve(true)
 	},
 }
 
