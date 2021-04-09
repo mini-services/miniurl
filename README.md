@@ -4,7 +4,7 @@
 <p align="center">
     <img src="https://img.shields.io/github/workflow/status/mini-services/miniurl/MiniUrl" alt="Build">
     <img src="https://img.shields.io/github/workflow/status/mini-services/miniurl/Test?label=test" alt="Test">
-    <a href="https://codecov.io/gh/mini-services/miniurl"><img src="https://codecov.io/gh/mini-services/miniurl/branch/release/0.2.0/graph/badge.svg?token=YE7LE819HK" alt="Codecov"></a>
+    <a href="https://codecov.io/gh/mini-services/miniurl"><img src="https://codecov.io/gh/mini-services/miniurl/branch/main/graph/badge.svg?token=YE7LE819HK" alt="Codecov"></a>
     <a href="https://join.slack.com/t/mini-services/shared_invite/zt-lu0mqw8n-HVk1Aq6yUODvJXZ6ikIA9w"><img src="https://img.shields.io/badge/Chat-Slack-blue" alt="Slack Chat"></a>
     <img src="https://img.shields.io/github/license/mini-services/miniurl" alt="License">
      <a href="https://github.com/mini-services/miniurl/issues"><img src="https://img.shields.io/github/issues/mini-services/miniurl" alt="Issues"></a>
