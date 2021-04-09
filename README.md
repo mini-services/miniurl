@@ -202,6 +202,8 @@ You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choo
 
 Refer to our [contribution guide](docs/contribution.md).
 
+Good luck!
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
