@@ -21,15 +21,14 @@ const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 	async handler(request) {
 		await validateUrl(request.body.url)
 
-		let urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
+		let urlRequestData = { url: request.body.url, ip: request.ip, requestUrl: request.hostname } as UrlRequestData
 		// Custom ids require admin rights
 		if (request.body.id) {
 			if (await this.auth.isAuthorized(request)) {
 				urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
 			} else {
-				throw UnauthorizedError("user without admin priviliges trying to create a url with custom id")
+				throw UnauthorizedError('user without admin priviliges trying to create a url with custom id')
 			}
-
 		}
 
 		const url = await this.storage.url.save(urlRequestData)

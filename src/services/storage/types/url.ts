@@ -25,6 +25,7 @@ export interface UrlRequestData {
 	url: string
 	id?: string
 	ip: string
+	requestUrl: string
 }
 
 export interface UrlInformation {
@@ -32,5 +33,6 @@ export interface UrlInformation {
 	urlVisitCount: number
 	infoVisitCount: number
 	lastUsed: string
+	requestUrl: string
 }
 export type UrlWithInformation = StoredUrl & UrlInformation
