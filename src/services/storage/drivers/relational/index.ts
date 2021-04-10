@@ -66,7 +66,7 @@ export class RelationalStorage implements StorageDriver {
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
 	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) { }
+		constructor(public storage: RelationalStorage) {}
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo
@@ -81,9 +81,18 @@ export class RelationalStorage implements StorageDriver {
 			} else {
 				urlInfo = await this.storage.db
 					.table<UrlInformation>('url_information')
-					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
+					.join('urls', 'urls.id', 'url_information.url_id')
+					.select(
+						'ip',
+						'url_visit_count',
+						'info_visit_count',
+						'last_used',
+						'id',
+						'url',
+						'created_at',
+						'updated_at',
+					)
 					.where('url_id', id)
-					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
 			}
 			if (!storedUrl && !urlInfo) throw NotFoundError()
@@ -123,8 +132,8 @@ export class RelationalStorage implements StorageDriver {
 
 			if (!url) throw NotFoundError()
 
-			if (id && await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first()) {
-				throw new GeneralError("The specific id you chose is already in use")
+			if (id && (await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first())) {
+				throw new GeneralError('The specific id you chose is already in use')
 			}
 
 			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
