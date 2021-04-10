@@ -10,6 +10,7 @@ export interface RawConfig {
 	url: {
 		matchPattern: string
 		lifetime: string
+		urlExpireFrom: string
 	}
 	storage: {
 		driverName: string
@@ -39,9 +40,10 @@ export interface Config {
 	url: {
 		matchPattern: string
 		lifetimeMs: number
+		urlExpireFrom: string
 		cleanupIntervalMs: number
 	}
 	baseRedirectUrl: string
-	storage: Omit<StorageConfig, 'appName' | 'lifetimeMs' | 'cleanupIntervalMs'>
+	storage: StorageConfig
 	auth: AuthConfig
 }

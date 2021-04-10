@@ -23,6 +23,7 @@ export class Storage implements StorageDriver {
 				throw new InvalidConfigError(`Invalid url storage driver selected.`)
 		}
 	}
+
 	get config(): StorageConfig {
 		return this._config
 	}

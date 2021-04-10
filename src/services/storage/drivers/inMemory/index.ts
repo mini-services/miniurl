@@ -3,8 +3,14 @@ import { NotFoundError , GeneralError } from '../../../../errors/errors.js'
 import { InMemoryStorageConfig } from '../../types/config.js'
 import type { StorageDriver } from '../../types/index.js'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
+import { logger } from '../../../logger/logger.js'
 
 export class InMemoryStorage implements StorageDriver {
+	private urlExpireFrom
+
+	constructor(private config: InMemoryStorageConfig) {
+		this.urlExpireFrom = config.urlExpireFrom
+	}
 	data: { urls: Map<string, StoredUrl>; urlInformation: Map<string, UrlInformation> } = {
 		urls: new Map(),
 		urlInformation: new Map(),
@@ -39,12 +45,15 @@ export class InMemoryStorage implements StorageDriver {
 			this.storage.data.urls.delete(id)
 		}
 		public async deleteOverdue(timespanMs: number): Promise<number> {
+			logger.debug('urlExpireFrom is ' + "'" + this.storage.urlExpireFrom + "'")
 			const deleteBefore = new Date().getTime() - timespanMs
 			let deletedCount = 0
 
 			this.storage.data.urls.forEach((storedUrl) => {
-				const updatedAt = new Date(storedUrl.updatedAt).getTime()
-				if (updatedAt <= deleteBefore) {
+				const relativeDate = new Date(
+					this.storage.urlExpireFrom === 'update' ? storedUrl.updatedAt : storedUrl.createdAt,
+				).getTime()
+				if (relativeDate <= deleteBefore) {
 					this.storage.data.urls.delete(storedUrl.id)
 					deletedCount++
 				}
@@ -106,11 +115,9 @@ export class InMemoryStorage implements StorageDriver {
 	public async initialize(): Promise<void> {
 		return
 	}
+
 	public async shutdown(): Promise<void> {
 		return
 	}
 
-	// eslint-disable-next-line
-	constructor(public config: InMemoryStorageConfig) {
-	}
 }
