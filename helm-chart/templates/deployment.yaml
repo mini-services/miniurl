@@ -38,20 +38,18 @@ spec:
             # Storage driver
             - name: STORAGE_DRIVER
               value: {{ required "storage.driver is required" .Values.storage.driver }}
-            {{ if eq .Values.storage.driver "Relational" }}
-            - name: RELATIONAL_STORAGE_CLIENT
-              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.client }}
-            - name: RELATIONAL_STORAGE_HOST
-              value: {{ .Values.storage.deploy | ternary (print .Release.Name "-postgresql") .Values.storage.relationalConfig.host }}
-            - name: RELATIONAL_STORAGE_USER
-              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.user }}
-            - name: RELATIONAL_STORAGE_PASSWORD
+            {{ if eq .Values.storage.driver "Postgres" }}
+            - name: POSTGRES_STORAGE_HOST
+              value: {{ .Values.storage.deploy | ternary (print .Release.Name "-postgresql") .Values.storage.postgresConfig.host }}
+            - name: POSTGRES_STORAGE_USER
+              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.postgresConfig.user }}
+            - name: POSTGRES_STORAGE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "miniurl.storageSecretName" . }}
                   key: {{ .Values.storage.deploy | ternary "postgresql-password" "password" }}
-            - name: RELATIONAL_STORAGE_DATABASE
-              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.relationalConfig.database }}
+            - name: POSTGRES_STORAGE_DATABASE
+              value: {{ .Values.storage.deploy | ternary "postgres" .Values.storage.postgresConfig.database }}
             {{ end }}
             # Auth driver
             - name: AUTH_DRIVER

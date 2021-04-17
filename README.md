@@ -47,12 +47,11 @@ docker run -d --name miniurl -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> -e STORAGE_DR
 docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
 docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
                              -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
-                             -e STORAGE_DRIVER=Relational \
-                             -e RELATIONAL_STORAGE_CLIENT=postgres \
-                             -e RELATIONAL_STORAGE_DATABASE=postgres \
-                             -e RELATIONAL_STORAGE_HOST=localhost \
-                             -e RELATIONAL_STORAGE_USER=postgres \
-                             -e RELATIONAL_STORAGE_PASSWORD=postgres
+                             -e STORAGE_DRIVER=Postgres \
+                             -e POSTGRES_STORAGE_DATABASE=postgres \
+                             -e POSTGRES_STORAGE_HOST=localhost \
+                             -e POSTGRES_STORAGE_USER=postgres \
+                             -e POSTGRES_STORAGE_PASSWORD=postgres
 ```
 
 ### Node.js
@@ -77,11 +76,10 @@ for Windows OS, it is also possible to use [nvm for Windows](https://github.com/
 ```s
 
 npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
-              STORAGE_DRIVER=Relational \
-              RELATIONAL_STORAGE_CLIENT=postgres \
-              RELATIONAL_STORAGE_HOST=localhost \
-              RELATIONAL_STORAGE_USER=postgres \
-              RELATIONAL_STORAGE_PASSWORD=postgres \
+              STORAGE_DRIVER=Postgres \
+              POSTGRES_STORAGE_HOST=localhost \
+              POSTGRES_STORAGE_USER=postgres \
+              POSTGRES_STORAGE_PASSWORD=postgres \
               npm start
 ```
 
@@ -170,17 +168,15 @@ Since MiniUrl follows the best practices including the [12 factor app](https://1
 
 ### Storage
 
-**STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Relational` (for any Knex.js-complaint SQL database).
+**STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Postgres` (for any Knex.js-complaint SQL database).
 
-**RELATIONAL_STORAGE_CLIENT** (required if STORAGE_DRIVER is `Relational`) - the relational client to use, see [Knex.js docs](http://knexjs.org/) for the available options
+**POSTGRES_STORAGE_HOST** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's host (e.g https://my-database.com)
 
-**RELATIONAL_STORAGE_HOST** (required if STORAGE_DRIVER is `Relational`) - the relational database's host (e.g https://my-database.com)
+**POSTGRES_STORAGE_USER** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's username
 
-**RELATIONAL_STORAGE_USER** (required if STORAGE_DRIVER is `Relational`) - the relational database's username
+**POSTGRES_STORAGE_PASSWORD** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's password
 
-**RELATIONAL_STORAGE_PASSWORD** (required if STORAGE_DRIVER is `Relational`) - the relational database's password
-
-**RELATIONAL_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Relational`) - the relational database's name (e.g postgres)
+**POSTGRES_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's name (e.g postgres)
 
 ### Auth
 

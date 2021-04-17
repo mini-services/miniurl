@@ -45,25 +45,19 @@ test('validateStorageDriver properly validates storage config', () => {
 		expect(validateConfig(config)).toBe(true)
 	})
 
-	// Tests the relational driver config
-	config.storage.driverName = StorageDriverName.Relational
+	// Tests the postgres driver config
+	config.storage.driverName = StorageDriverName.Postgres
 
-	// storage.relationalDriverConfig.client
-	const originalClientValue = config.storage.relationalDriverConfig.client
-	config.storage.relationalDriverConfig.client = ''
-	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
-	config.storage.relationalDriverConfig.client = originalClientValue
-
-	// storage.relationalDriverConfig.connection
+	// storage.postgresDriverConfig.connection
 	;(Object.keys(
-		config.storage.relationalDriverConfig.connection,
-	) as (keyof typeof config['storage']['relationalDriverConfig']['connection'])[]).forEach((key) => {
-		const originalValue = config.storage.relationalDriverConfig.connection[key]
-		config.storage.relationalDriverConfig.connection[key] = ''
+		config.storage.postgresDriverConfig.connection,
+	) as (keyof typeof config['storage']['postgresDriverConfig']['connection'])[]).forEach((key) => {
+		const originalValue = config.storage.postgresDriverConfig.connection[key]
+		config.storage.postgresDriverConfig.connection[key] = ''
 
 		expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
 
-		config.storage.relationalDriverConfig.connection[key] = originalValue
+		config.storage.postgresDriverConfig.connection[key] = originalValue
 	})
 })
 
