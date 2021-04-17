@@ -27,6 +27,11 @@ const rawConfig: RawConfig = {
 				database: process.env.POSTGRES_STORAGE_DATABASE || '',
 			},
 		},
+		sqliteDriverConfig: {
+			connection: {
+				filename: process.env.SQLITE_STORAGE_FILENAME || './db.sqlite',
+			},
+		},
 	},
 	auth: {
 		driverName: process.env.AUTH_DRIVER || '',

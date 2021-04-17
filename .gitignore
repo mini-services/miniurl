@@ -115,3 +115,5 @@ Pulumi.*.yaml
 *.bak
 
 .DS_Store
+
+*.sqlite

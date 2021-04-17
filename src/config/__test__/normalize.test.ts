@@ -13,6 +13,8 @@ test('Happy flow', () => {
 	expect(config.baseRedirectUrl.endsWith('/')).toBe(true)
 	expect(baseRedirectUrl === config.baseRedirectUrl || baseRedirectUrl + '/' === config.baseRedirectUrl).toBe(true)
 
+	const urlLifetimeMs = ms(url.lifetime)
+
 	expect(config).toEqual({
 		port,
 		logLevel,
@@ -20,11 +22,14 @@ test('Happy flow', () => {
 		appName,
 		baseRedirectUrl: config.baseRedirectUrl, // This value is already tested above
 		url: {
-			lifetimeMs: ms(url.lifetime),
+			lifetimeMs: urlLifetimeMs,
 			matchPattern: url.matchPattern,
 			cleanupIntervalMs: config.url.cleanupIntervalMs, // We're not yet testing this
 		},
 		storage: {
+			appName,
+			urlLifetimeMs,
+			cleanupIntervalMs: config.url.cleanupIntervalMs, // We're not yet testing this
 			driverName: storage.driverName as StorageDriverName,
 			driverConfig: storage.driverName === StorageDriverName.Postgres ? storage.postgresDriverConfig : {},
 		},
