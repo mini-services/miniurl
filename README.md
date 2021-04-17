@@ -17,10 +17,12 @@ MiniUrl is part of the [Mini Services Project](https://github.com/mini-services)
 ## Getting Started
 
 -   Run using [Helm](https://github.com/mini-services/miniurl/tree/main#helm), [Docker](https://github.com/mini-services/miniurl/tree/main#docker) or [Node.js](https://github.com/mini-services/miniurl/tree/main#nodejs)
-- Use the API (future: dashboard) and enjoy a zero-code microservice :upside_down_face:
+-   Use the API (future: dashboard) and enjoy a zero-code microservice :upside_down_face:
+
 ## Deployment Options
 
 ### Helm
+
 MiniUrl maintains an extensive production-grade Helm chart. See the [chart](https://github.com/mini-services/miniurl/tree/main/helm-chart) for the possible values configuration and examples.
 
 ```s
@@ -32,28 +34,32 @@ helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=<YOUR_
 ```
 
 ### Docker
-Run MiniUrl's docker image directly. 
+
+Run MiniUrl's docker image directly.
+
 ```s
 docker run -d --name miniurl -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> -e STORAGE_DRIVER=InMemory -p 80:8000 miniservices/miniurl
 ```
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable database. A working example using Postgres:
+
 ```s
 docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
 docker run -d --name miniurl -p 80:8000 miniservices/miniurl \
                              -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
-                             -e STORAGE_DRIVER=Relational \
-                             -e RELATIONAL_STORAGE_CLIENT=postgres \
-                             -e RELATIONAL_STORAGE_DATABASE=postgres \
-                             -e RELATIONAL_STORAGE_HOST=localhost \
-                             -e RELATIONAL_STORAGE_USER=postgres \
-                             -e RELATIONAL_STORAGE_PASSWORD=postgres
+                             -e STORAGE_DRIVER=Postgres \
+                             -e POSTGRES_STORAGE_DATABASE=postgres \
+                             -e POSTGRES_STORAGE_HOST=localhost \
+                             -e POSTGRES_STORAGE_USER=postgres \
+                             -e POSTGRES_STORAGE_PASSWORD=postgres
 ```
 
 ### Node.js
+
 Requirements:
-* Node.js 14.8+
-* NPM 6+ or Yarn X+
+
+-   Node.js 14.8+
+-   NPM 6+ or Yarn X+
 
 ```s
 git clone https://github.com/mini-services/miniurl.git
@@ -63,26 +69,24 @@ npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm sta
 ```
 Node.js troubleshooting:
 
-for Windows OS, it is also possible to use [nvm for windows](https://github.com/coreybutler/nvm-windows/releases)
-
-refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md)
+for Windows OS, it is also possible to use [nvm for Windows](https://github.com/coreybutler/nvm-windows/releases). Refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md).
 
 **NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
 
 ```s
 
 npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> \
-              STORAGE_DRIVER=Relational \
-              RELATIONAL_STORAGE_CLIENT=postgres \
-              RELATIONAL_STORAGE_HOST=localhost \
-              RELATIONAL_STORAGE_USER=postgres \
-              RELATIONAL_STORAGE_PASSWORD=postgres \
+              STORAGE_DRIVER=Postgres \
+              POSTGRES_STORAGE_HOST=localhost \
+              POSTGRES_STORAGE_USER=postgres \
+              POSTGRES_STORAGE_PASSWORD=postgres \
               npm start
 ```
 
 ### Development
 
 See [running the project in development mode](docs/contribution.md#running-the-project-in-development-mode).
+
 ## API
 
 The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/).
@@ -96,7 +100,6 @@ The easiest way to get familiar with MiniUrl's API is using [Insomnia](https://i
 -   [Url collection](https://raw.githubusercontent.com/mini-services/miniurl/main/docs/assets/postman/url-collection.json)
 -   [Demo environment](https://raw.githubusercontent.com/mini-services/miniurl/main/docs/assets/postman/demo-environment.json)
 -   [Local environment](https://raw.githubusercontent.com/mini-services/miniurl/main/docs/assets/postman/local-environment.json)
-
 
 ### POST /miniurl/url
 
@@ -151,25 +154,35 @@ Redirect 302 - redirects to the saved url.
 
 Since MiniUrl follows the best practices including the [12 factor app](https://12factor.net/), the microservice is entirely configurable via environment variables. Available variables are:
 
-**BASE_REDIRECT_URL** (required) - the shortened urls base path e.g https://youtu.be, https://bit.ly or https://example.com/u
+### General
 
-**URL_MATCH_PATTERN** (default: "**") - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
+**BASE_REDIRECT_URL** (required) - the shortened urls' base path e.g https://youtu.be, https://bit.ly or https://example.com/u
+
+**API_PREFIX** (default: "/miniurl") - MiniUrl's prefix for the api routes (e.g for saving a url, one would POST to ${API_PREFIX}/url)
+
+**URL_MATCH_PATTERN** (default: "\*\*") - a [micromatch](https://github.com/micromatch/micromatch)-complaint glob pattern for restricting the saved urls (for example, if you don't want your MiniUrl to save links other than your domain such as https://evil-fisching.com)
 
 **URL_LIFETIME** (default: "7 days") - a human-readible time (see the [ms docs](https://github.com/vercel/ms) for available options) stating the url lifetime (after which it expires). Note that the expiration mechanism runs at most once per minute and at least once per hour and so slight deviation may occur.
 
-**STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Relational` (for any Knex.js-complaint SQL database).
-
-**RELATIONAL_STORAGE_CLIENT** (required if STORAGE_DRIVER is `Relational`) - the relational client to use, see [Knex.js docs](http://knexjs.org/) for the available options
-
-**RELATIONAL_STORAGE_HOST** (required if STORAGE_DRIVER is `Relational`) - the relational database's host (e.g https://my-database.com)
-
-**RELATIONAL_STORAGE_USER** (required if STORAGE_DRIVER is `Relational`) - the relational database's username
-
-**RELATIONAL_STORAGE_PASSWORD** (required if STORAGE_DRIVER is `Relational`) - the relational database's password
-
-**RELATIONAL_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Relational`) - the relational database's name (e.g postgres)
-
 **PORT** (default: "80") - the Node.js process port. In most cases your shouldn't change this
+
+### Storage
+
+**STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Postgres` (for any Knex.js-complaint SQL database).
+
+**POSTGRES_STORAGE_HOST** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's host (e.g https://my-database.com)
+
+**POSTGRES_STORAGE_USER** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's username
+
+**POSTGRES_STORAGE_PASSWORD** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's password
+
+**POSTGRES_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's name (e.g postgres)
+
+### Auth
+
+**AUTH_DRIVER** (default: `BearerToken`) - MiniUrl's auth driver. Currently, the only available option is `BearerToken`.
+
+**AUTH_BEARER_TOKEN** (default: <RANDOM>) - The bearer token to use when selecting the `BearerToken` auth driver.
 
 ## Issues and Questions
 
@@ -184,6 +197,7 @@ You may [open an issue](https://github.com/mini-services/miniurl/issues/new/choo
 ## Contribution
 
 Refer to our [contribution guide](docs/contribution.md).
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)

@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 
 COPY package.json /usr/src/app
 COPY package-lock.json /usr/src/app
-RUN npm install
+RUN npm install --production
 
 COPY . /usr/src/app
 ENTRYPOINT ["npm", "start"]

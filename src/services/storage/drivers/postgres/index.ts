@@ -1,20 +1,23 @@
 import cryptoRandomString from 'crypto-random-string'
 import Knex from 'knex'
 import { join } from 'path'
-import { NotFoundError } from '../../../../errors/notFound.js'
+import { NotFoundError, GeneralError } from '../../../../errors/errors.js'
 import type { StorageDriver } from '../../types'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
-import type { StoredUrl } from '../../types/url.js'
-import { RelationalStorageConfig } from '../../types/config.js'
+import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
+import { PostgresStorageConfig } from '../../types/config.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-export class RelationalStorage implements StorageDriver {
+
+export class PostgresStorage implements StorageDriver {
 	private db: Knex
-	constructor(private config: RelationalStorageConfig) {
+
+	constructor(private config: PostgresStorageConfig) {
 		this.db = Knex({
+			client: 'postgres',
 			...config.driverConfig,
 			migrations: {
 				schemaName: config.appName,
@@ -40,6 +43,9 @@ export class RelationalStorage implements StorageDriver {
 	public async initialize(): Promise<void> {
 		await this.upMigrations()
 	}
+	public async shutdown(): Promise<void> {
+		return
+	}
 	private async upMigrations() {
 		// For new migrations, see the contribution guide's common issues section
 		await this.db.schema.createSchemaIfNotExists(this.config.appName)
@@ -60,27 +66,43 @@ export class RelationalStorage implements StorageDriver {
 		])
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
-	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) {}
-		public async get(id: string): Promise<StoredUrl> {
-			const storedUrl = await this.storage.db
-				.table<StoredUrl & { serial?: number }>('urls')
-				.select('*')
-				.where('id', id)
-				.first()
+	url = new (class PostgresUrlStorage {
+		constructor(public storage: PostgresStorage) {}
 
-			delete storedUrl?.serial
+		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
+			let storedUrl, urlInfo
+			if (!options.withInfo) {
+				storedUrl = await this.storage.db
+					.table<StoredUrl & { serial?: number }>('urls')
+					.select('*')
+					.where('id', id)
+					.first()
 
-			if (!storedUrl) throw NotFoundError()
-			else return storedUrl
+				delete storedUrl?.serial
+			} else {
+				urlInfo = await this.storage.db
+					.table<UrlInformation>('url_information')
+					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
+					.where('url_id', id)
+					.join('urls', 'url_information.url_id', 'urls.id')
+					.first()
+			}
+			if (!storedUrl && !urlInfo) throw NotFoundError()
+			return options.withInfo ? urlInfo : storedUrl
 		}
+
+		//All Info associated with that Urls also get deleted, automatically.
+		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
 		public async delete(id: string): Promise<void> {
 			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
+			return
 		}
+
 		public async deleteOverdue(timespanMs: number): Promise<number> {
 			const deleteBefore = new Date(new Date().getTime() - timespanMs)
 			return await this.storage.db.table<StoredUrl>('urls').where('updatedAt', '<', deleteBefore).delete()
 		}
+
 		public async edit(id: string, url: string): Promise<StoredUrl> {
 			const [storedUrl] = await this.storage.db
 				.table<StoredUrl>('urls')
@@ -91,11 +113,43 @@ export class RelationalStorage implements StorageDriver {
 			if (!url) throw NotFoundError()
 			return storedUrl
 		}
-		public async save(url: string): Promise<StoredUrl> {
-			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url }).returning('*')
+
+		public async save({ url, id = '', ip }: UrlRequestData): Promise<StoredUrl> {
+			const urlInfo: UrlInformation = {
+				ip,
+				urlVisitCount: 0,
+				infoVisitCount: 0,
+				lastUsed: new Date().toISOString(),
+			}
 
 			if (!url) throw NotFoundError()
+
+			if (id && (await this.storage.db.table<StoredUrl>('urls').select('*').where('id', id).first())) {
+				throw new GeneralError('The specific id you chose is already in use')
+			}
+
+			const [storedUrl] = await this.storage.db.table<StoredUrl>('urls').insert({ url, id }).returning('*')
+
+			await this.storage.db
+				.table<UrlInformation & { urlId: string }>('url_information')
+				.insert({ urlId: storedUrl.id, ...urlInfo })
+
 			return storedUrl
+		}
+
+		public async incVisitCount(id: string): Promise<void> {
+			await this.storage.db
+				.table<UrlInformation>('url_information')
+				.where('url_id', '=', id)
+				.increment('url_visit_count', 1)
+		}
+
+		public async incInfoCount(id: string): Promise<void> {
+			await this.storage.db
+				.table<UrlInformation>('url_information')
+				.where('url_id', '=', id)
+				.increment('info_visit_count', 1)
+				.update({ lastUsed: new Date().toISOString() })
 		}
 	})(this)
 }
