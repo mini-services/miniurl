@@ -19,13 +19,12 @@ const rawConfig: RawConfig = {
 	},
 	storage: {
 		driverName: process.env.STORAGE_DRIVER || '',
-		relationalDriverConfig: {
-			client: process.env.RELATIONAL_STORAGE_CLIENT || '',
+		postgresDriverConfig: {
 			connection: {
-				host: process.env.RELATIONAL_STORAGE_HOST || '',
-				user: process.env.RELATIONAL_STORAGE_USER || '',
-				password: process.env.RELATIONAL_STORAGE_PASSWORD || '',
-				database: process.env.RELATIONAL_STORAGE_DATABASE || '',
+				host: process.env.POSTGRES_STORAGE_HOST || '',
+				user: process.env.POSTGRES_STORAGE_USER || '',
+				password: process.env.POSTGRES_STORAGE_PASSWORD || '',
+				database: process.env.POSTGRES_STORAGE_DATABASE || '',
 			},
 		},
 	},
@@ -36,6 +35,9 @@ const rawConfig: RawConfig = {
 		},
 	},
 }
+
+// In order to support the Postgres driver's older name
+if (rawConfig.storage.driverName === 'Relational') rawConfig.storage.driverName = 'Postgres'
 
 if (!rawConfig.auth.driverName) {
 	logger.warn(`No auth driver selected.

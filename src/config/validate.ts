@@ -25,15 +25,14 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 		)
 	}
 
-	if (storage.driverName === StorageDriverName.Relational) {
-		const { client, connection } = storage.relationalDriverConfig
-		if (!(client && connection.host && connection.user && connection.password && connection.database)) {
+	if (storage.driverName === StorageDriverName.Postgres) {
+		const { connection } = storage.postgresDriverConfig
+		if (!(connection.host && connection.user && connection.password && connection.database)) {
 			throw new InvalidConfigError(
-				`When using Relational storage driver you must specify RELATIONAL_STORAGE_CLIENT,
-													RELATIONAL_STORAGE_HOST,
-													RELATIONAL_STORAGE_USER,
-													RELATIONAL_STORAGE_PASSWORD,
-													RELATIONAL_STORAGE_DATABASE`,
+				`When using Postgres storage driver you must specify POSTGRES_STORAGE_HOST,
+													POSTGRES_STORAGE_USER,
+													POSTGRES_STORAGE_PASSWORD,
+													POSTGRES_STORAGE_DATABASE`,
 			)
 		}
 	}

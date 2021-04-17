@@ -40,7 +40,7 @@ export function normalizeConfig({
 		},
 		storage: {
 			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Relational ? storage.relationalDriverConfig : {},
+			driverConfig: storage.driverName === StorageDriverName.Postgres ? storage.postgresDriverConfig : {},
 		},
 		auth: {
 			driverName: auth.driverName as AuthDriverName,

@@ -2,7 +2,7 @@ import { StorageConfig, StorageDriverName } from './types/config.js'
 import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.js'
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
-import { RelationalStorage } from './drivers/relational/index.js'
+import { PostgresStorage } from './drivers/postgres/index.js'
 import { InvalidConfigError, GeneralError } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
@@ -16,8 +16,8 @@ export class Storage implements StorageDriver {
 			case StorageDriverName.InMemory:
 				this._driver = new InMemoryStorage(_config)
 				break
-			case StorageDriverName.Relational:
-				this._driver = new RelationalStorage(_config)
+			case StorageDriverName.Postgres:
+				this._driver = new PostgresStorage(_config)
 				break
 			default:
 				throw new InvalidConfigError(`Invalid url storage driver selected.`)

@@ -8,15 +8,16 @@ import { fileURLToPath } from 'url'
 import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
-import { RelationalStorageConfig } from '../../types/config.js'
+import { PostgresStorageConfig } from '../../types/config.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-export class RelationalStorage implements StorageDriver {
+export class PostgresStorage implements StorageDriver {
 	private db: Knex
 
-	constructor(private config: RelationalStorageConfig) {
+	constructor(private config: PostgresStorageConfig) {
 		this.db = Knex({
+			client: 'postgres',
 			...config.driverConfig,
 			migrations: {
 				schemaName: config.appName,
@@ -65,8 +66,8 @@ export class RelationalStorage implements StorageDriver {
 		])
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
-	url = new (class RelationalUrlStorage {
-		constructor(public storage: RelationalStorage) {}
+	url = new (class PostgresUrlStorage {
+		constructor(public storage: PostgresStorage) {}
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
 			let storedUrl, urlInfo

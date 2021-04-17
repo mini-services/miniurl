@@ -13,8 +13,7 @@ export interface RawConfig {
 	}
 	storage: {
 		driverName: string
-		relationalDriverConfig: {
-			client: string
+		postgresDriverConfig: {
 			connection: {
 				host: string
 				user: string

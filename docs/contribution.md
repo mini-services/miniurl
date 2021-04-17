@@ -36,8 +36,8 @@ This is probably due to Helm not deleting the PersistentVolumeClaims of the data
 -  Check if you have Postgres installed locally and remove it or kill the process.
 ## Common issues
 
-### How do I create a new migration in the Storage Relational driver?
--   cd to src/services/storage/drivers/relational folder
+### How do I create a new migration in the Storage Postgres driver?
+-   cd to src/services/storage/drivers/postgres folder
 -   run `npx knex migrate:make <MIGRATION_NAME> -x ts --migrations-directory migrations`
 
 ### My urls keep getting erased on development mode!
@@ -48,7 +48,7 @@ If you want to persist the data, you can edit the .env.development file and chan
 ### How can I run a local postgres database for development purposes?
 -   Make sure you have Docker installed
 -   Run `docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres`
--   On .env.development, comment the InMemory Storage section and uncomment the Relational Storage section
+-   On .env.development, comment the InMemory Storage section and uncomment the Postgres Storage section
 ## Project structure
 
 ![Project Structure](assets/project-structure.svg)

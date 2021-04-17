@@ -31,9 +31,8 @@
 
 {{- define "miniurl.validateStorageConfig" -}}
 {{- if not .Values.storage.deploy -}}
-{{- required "storage.relationalConfig.client is required when storage.driver is set to 'Relational' and storage.deploy is set to false" .Values.storage.relationalConfig.client -}}
-{{- required "storage.relationalConfig.host is required when storage.driver is set to 'Relational' and storage.deploy is set to false" .Values.storage.relationalConfig.host -}}
-{{- required "storage.relationalConfig.user is required when storage.driver is set to 'Relational' and storage.deploy is set to false" .Values.storage.relationalConfig.user -}}
-{{- required "storage.relationalConfig.database is required when storage.driver is set to 'Relational' and storage.deploy is set to false" .Values.storage.relationalConfig.database -}}
+{{- required "storage.postgresConfig.host is required when storage.driver is set to 'Postgres' and storage.deploy is set to false" .Values.storage.postgresConfig.host -}}
+{{- required "storage.postgresConfig.user is required when storage.driver is set to 'Postgres' and storage.deploy is set to false" .Values.storage.postgresConfig.user -}}
+{{- required "storage.postgresConfig.database is required when storage.driver is set to 'Postgres' and storage.deploy is set to false" .Values.storage.postgresConfig.database -}}
 {{- end -}}
 {{- end -}}

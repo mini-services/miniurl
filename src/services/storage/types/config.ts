@@ -1,9 +1,9 @@
 import type { InMemoryStorageDriverConfig } from '../drivers/inMemory/types'
-import type { RelationalStorageDriverConfig } from '../drivers/relational/types'
+import type { PostgresStorageDriverConfig } from '../drivers/postgres/types'
 
 export enum StorageDriverName {
 	InMemory = 'InMemory',
-	Relational = 'Relational',
+	Postgres = 'Postgres',
 }
 
 export interface BaseConfig {
@@ -12,9 +12,9 @@ export interface BaseConfig {
 	cleanupIntervalMs: number
 }
 
-export interface RelationalStorageConfig extends BaseConfig {
-	driverName: StorageDriverName.Relational
-	driverConfig: RelationalStorageDriverConfig
+export interface PostgresStorageConfig extends BaseConfig {
+	driverName: StorageDriverName.Postgres
+	driverConfig: PostgresStorageDriverConfig
 }
 
 export interface InMemoryStorageConfig extends BaseConfig {
@@ -22,4 +22,4 @@ export interface InMemoryStorageConfig extends BaseConfig {
 	driverConfig: InMemoryStorageDriverConfig
 }
 
-export type StorageConfig = RelationalStorageConfig | InMemoryStorageConfig
+export type StorageConfig = PostgresStorageConfig | InMemoryStorageConfig

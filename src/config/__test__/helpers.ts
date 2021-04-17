@@ -13,8 +13,7 @@ export function getRawConfig(): RawConfig {
 		},
 		storage: {
 			driverName: 'InMemory',
-			relationalDriverConfig: {
-				client: 'mock-client',
+			postgresDriverConfig: {
 				connection: {
 					host: 'local-host',
 					user: 'snir-hamair',
