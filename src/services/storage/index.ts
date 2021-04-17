@@ -101,7 +101,7 @@ export class Storage implements StorageDriver {
 
 		public async save(body: UrlRequestData): Promise<StoredUrl> {
 			try {
-				logger.debug(`Start Storage.url.save with ${body}`)
+				logger.debug(`Start Storage.url.save with ${JSON.stringify(body)}`)
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)

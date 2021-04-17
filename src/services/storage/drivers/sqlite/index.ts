@@ -61,7 +61,7 @@ export class SqliteStorage implements StorageDriver {
 		constructor(public storage: SqliteStorage) {}
 
 		public async get(id: string, options = { withInfo: false }): Promise<StoredUrl | UrlWithInformation> {
-			let storedUrl, urlInfo
+			let storedUrl, urlWithInfo
 			if (!options.withInfo) {
 				storedUrl = await this.storage.db
 					.table<StoredUrl & { serial?: number }>('urls')
@@ -71,15 +71,24 @@ export class SqliteStorage implements StorageDriver {
 
 				delete storedUrl?.serial
 			} else {
-				urlInfo = await this.storage.db
+				urlWithInfo = await this.storage.db
 					.table<UrlInformation>('url_information')
-					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
+					.select(
+						'id',
+						'url',
+						'ip',
+						'url_visit_count',
+						'info_visit_count',
+						'last_used',
+						'created_at',
+						'updated_at',
+					)
 					.where('url_id', id)
 					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
 			}
-			if (!storedUrl && !urlInfo) throw NotFoundError()
-			return options.withInfo ? urlInfo : storedUrl
+			if (!storedUrl && !urlWithInfo) throw NotFoundError()
+			return options.withInfo ? urlWithInfo : storedUrl
 		}
 
 		//All Info associated with that Urls also get deleted, automatically.
