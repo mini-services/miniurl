@@ -17,8 +17,8 @@
 		"test": "npm run test:unit && npm run test:e2e",
 		"start": "cross-env npm_package_type=module NODE_ENV=production node --loader ts-node/esm/transpile-only ./src/index.ts",
 		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --trace-warnings\" src/index.ts",
-		"lint":"tsc --noEmit && eslint **/*.ts",
-		"lint:fix":"npm run lint -- --fix",
+		"lint": "tsc --noEmit && eslint **/*.ts",
+		"lint:fix": "npm run lint -- --fix",
 		"test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
 		"test:e2e": "exit 0",
 		"test:coverage": "codecov"
@@ -69,7 +69,6 @@
 		"jest": "^26.6.3",
 		"lint-staged": "^10.5.3",
 		"nodemon": "^2.0.6",
-		"nyc": "^15.1.0",
 		"prettier": "^2.2.1",
 		"source-map-support": "^0.5.19",
 		"ts-jest": "^26.5.3",
