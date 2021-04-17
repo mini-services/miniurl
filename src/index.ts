@@ -10,13 +10,7 @@ logger.info(`Logger level defined as ${config.logLevel}`)
 logger.setLevel(config.logLevel)
 
 // Storage
-const storage = new Storage({
-	appName: config.appName,
-	driverName: config.storage.driverName,
-	driverConfig: config.storage.driverConfig,
-	lifetimeMs: config.url.lifetimeMs,
-	cleanupIntervalMs: config.url.cleanupIntervalMs,
-})
+const storage = new Storage(config.storage)
 await storage.initialize()
 
 // Fastify

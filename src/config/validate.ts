@@ -29,10 +29,17 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 		const { connection } = storage.postgresDriverConfig
 		if (!(connection.host && connection.user && connection.password && connection.database)) {
 			throw new InvalidConfigError(
-				`When using Postgres storage driver you must specify POSTGRES_STORAGE_HOST,
+				`When using the Postgres storage driver you must specify POSTGRES_STORAGE_HOST,
 													POSTGRES_STORAGE_USER,
 													POSTGRES_STORAGE_PASSWORD,
 													POSTGRES_STORAGE_DATABASE`,
+			)
+		}
+	} else if (storage.driverName === StorageDriverName.Sqlite) {
+		const { connection } = storage.sqliteDriverConfig
+		if (!connection.filename) {
+			throw new InvalidConfigError(
+				`When using the Sqlite storage driver you must specify a filename via SQLITE_STORAGE_FILENAME`,
 			)
 		}
 	}

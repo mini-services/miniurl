@@ -21,6 +21,11 @@ export interface RawConfig {
 				database: string
 			}
 		}
+		sqliteDriverConfig: {
+			connection: {
+				filename: string
+			}
+		}
 	}
 	auth: {
 		driverName: string
@@ -41,6 +46,6 @@ export interface Config {
 		cleanupIntervalMs: number
 	}
 	baseRedirectUrl: string
-	storage: Omit<StorageConfig, 'appName' | 'lifetimeMs' | 'cleanupIntervalMs'>
+	storage: StorageConfig
 	auth: AuthConfig
 }

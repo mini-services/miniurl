@@ -21,6 +21,11 @@ export function getRawConfig(): RawConfig {
 					database: 'mock-db',
 				},
 			},
+			sqliteDriverConfig: {
+				connection: {
+					filename: './db.sqlite',
+				},
+			},
 		},
 		auth: {
 			driverName: 'BearerToken',

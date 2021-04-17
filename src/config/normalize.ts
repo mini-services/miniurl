@@ -1,4 +1,4 @@
-import { StorageDriverName } from '../services/storage/types/config.js'
+import { StorageConfig, StorageDriverName } from '../services/storage/types/config.js'
 import ms from 'ms'
 import type { RawConfig, Config } from './types.js'
 import {
@@ -27,6 +27,9 @@ export function normalizeConfig({
 	// No more than the maximum
 	const cleanupIntervalMs = Math.min(minimumCleanupTime, MAX_URL_CLEANUP_INTERVAL_MS)
 
+	const urlLifetimeMs = ms(url.lifetime)
+
+	const storageConfig = getStorageDriverConfig(storage, { appName, urlLifetimeMs, cleanupIntervalMs })
 	return {
 		port,
 		logLevel,
@@ -34,17 +37,40 @@ export function normalizeConfig({
 		appName,
 		baseRedirectUrl,
 		url: {
-			lifetimeMs: ms(url.lifetime),
+			lifetimeMs: urlLifetimeMs,
 			matchPattern: url.matchPattern,
 			cleanupIntervalMs,
 		},
-		storage: {
-			driverName: storage.driverName as StorageDriverName,
-			driverConfig: storage.driverName === StorageDriverName.Postgres ? storage.postgresDriverConfig : {},
-		},
+		storage: storageConfig,
 		auth: {
 			driverName: auth.driverName as AuthDriverName,
 			driverConfig: auth.bearerTokenDriverConfig,
 		},
+	}
+}
+
+function getStorageDriverConfig(
+	storage: RawConfig['storage'],
+	extras: { appName: string; urlLifetimeMs: number; cleanupIntervalMs: number },
+): StorageConfig {
+	const { Postgres, Sqlite, InMemory } = StorageDriverName
+	if (storage.driverName === Postgres) {
+		return {
+			driverName: Postgres,
+			driverConfig: storage.postgresDriverConfig,
+			...extras,
+		}
+	} else if (storage.driverName === Sqlite) {
+		return {
+			driverName: Sqlite,
+			driverConfig: storage.sqliteDriverConfig,
+			...extras,
+		}
+	} else {
+		return {
+			driverName: InMemory,
+			driverConfig: {},
+			...extras,
+		}
 	}
 }

@@ -6,6 +6,7 @@ import { PostgresStorage } from './drivers/postgres/index.js'
 import { InvalidConfigError, GeneralError } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
+import { SqliteStorage } from './drivers/sqlite/index.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -18,6 +19,9 @@ export class Storage implements StorageDriver {
 				break
 			case StorageDriverName.Postgres:
 				this._driver = new PostgresStorage(_config)
+				break
+			case StorageDriverName.Sqlite:
+				this._driver = new SqliteStorage(_config)
 				break
 			default:
 				throw new InvalidConfigError(`Invalid url storage driver selected.`)
@@ -34,9 +38,9 @@ export class Storage implements StorageDriver {
 			logger.debug(`Running Storage.initialize`)
 			// Waits for 1 minute (6 * 10,000ms) before failing
 			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
-			await this.url.deleteOverdue(this.config.lifetimeMs)
+			await this.url.deleteOverdue(this.config.urlLifetimeMs)
 			this._intervalToken = setInterval(
-				() => this.url.deleteOverdue(this.config.lifetimeMs),
+				() => this.url.deleteOverdue(this.config.urlLifetimeMs),
 				this.config.cleanupIntervalMs,
 			)
 		} catch (err) {
@@ -97,9 +101,7 @@ export class Storage implements StorageDriver {
 
 		public async save(body: UrlRequestData): Promise<StoredUrl> {
 			try {
-				logger.debug(
-					`Start Storage.url.save with url: ${body.url}, ip: ${body.ip}${body.id && `, id: ${body.id}`}`,
-				)
+				logger.debug(`Start Storage.url.save with ${body}`)
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)
@@ -113,7 +115,6 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.incVisitCount(id)
 			} catch (err) {
 				logger.error(`Storage.url.incVisitCount failed: ${err}`)
-				throw new GeneralError(`Could not increase visit count for url ${id}`)
 			}
 		}
 
@@ -123,7 +124,6 @@ export class Storage implements StorageDriver {
 				return this.driver.url.incInfoCount(id)
 			} catch (err) {
 				logger.error(`Storage.url.incInfoCount failed: ${err}`)
-				throw new GeneralError(`Could not increase info count for url ${id}`)
 			}
 		}
 	})(this)
