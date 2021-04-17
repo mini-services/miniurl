@@ -18,6 +18,9 @@ install-dependencies:
 	@sudo snap install yq
 
 	@echo [!] Installing npm dependencies
+	@echo npm -v
+	@npm i -g npm
+	@echo npm -v
 	@sudo npm install
 
 # Run tests
