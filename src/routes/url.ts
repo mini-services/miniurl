@@ -27,9 +27,8 @@ const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 			if (await this.auth.isAuthorized(request)) {
 				urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
 			} else {
-				throw UnauthorizedError("user without admin priviliges trying to create a url with custom id")
+				throw UnauthorizedError('user without admin priviliges trying to create a url with custom id')
 			}
-
 		}
 
 		const url = await this.storage.url.save(urlRequestData)
