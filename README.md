@@ -1,11 +1,9 @@
-
-
-
 <p align="center">
     <img src="https://img.shields.io/github/workflow/status/mini-services/miniurl/MiniUrl" alt="Build">
     <img src="https://img.shields.io/github/workflow/status/mini-services/miniurl/Test?label=test" alt="Test">
     <a href="https://codecov.io/gh/mini-services/miniurl"><img src="https://codecov.io/gh/mini-services/miniurl/branch/main/graph/badge.svg?token=YE7LE819HK" alt="Codecov"></a>
     <a href="https://join.slack.com/t/mini-services/shared_invite/zt-lu0mqw8n-HVk1Aq6yUODvJXZ6ikIA9w"><img src="https://img.shields.io/badge/Chat-Slack-blue" alt="Slack Chat"></a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl.svg?type=shield"/></a>
     <img src="https://img.shields.io/github/license/mini-services/miniurl" alt="License">
      <a href="https://github.com/mini-services/miniurl/issues"><img src="https://img.shields.io/github/issues/mini-services/miniurl" alt="Issues"></a>
      <img src="https://img.shields.io/snyk/vulnerabilities/github/mini-services/miniurl" alt="Analysis">
@@ -16,6 +14,9 @@
      <img src="https://img.shields.io/docker/v/miniservices/miniurl" alt="Docker Version"></a>
 </p>
 
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl?ref=badge_large)
 
 # MiniUrl
 
