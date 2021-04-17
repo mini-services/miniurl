@@ -15,9 +15,6 @@
 </p>
 
 
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl?ref=badge_large)
-
 # MiniUrl
 
 MiniUrl is an open-source production-ready microservice for shortening Urls. Deploy it on your personal cloud and get a fully-functional url-shortener with zero effort.
@@ -221,5 +218,7 @@ Refer to our [contribution guide](docs/contribution.md).
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmini-services%2Fminiurl?ref=badge_large)
 
 Copyright (c) 2020-present, Snir Shechter
