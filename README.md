@@ -14,7 +14,6 @@
      <img src="https://img.shields.io/docker/v/miniservices/miniurl" alt="Docker Version"></a>
 </p>
 
-
 # MiniUrl
 
 MiniUrl is an open-source production-ready microservice for shortening Urls. Deploy it on your personal cloud and get a fully-functional url-shortener with zero effort.
@@ -84,6 +83,7 @@ cd miniurl
 npm install
 npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm start
 ```
+
 Node.js troubleshooting:
 
 for Windows OS, it is also possible to use [nvm for Windows](https://github.com/coreybutler/nvm-windows/releases). Refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md).
