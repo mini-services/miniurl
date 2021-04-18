@@ -1,10 +1,10 @@
 import ms from 'ms'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { normalizeConfig } from '../normalize.js'
-import { getRawConfig } from './helpers.js'
+import { getMockRawConfig } from './helpers.js'
 
 test('Happy flow', () => {
-	const rawConfig = getRawConfig()
+	const rawConfig = getMockRawConfig()
 	const { port, logLevel, apiPrefix, appName, baseRedirectUrl, url, storage, auth } = rawConfig
 
 	const config = normalizeConfig(rawConfig)

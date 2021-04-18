@@ -1,6 +1,8 @@
-import { RawConfig } from '../types'
+import { AuthDriverName } from '../../services/auth/types/config'
+import { StorageDriverName } from '../../services/storage/types/config'
+import { Config, RawConfig } from '../types'
 
-export function getRawConfig(): RawConfig {
+export function getMockRawConfig(): RawConfig {
 	return {
 		port: 'mock-port',
 		logLevel: 'debug',

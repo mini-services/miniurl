@@ -3,10 +3,10 @@ import { InvalidConfigError } from '../../errors/errors.js'
 import { StorageDriverName } from '../../services/storage/types/config.js'
 import { AuthDriverName } from '../../services/auth/types/config.js'
 import { logger } from '../../services/logger/logger.js'
-import { getRawConfig } from './helpers.js'
+import { getMockRawConfig } from './helpers.js'
 
 test('validateBaseRedirectUrl properly validates baseRedirectUrl', () => {
-	const config = getRawConfig()
+	const config = getMockRawConfig()
 	const invalidUrls = [
 		{ url: '', message: 'Throws when the baseRedirectUrl does not exist' },
 		{ url: 'blabla...', message: 'Throws when the baseRedirectUrl is not a valid url' },
@@ -36,7 +36,7 @@ test('validateBaseRedirectUrl properly validates baseRedirectUrl', () => {
 })
 
 test('validateStorageDriver properly validates storage config', () => {
-	const config = getRawConfig()
+	const config = getMockRawConfig()
 	const storageDriverOptions = Object.values(StorageDriverName)
 
 	// Tests the driver types
@@ -62,7 +62,7 @@ test('validateStorageDriver properly validates storage config', () => {
 })
 
 test('validateAuthDriver properly validates auth config', () => {
-	const config = getRawConfig()
+	const config = getMockRawConfig()
 	const authDriverOptions = Object.values(AuthDriverName)
 
 	// Tests the driver types
@@ -77,7 +77,7 @@ test('validateAuthDriver properly validates auth config', () => {
 })
 
 test('validateUrlLifetime', () => {
-	const config = getRawConfig()
+	const config = getMockRawConfig()
 
 	config.url.lifetime = ''
 	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
@@ -93,7 +93,7 @@ test('validateUrlLifetime', () => {
 })
 
 test('validateLogLevel', () => {
-	const config = getRawConfig()
+	const config = getMockRawConfig()
 
 	config.logLevel = ''
 	expect(() => validateConfig(config)).toThrowError(InvalidConfigError)
