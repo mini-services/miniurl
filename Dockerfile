@@ -1,30 +1,15 @@
-# --------------> The build image
+# ========== Build ==========
 FROM node:latest AS build
 WORKDIR /usr/src/app
 COPY package*.json /usr/src/app/
 RUN --mount=type=secret,mode=0644,id=npmrc,target=/usr/src/app/.npmrc npm ci --only=production
 
-
-
-# --------------> The production image
-#FROM node:lts-alpine@sha256:a75f7cc536062f9266f602d49047bc249826581406f8bc5a6605c76f9ed18e984
-FROM node:lts-alpine
+# ========== Production ==========
+FROM node:lts-alpine@sha256:e48a99d69f430761d99682ffcb17b06a513cdc65d7130cc02ce0f6a1ef492357
 RUN apk add dumb-init
 ENV NODE_ENV production
-# Creating dir as root before changing to USER. 
-#RUN mkdir -p /usr/src/app
-
-
-#USER node
+USER node
 WORKDIR /usr/src/app
-
-COPY --chown=node:node package.json .
-COPY --chown=node:node package-lock.json .
-COPY --chown=node:node . .
-#RUN npm ci --only=production
-#RUN echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc && \
- #  npm ci --only=production && \
-  # rm -f .npmrc
-RUN --mount=type=secret,mode=0644,id=npmrc,target=/usr/src/app/.npmrc npm ci --only=production
-#ENTRYPOINT ["npm", "start"]
-CMD ["dumb-init", "node", "server.js"]
+COPY --chown=node:node --from=build /usr/src/app/node_modules /usr/src/app/node_modules
+COPY --chown=node:node . /usr/src/app
+CMD ["dumb-init", "npm", "start"]
