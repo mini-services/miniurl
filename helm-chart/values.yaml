@@ -1,4 +1,4 @@
-image: miniservices/miniurl:v0.1.65
+image: miniservices/miniurl:v0.1.66
 imagePullPolicy: Always
 port: 80
 apiPrefix: /miniurl
