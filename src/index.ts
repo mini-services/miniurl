@@ -4,9 +4,9 @@ import { createApp } from './app.js'
 
 const config = getConfig()
 
-const fastify = await createApp(config)
+const app = await createApp(config)
 
 // Start server
-runWithGracefulShutdown(fastify, config.port, async () => {
-	await fastify.storage.shutdown()
+runWithGracefulShutdown(app, config.port, async () => {
+	await app.storage.shutdown()
 })

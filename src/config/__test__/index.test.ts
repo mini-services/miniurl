@@ -8,6 +8,7 @@ jest.mock('../generate', () => {
 		generateConfig: jest.fn().mockImplementation(() => mockGetConfig()),
 	}
 })
+
 test('getConfig ', () => {
 	process.env.BASE_REDIRECT_URL = 'http://doesnt-matter.com'
 	process.env.STORAGE_DRIVER = 'InMemory'
