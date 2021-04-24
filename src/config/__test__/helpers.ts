@@ -1,6 +1,6 @@
 import { RawConfig } from '../types'
 
-export function getRawConfig(): RawConfig {
+export function getMockRawConfig(): RawConfig {
 	return {
 		port: 'mock-port',
 		logLevel: 'debug',

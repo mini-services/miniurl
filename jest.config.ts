@@ -4,7 +4,7 @@ const config: Config.InitialOptions = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	moduleNameMapper: {
-		'^(.*)\\.js$': '$1',
+		'^\\.(.*)\\.js$': '.$1',
 	},
 	coverageDirectory: 'coverage',
 	coverageProvider: 'v8',

@@ -111,6 +111,5 @@ export class InMemoryStorage implements StorageDriver {
 	}
 
 	// eslint-disable-next-line
-	constructor(public config: InMemoryStorageConfig) {
-	}
+	constructor(public config: InMemoryStorageConfig) {}
 }

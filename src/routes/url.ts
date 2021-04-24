@@ -19,7 +19,7 @@ const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 		},
 	},
 	async handler(request) {
-		await validateUrl(request.body.url)
+		await validateUrl(request.body.url, this.config.url.matchPattern)
 
 		let urlRequestData = { url: request.body.url, ip: request.ip } as UrlRequestData
 		// Custom ids require admin rights
