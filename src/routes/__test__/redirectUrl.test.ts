@@ -19,4 +19,5 @@ test('GET /u/:id route', async () => {
 	})
 
 	expect(response.statusCode).toBe(302)
+	expect(response.headers.location).toBe(storedUrl.url)
 })
