@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 import { Route } from '../types/routes.js'
-import { NotFoundError, UnauthorizedError } from '../errors/errors.js'
+import { GeneralError, NotFoundError, UnauthorizedError } from '../errors/errors.js'
 import { validateUrl } from '../services/urlValidator.js'
 import { UrlRequestData } from '../services/storage/types/url'
 
@@ -28,11 +28,8 @@ const saveUrl: Route<{ Body: { url: string; id?: string } }> = {
 		} as UrlRequestData
 		// Custom ids require admin rights
 		if (request.body.id) {
-			if (await this.auth.isAuthorized(request)) {
-				urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
-			} else {
-				throw UnauthorizedError('user without admin priviliges trying to create a url with custom id')
-			}
+			await this.auth.authorize(request)
+			urlRequestData = { ...urlRequestData, id: request.body.id } as UrlRequestData
 		}
 
 		const url = await this.storage.url.save(urlRequestData)
@@ -74,7 +71,59 @@ const retrieveUrl: Route<{ Params: { id: string } }> = {
 	},
 }
 
+/* Update URL origin path */
+const updateUrl: Route<{ Params: { id: string }; Body: { url: string } }> = {
+	method: 'PUT',
+	url: '/url/:id',
+	schema: {
+		body: {
+			type: 'object',
+			required: ['url'],
+			properties: {
+				url: { type: 'string' },
+			},
+		},
+	},
+	attachValidation: true,
+	async handler(request) {
+		await validateUrl(request.body.url, this.config.url.matchPattern)
+		await this.auth.authorize(request)
+		const storedUrl = await this.storage.url.edit(request.params.id, request.body.url)
+		if (typeof storedUrl === 'undefined') throw new NotFoundError()
+
+		return storedUrl
+	},
+}
+
+/* Delete URL from store  */
+const deleteUrl: Route<{ Params: { id: string } }> = {
+	method: 'DELETE',
+	url: '/url/:id',
+	schema: {
+		params: {
+			type: 'object',
+			required: ['id'],
+			properties: {
+				id: { type: 'string' },
+			},
+		},
+	},
+	async handler(request) {
+		await this.auth.authorize(request)
+		try {
+			await this.storage.url.delete(request.params.id)
+		} catch (e) {
+			this.log.warn('delete url failed in deleteUrl endpoint')
+			this.log.error(e.message)
+			throw GeneralError(e.message)
+		}
+		return Promise.resolve(true)
+	},
+}
+
 export const urlRoutes: FastifyPluginAsync = async function (fastify) {
 	fastify.route(saveUrl)
 	fastify.route(retrieveUrl)
+	fastify.route(updateUrl)
+	fastify.route(deleteUrl)
 }
