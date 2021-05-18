@@ -49,8 +49,11 @@ export class Storage implements StorageDriver {
 		}
 	}
 	public async shutdown(): Promise<void> {
-		this.driver.shutdown()
+		await this.driver.shutdown()
 		if (this._intervalToken) clearInterval(this._intervalToken)
+	}
+	public async wipeData(options: { iUnderstandThatThisIsIrreversible: boolean }): Promise<void> {
+		await this.driver.wipeData(options)
 	}
 
 	url = new (class UrlStorage {

@@ -109,7 +109,16 @@ export class InMemoryStorage implements StorageDriver {
 	public async shutdown(): Promise<void> {
 		return
 	}
+	public async wipeData({
+		iUnderstandThatThisIsIrreversible,
+	}: {
+		iUnderstandThatThisIsIrreversible: boolean
+	}): Promise<void> {
+		if (!iUnderstandThatThisIsIrreversible) return
 
+		this.data.urlInformation = new Map()
+		this.data.urls = new Map()
+	}
 	// eslint-disable-next-line
 	constructor(public config: InMemoryStorageConfig) {}
 }

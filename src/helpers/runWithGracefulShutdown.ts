@@ -10,7 +10,6 @@ export async function runWithGracefulShutdown(
 	// Graceful shutdown
 	shutdownSignals.forEach((signal: NodeJS.Signals) =>
 		process.on(signal, async () => {
-			fastify.log.info('Shutting down...')
 			if (cleanupCallback) await cleanupCallback()
 			await fastify.close()
 		}),
