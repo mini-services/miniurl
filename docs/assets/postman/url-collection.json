@@ -34,7 +34,7 @@
 			"response": []
 		},
 		{
-			"name": "Retrieve",
+			"name": "retrieve",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -121,7 +121,7 @@
 			"response": []
 		},
 		{
-			"name": "Redirect",
+			"name": "redirect",
 			"request": {
 				"method": "GET",
 				"header": [],

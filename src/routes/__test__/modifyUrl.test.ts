@@ -9,7 +9,7 @@ test('PUT /url/:id', async () => {
 	const urlMock = 'https://twitter.com/elonmusk'
 
 	const storedUrl = {
-		id: '123',
+		id: mockId,
 		url: urlMock,
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
@@ -24,6 +24,7 @@ test('PUT /url/:id', async () => {
 		},
 	})
 
+	expect(app.storage.url.edit).toBeCalledWith(mockId, urlMock)
 	expect(response.statusCode).toBe(200)
 	expect(JSON.parse(response.body).url).toEqual(urlMock)
 })
