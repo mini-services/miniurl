@@ -34,7 +34,7 @@
 			"response": []
 		},
 		{
-			"name": "Retrieve",
+			"name": "retrieve",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -60,7 +60,68 @@
 			"response": []
 		},
 		{
-			"name": "Redirect",
+			"name": "update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": \"https://css-tricks.com/in-praise-of-the-unambiguous-click-menu\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/miniurl/url/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"miniurl",
+						"url",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "coZUC"
+						}
+					]
+				},
+				"description": "update url path"
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/miniurl/url/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"miniurl",
+						"url",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "coZUC"
+						}
+					]
+				},
+				"description": "Delete url (bearer token required)"
+			},
+			"response": []
+		},
+		{
+			"name": "redirect",
 			"request": {
 				"method": "GET",
 				"header": [],
