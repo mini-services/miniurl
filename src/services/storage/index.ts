@@ -3,7 +3,7 @@ import type { StoredUrl, UrlRequestData, UrlWithInformation } from './types/url.
 import type { StorageDriver } from './types/index.js'
 import { InMemoryStorage } from './drivers/inMemory/index.js'
 import { PostgresStorage } from './drivers/postgres/index.js'
-import { InvalidConfigError, GeneralError } from '../../errors/errors.js'
+import { InvalidConfigError, GeneralError, BASE_ERROR_NAME } from '../../errors/errors.js'
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
 import { SqliteStorage } from './drivers/sqlite/index.js'
@@ -68,7 +68,8 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.get(id, options)
 			} catch (err) {
 				logger.error(`Storage.url.get failed: ${err}`)
-				throw new GeneralError('Could not get url')
+				if (err.name !== BASE_ERROR_NAME) throw new GeneralError('Could not get url')
+				else throw err
 			}
 		}
 
@@ -78,7 +79,8 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.delete(id)
 			} catch (err) {
 				logger.error(`Storage.url.delete failed: ${err}`)
-				throw new GeneralError('Could not delete url')
+				if (err.name !== BASE_ERROR_NAME) throw new GeneralError('Could not delete url')
+				else throw err
 			}
 		}
 
@@ -88,7 +90,8 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.deleteOverdue(timespanMs)
 			} catch (err) {
 				logger.error(`Storage.url.deleteOverdue failed: ${err}`)
-				throw GeneralError('Could not delete overdue urls')
+				if (err.name !== BASE_ERROR_NAME) throw new GeneralError('Could not delete overdue urls')
+				else throw err
 			}
 		}
 
@@ -98,7 +101,8 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.edit(id, url)
 			} catch (err) {
 				logger.error(`Storage.url.edit failed: ${err}`)
-				throw new GeneralError('Could not edit url')
+				if (err.name !== BASE_ERROR_NAME) throw new GeneralError('Could not edit url')
+				else throw err
 			}
 		}
 
@@ -108,7 +112,8 @@ export class Storage implements StorageDriver {
 				return await this.driver.url.save(body)
 			} catch (err) {
 				logger.error(`Storage.url.save failed: ${err}`)
-				throw new GeneralError('Could not save url')
+				if (err.name !== BASE_ERROR_NAME) throw new GeneralError('Could not save url')
+				else throw err
 			}
 		}
 

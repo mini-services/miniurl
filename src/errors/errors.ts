@@ -1,5 +1,7 @@
 import createError from 'fastify-error'
 
+export const BASE_ERROR_NAME = createError('_', '_').name
+
 export const GeneralError = createError('ERR_GENERAL_ERROR', 'Error', 500)
 export const OperationFailed = createError('ERR_OPERATION_FAILED', 'Failed to execute operation', 500)
 export const InvalidConfigError = createError('ERR_INVALID_CONFIG', `[FATAL] Invalid config.`, 500)
