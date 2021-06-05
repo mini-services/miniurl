@@ -27,7 +27,5 @@ auth:
   bearerTokenConfig:
     # A random token will be generated if this stays empty
     token:
-
-global:
-  postgresql:
-    existingSecret: "miniurl-postgresql"
+postgresql:
+  existingSecret: "{{ .Release.Name }}-postgresql"
