@@ -16,9 +16,9 @@ export interface UrlStorageDriver {
 
 	deleteOverdue(timespanMs: number): Promise<number>
 
-	incVisitCount(id: string): Promise<void>
+	incVisitCount(id: string): void
 
-	incInfoCount(id: string): Promise<void>
+	incInfoCount(id: string): void
 }
 
 export interface UrlRequestData {
