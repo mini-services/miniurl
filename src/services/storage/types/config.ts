@@ -1,11 +1,13 @@
 import type { InMemoryStorageDriverConfig } from '../drivers/inMemory/types'
 import type { PostgresStorageDriverConfig } from '../drivers/postgres/types'
 import type { SqliteStorageDriverConfig } from '../drivers/sqlite/types'
+import type { RedisStorageDriverConfig } from '../drivers/redis/types'
 
 export enum StorageDriverName {
 	InMemory = 'InMemory',
 	Postgres = 'Postgres',
 	Sqlite = 'Sqlite',
+	Redis = 'Redis',
 }
 
 export interface BaseConfig {
@@ -29,4 +31,9 @@ export interface InMemoryStorageConfig extends BaseConfig {
 	driverConfig: InMemoryStorageDriverConfig
 }
 
-export type StorageConfig = PostgresStorageConfig | InMemoryStorageConfig | SqliteStorageConfig
+export interface RedisStorageConfig extends BaseConfig {
+	driverName: StorageDriverName.Redis
+	driverConfig: RedisStorageDriverConfig
+}
+
+export type StorageConfig = PostgresStorageConfig | InMemoryStorageConfig | SqliteStorageConfig | RedisStorageConfig
