@@ -26,6 +26,11 @@ export interface RawConfig {
 				filename: string
 			}
 		}
+		redisDriverConfig: {
+			host: string
+			username: string
+			password: string
+		}
 	}
 	auth: {
 		driverName: string

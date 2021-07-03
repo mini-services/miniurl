@@ -33,6 +33,11 @@ export function generateConfig(): Config {
 					filename: process.env.SQLITE_STORAGE_FILENAME || './db.sqlite',
 				},
 			},
+			redisDriverConfig: {
+				host: process.env.REDIS_STORAGE_HOST || '',
+				username: process.env.REDIS_STORAGE_USERNAME || '',
+				password: process.env.REDIS_STORAGE_PASSWORD || '',
+			},
 		},
 		auth: {
 			driverName: process.env.AUTH_DRIVER || '',
