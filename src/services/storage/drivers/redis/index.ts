@@ -17,8 +17,8 @@ export class RedisStorage implements StorageDriver {
 		return this._client
 	}
 
-	shutdown(): Promise<void> {
-		throw new Error('Method not implemented.')
+	async shutdown(): Promise<void> {
+		await this._client.disconnect()
 	}
 
 	initialize(): Promise<void> {
