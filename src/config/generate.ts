@@ -35,8 +35,6 @@ export function generateConfig(): Config {
 			},
 			redisDriverConfig: {
 				host: process.env.REDIS_STORAGE_HOST || '',
-				username: process.env.REDIS_STORAGE_USERNAME || '',
-				password: process.env.REDIS_STORAGE_PASSWORD || '',
 			},
 		},
 		auth: {

@@ -1,9 +1,9 @@
 import ms from 'ms'
 import { InvalidConfigError } from '../errors/errors.js'
 import { StorageDriverName } from '../services/storage/types/config.js'
-import { AuthDriverName } from '../services/auth/types/config.js'
 import type { RawConfig } from './types.js'
 import { logger } from '../services/logger/logger.js'
+import { AuthDriverName } from '../services/auth/types/config.js'
 
 export function validateConfig(rawConfig: RawConfig): boolean {
 	logger.debug(`Start validateConfig`)
@@ -40,6 +40,13 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 		if (!connection.filename) {
 			throw new InvalidConfigError(
 				`When using the Sqlite storage driver you must specify a filename via SQLITE_STORAGE_FILENAME`,
+			)
+		}
+	} else if (storage.driverName === StorageDriverName.Redis) {
+		const { host } = storage.redisDriverConfig
+		if (!host) {
+			throw new InvalidConfigError(
+				`When using the Radis storage driver you must specify a host via REDIS_STORAGE_HOST`,
 			)
 		}
 	}

@@ -1,10 +1,10 @@
 import IORedis from 'ioredis'
-import { NotFoundError, OperationFailed } from '../../../../errors/errors'
 import { StorageDriver } from '../../types'
 import { RedisStorageConfig } from '../../types/config'
 import { StoredUrl, UrlRequestData, UrlWithInformation } from '../../types/url'
 import cryptoRandomString from 'crypto-random-string'
 import { getConfig } from '../../../../config'
+import { NotFoundError, OperationFailed } from '../../../../errors/errors.js'
 
 export class RedisStorage implements StorageDriver {
 	private readonly _client: IORedis.Redis
@@ -82,8 +82,8 @@ export class RedisStorage implements StorageDriver {
 			const config = getConfig()
 
 			const storedUrlWithInfo: UrlWithInformation = {
-				id: 'miniurl:' + cryptoRandomString({ length: 6, type: 'url-safe' }),
-				url: 'url:' + url,
+				id: cryptoRandomString({ length: 6, type: 'url-safe' }),
+				url: url,
 				createdAt: new Date().toISOString(),
 				updatedAt: new Date().toISOString(),
 				ip: ip,
@@ -97,7 +97,6 @@ export class RedisStorage implements StorageDriver {
 				config.url.lifetimeMs / 1000, //TODO: set ttl according to _config flag
 				JSON.stringify(storedUrlWithInfo),
 			)
-
 			return storedUrlWithInfo
 		}
 
