@@ -43,10 +43,13 @@ function validateStorageDriver(storage: RawConfig['storage']): void {
 			)
 		}
 	} else if (storage.driverName === StorageDriverName.Redis) {
-		const { host } = storage.redisDriverConfig
-		if (!host) {
+		const { host, port, username, password } = storage.redisDriverConfig
+		if (!(host && port && username && password)) {
 			throw new InvalidConfigError(
-				`When using the Radis storage driver you must specify a host via REDIS_STORAGE_HOST`,
+				`When using the Radis storage driver you must specify REDIS_STORAGE_HOST,
+				REDIS_STORAGE_PORT,
+				REDIS_STORAGE_USERNAME,
+				REDIS_STORAGE_PASSWORD`,
 			)
 		}
 	}

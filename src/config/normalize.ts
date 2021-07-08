@@ -69,7 +69,10 @@ function getStorageDriverConfig(
 	} else if (storage.driverName === Redis) {
 		return {
 			driverName: Redis,
-			driverConfig: storage.redisDriverConfig,
+			driverConfig: {
+				...storage.redisDriverConfig,
+				port: Number(storage.redisDriverConfig.port),
+			},
 			...extras,
 		}
 	} else {

@@ -28,6 +28,9 @@ export function getMockRawConfig(): RawConfig {
 			},
 			redisDriverConfig: {
 				host: 'localhost',
+				port: '6379',
+				username: 'redis',
+				password: 'redis',
 			},
 		},
 		auth: {
