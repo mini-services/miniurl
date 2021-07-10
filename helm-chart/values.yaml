@@ -1,4 +1,4 @@
-image: miniservices/miniurl:v0.1.72
+image: miniservices/miniurl:v0.1.73
 imagePullPolicy: Always
 port: 80
 apiPrefix: /miniurl
@@ -27,3 +27,5 @@ auth:
   bearerTokenConfig:
     # A random token will be generated if this stays empty
     token:
+postgresql:
+  existingSecret: "{{ .Release.Name }}-postgresql"
