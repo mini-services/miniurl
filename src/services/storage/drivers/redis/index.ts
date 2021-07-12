@@ -20,18 +20,28 @@ export class RedisStorage implements StorageDriver {
 		await this._client.disconnect()
 	}
 
-	initialize(): Promise<void> {
-		//connection with the db checked in storage/index runWithRetries
-		return new Promise<void>((resolve) => resolve())
+	async initialize(): Promise<void> {
+		// Connection with the DBis already checked in storage/index using runWithRetries
+		return
 	}
 
 	url = new (class RedisUrlStorage {
 		constructor(public storage: RedisStorage) {}
 
-		tempPropertyMap = new Map()
-
 		async get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation> {
-			return await this.fetchUrlInfoFromDB(id, options.withInfo)
+			const rawUrlData = (await this.storage.client.get(id)) as string
+			if (!rawUrlData) throw new NotFoundError()
+
+			const urlData = JSON.parse(rawUrlData) as UrlWithInformation
+			if (options.withInfo) return urlData
+			else {
+				return {
+					id: urlData.id,
+					url: urlData.url,
+					createdAt: urlData.createdAt,
+					updatedAt: urlData.updatedAt,
+				}
+			}
 		}
 
 		public async delete(id: string): Promise<void | number> {
@@ -44,7 +54,7 @@ export class RedisStorage implements StorageDriver {
 		}
 
 		async edit(id: string, url: string): Promise<StoredUrl> {
-			const dbUrl: StoredUrl = await this.fetchUrlInfoFromDB(id, false)
+			const dbUrl: StoredUrl = await this.get(id, { withInfo: false })
 			dbUrl.updatedAt = new Date().toISOString()
 			dbUrl.url = url
 			await this.storage.client.setex(dbUrl.id, this.storage._config.urlLifetimeMs / 1000, JSON.stringify(dbUrl))
@@ -54,7 +64,7 @@ export class RedisStorage implements StorageDriver {
 		async incInfoCount(id: string): Promise<void> {
 			if (!id) throw new OperationFailed('Must provide an id')
 
-			const urlFromDb: UrlWithInformation = <UrlWithInformation>await this.fetchUrlInfoFromDB(id, true)
+			const urlFromDb: UrlWithInformation = <UrlWithInformation>await this.get(id, { withInfo: true })
 
 			urlFromDb.updatedAt = new Date().toISOString()
 			urlFromDb.infoVisitCount = ++urlFromDb.infoVisitCount
@@ -66,7 +76,7 @@ export class RedisStorage implements StorageDriver {
 		async incVisitCount(id: string): Promise<void> {
 			if (!id) throw new OperationFailed('Must provide an id')
 
-			const urlFromDb: UrlWithInformation = <UrlWithInformation>await this.fetchUrlInfoFromDB(id, true)
+			const urlFromDb: UrlWithInformation = <UrlWithInformation>await this.get(id, { withInfo: true })
 			urlFromDb.updatedAt = new Date().toISOString()
 			urlFromDb.urlVisitCount = ++urlFromDb.urlVisitCount
 
@@ -94,41 +104,6 @@ export class RedisStorage implements StorageDriver {
 				JSON.stringify(storedUrlWithInfo),
 			)
 			return storedUrlWithInfo
-		}
-
-		async fetchUrlInfoFromDB(id: string, withInfo: boolean): Promise<UrlWithInformation | StoredUrl> {
-			this.tempPropertyMap.clear()
-			const rawUrlData = (await this.storage.client.get(id)) as string
-			if (!rawUrlData) throw new NotFoundError()
-			this.processUrlFromStorage(rawUrlData)
-			if (withInfo)
-				return {
-					id: this.tempPropertyMap.get('id'),
-					url: this.tempPropertyMap.get('url'),
-					createdAt: this.tempPropertyMap.get('createdAt'),
-					updatedAt: this.tempPropertyMap.get('updatedAt'),
-					ip: this.tempPropertyMap.get('ip'),
-					urlVisitCount: this.tempPropertyMap.get('urlVisitCount'),
-					infoVisitCount: this.tempPropertyMap.get('infoVisitCount'),
-					lastUsed: this.tempPropertyMap.get('lastUsed'),
-				}
-			else
-				return {
-					id: this.tempPropertyMap.get('id'),
-					url: this.tempPropertyMap.get('url'),
-					createdAt: this.tempPropertyMap.get('createdAt'),
-					updatedAt: this.tempPropertyMap.get('updatedAt'),
-				}
-		}
-
-		fillTempPropertyMap(key: string, value: string): void {
-			this.tempPropertyMap.set(key, value)
-		}
-
-		processUrlFromStorage(rawUrlData: string): void {
-			JSON.parse(rawUrlData, (key, value) => {
-				if (!this.tempPropertyMap.has(key)) this.fillTempPropertyMap(key, value)
-			})
 		}
 	})(this)
 }
