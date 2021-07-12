@@ -3,7 +3,6 @@ import { StorageDriver } from '../../types'
 import { RedisStorageConfig } from '../../types/config'
 import { StoredUrl, UrlRequestData, UrlWithInformation } from '../../types/url'
 import cryptoRandomString from 'crypto-random-string'
-import { getConfig } from '../../../../config'
 import { NotFoundError, OperationFailed } from '../../../../errors/errors.js'
 
 export class RedisStorage implements StorageDriver {
@@ -48,9 +47,7 @@ export class RedisStorage implements StorageDriver {
 			const dbUrl: StoredUrl = await this.fetchUrlInfoFromDB(id, false)
 			dbUrl.updatedAt = new Date().toISOString()
 			dbUrl.url = url
-			const config = getConfig()
-			//TODO: set ttl according to _config flag
-			await this.storage.client.setex(dbUrl.id, config.url.lifetimeMs / 1000, JSON.stringify(dbUrl))
+			await this.storage.client.setex(dbUrl.id, this.storage._config.urlLifetimeMs / 1000, JSON.stringify(dbUrl))
 			return dbUrl
 		}
 
@@ -79,7 +76,6 @@ export class RedisStorage implements StorageDriver {
 
 		async save({ ip, url, requestUrl }: UrlRequestData): Promise<StoredUrl> {
 			if (!url || !ip) throw new OperationFailed('Must provide an ip & url')
-			const config = getConfig()
 
 			const storedUrlWithInfo: UrlWithInformation = {
 				id: cryptoRandomString({ length: 6, type: 'url-safe' }),
@@ -94,7 +90,7 @@ export class RedisStorage implements StorageDriver {
 			}
 			await this.storage.client.setex(
 				storedUrlWithInfo.id,
-				config.url.lifetimeMs / 1000, //TODO: set ttl according to _config flag
+				this.storage._config.urlLifetimeMs / 1000,
 				JSON.stringify(storedUrlWithInfo),
 			)
 			return storedUrlWithInfo
