@@ -9,12 +9,12 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { PostgresStorageConfig } from '../../types/config.js'
-import { ICountersCache } from './types.js'
+import { CountersCache } from './types.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export class PostgresStorage implements StorageDriver {
 	private db: Knex
-	private countersCache: ICountersCache
+	private countersCache: CountersCache
 	private countersCacheFlushInterval: NodeJS.Timeout
 
 	constructor(private config: PostgresStorageConfig) {
