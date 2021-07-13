@@ -42,10 +42,7 @@ export class PostgresStorage implements StorageDriver {
 		process.env.MIGRATIONS_RANDOM_SEED_1 = cryptoRandomString({ length: 6, type: 'numeric' })
 		process.env.MIGRATIONS_RANDOM_SEED_2 = cryptoRandomString({ length: 4, type: 'numeric' })
 
-		this.countersCache = {
-			visitCount: {},
-			infoCount: {},
-		}
+		this.countersCache = {}
 
 		this.countersCacheFlushInterval = setInterval(this.pushUpdates.bind(this), 10000)
 	}
@@ -78,26 +75,20 @@ export class PostgresStorage implements StorageDriver {
 	}
 
 	public async pushUpdates(): Promise<void> {
-		//run over the cache and dispatch db pushes
-		for (const [id, count] of Object.entries(this.countersCache.infoCount)) {
+		for (const [id, counters] of Object.entries(this.countersCache)) {
 			await this.db
 				.table<UrlInformation>('url_information')
 				.where('url_id', '=', id)
-				.increment('info_visit_count', count)
+				.increment('info_visit_count', counters.infoCount)
 				.update({ lastUsed: new Date().toISOString() })
-		}
-		for (const [id, count] of Object.entries(this.countersCache.visitCount)) {
 			await this.db
 				.table<UrlInformation>('url_information')
 				.where('url_id', '=', id)
-				.increment('url_visit_count', count)
+				.increment('url_visit_count', counters.visitCount)
 		}
 
 		//clear cache
-		this.countersCache = {
-			visitCount: {},
-			infoCount: {},
-		}
+		this.countersCache = {}
 	}
 	url = new (class PostgresUrlStorage {
 		constructor(public storage: PostgresStorage) {}
@@ -172,15 +163,23 @@ export class PostgresStorage implements StorageDriver {
 		}
 
 		public incVisitCount(id: string): void {
-			const currIds = Object.keys(this.storage.countersCache.visitCount)
-			if (currIds.includes(id)) this.storage.countersCache.visitCount[id] += 1
-			else this.storage.countersCache.visitCount[id] = 1
+			const currIds = Object.keys(this.storage.countersCache)
+			if (currIds.includes(id)) this.storage.countersCache[id].visitCount += 1
+			else
+				this.storage.countersCache[id] = {
+					infoCount: 0,
+					visitCount: 1,
+				}
 		}
 
 		public incInfoCount(id: string): void {
-			const currIds = Object.keys(this.storage.countersCache.infoCount)
-			if (currIds.includes(id)) this.storage.countersCache.infoCount[id] += 1
-			else this.storage.countersCache.infoCount[id] = 1
+			const currIds = Object.keys(this.storage.countersCache)
+			if (currIds.includes(id)) this.storage.countersCache[id].infoCount += 1
+			else
+				this.storage.countersCache[id] = {
+					infoCount: 1,
+					visitCount: 0,
+				}
 		}
 	})(this)
 }
