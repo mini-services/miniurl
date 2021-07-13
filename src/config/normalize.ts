@@ -71,7 +71,7 @@ function getStorageDriverConfig(
 			driverName: Redis,
 			driverConfig: {
 				...storage.redisDriverConfig,
-				port: Number(storage.redisDriverConfig.port),
+				port: +storage.redisDriverConfig.port,
 			},
 			...extras,
 		}
