@@ -75,18 +75,15 @@ export class PostgresStorage implements StorageDriver {
 	}
 
 	public async pushUpdates(): Promise<void> {
-		for (const [id, counters] of Object.entries(this.countersCache)) {
-			await this.db
-				.table<UrlInformation>('url_information')
-				.where('url_id', '=', id)
-				.increment('info_visit_count', counters.infoCount)
-				.update({ lastUsed: new Date().toISOString() })
-			await this.db
-				.table<UrlInformation>('url_information')
-				.where('url_id', '=', id)
-				.increment('url_visit_count', counters.visitCount)
-		}
-
+		const query: string = Object.keys(this.countersCache).reduce((acc, currId) => {
+			const currInfoCount = this.countersCache[currId].infoCount
+			const currVisitCount = this.countersCache[currId].visitCount
+			return (
+				acc +
+				`UPDATE url_information SET info_visit_count = info_visit_count + ${currInfoCount}, url_visit_count = url_visit_count + ${currVisitCount} WHERE url_id = '${currId}';`
+			)
+		}, '')
+		await this.db.raw(query)
 		//clear cache
 		this.countersCache = {}
 	}
