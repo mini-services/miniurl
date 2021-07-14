@@ -177,23 +177,25 @@ export class PostgresStorage implements StorageDriver {
 		}
 
 		public incVisitCount(id: string): void {
-			const currIds = Object.keys(this.storage.countersCache)
-			if (currIds.includes(id)) this.storage.countersCache[id].visitCount += 1
+			const currCountersCache = this.storage.countersCache
+			if (currCountersCache[id]) currCountersCache[id].visitCount += 1
 			else
-				this.storage.countersCache[id] = {
+				currCountersCache[id] = {
 					infoCount: 0,
 					visitCount: 1,
 				}
+			this.storage.countersCache = currCountersCache
 		}
 
 		public incInfoCount(id: string): void {
-			const currIds = Object.keys(this.storage.countersCache)
-			if (currIds.includes(id)) this.storage.countersCache[id].infoCount += 1
+			const currCountersCache = this.storage.countersCache
+			if (currCountersCache[id]) currCountersCache[id].infoCount += 1
 			else
-				this.storage.countersCache[id] = {
+				currCountersCache[id] = {
 					infoCount: 1,
 					visitCount: 0,
 				}
+			this.storage.countersCache = currCountersCache
 		}
 	})(this)
 }
