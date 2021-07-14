@@ -10,6 +10,7 @@ import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { PostgresStorageConfig } from '../../types/config.js'
 import { CountersCache } from './types.js'
+import { logger } from '../../../logger/logger.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export class PostgresStorage implements StorageDriver {
@@ -75,18 +76,34 @@ export class PostgresStorage implements StorageDriver {
 	}
 
 	public async pushUpdates(): Promise<void> {
-		const query: string = Object.keys(this.countersCache).reduce((acc, currId) => {
-			const currInfoCount = this.countersCache[currId].infoCount
-			const currVisitCount = this.countersCache[currId].visitCount
-			return (
-				acc +
-				`UPDATE url_information SET info_visit_count = info_visit_count + ${currInfoCount}, url_visit_count = url_visit_count + ${currVisitCount} WHERE url_id = '${currId}';`
-			)
-		}, '')
-		await this.db.raw(query)
-		//clear cache
+		const currCounters = this.countersCache
 		this.countersCache = {}
+		try {
+			await this.db.raw(
+				Object.keys(currCounters).reduce((acc, currId) => {
+					const currInfoCount = currCounters[currId].infoCount
+					const currVisitCount = currCounters[currId].visitCount
+					return (
+						acc +
+						`UPDATE url_information SET info_visit_count = info_visit_count + ${currInfoCount}, url_visit_count = url_visit_count + ${currVisitCount} WHERE url_id = '${currId}';`
+					)
+				}, ''),
+			)
+		} catch (err) {
+			logger.error('Update counters failed!', err)
+			// Revert countersCache changes since we failed the update
+			Object.keys(currCounters).forEach((id) => {
+				if (Object.keys(this.countersCache).includes(id)) {
+					this.countersCache[id].visitCount += currCounters[id].visitCount
+					this.countersCache[id].infoCount += currCounters[id].infoCount
+				} else {
+					this.countersCache[id].visitCount = currCounters[id].visitCount
+					this.countersCache[id].infoCount = currCounters[id].infoCount
+				}
+			})
+		}
 	}
+
 	url = new (class PostgresUrlStorage {
 		constructor(public storage: PostgresStorage) {}
 
