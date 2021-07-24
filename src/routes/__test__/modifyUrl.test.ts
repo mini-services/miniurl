@@ -1,6 +1,7 @@
 import { mockCreateApp } from '../../__test__/mockApp'
 import { routes } from '../index'
 import { mockId } from '../../services/storage/__test__/mock'
+import { jest, expect, test } from '@jest/globals'
 
 test('PUT /url/:id', async () => {
 	const app = await mockCreateApp()
@@ -14,7 +15,7 @@ test('PUT /url/:id', async () => {
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
 	}
-	app.storage = { url: { edit: jest.fn().mockResolvedValue(storedUrl) } } as any
+	app.storage = { url: { edit: jest.fn(() => Promise.resolve(storedUrl)) } } as any
 
 	const response = await app.inject({
 		method: 'PUT',

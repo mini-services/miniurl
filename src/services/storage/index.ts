@@ -41,7 +41,11 @@ export class Storage implements StorageDriver {
 		try {
 			logger.debug(`Running Storage.initialize`)
 			// Waits for 1 minute (6 * 10,000ms) before failing
-			await runWithRetries(this._driver.initialize.bind(this._driver), { retries: 6, retryTime: 10 * 1000 })
+			const retries = process.env.NODE_ENV === 'test' ? 0 : 6
+			await runWithRetries(this._driver.initialize.bind(this._driver), {
+				retries,
+				retryTime: 10 * 1000,
+			})
 			await this.url.deleteOverdue(this.config.urlLifetimeMs)
 			this._intervalToken = setInterval(
 				() => this.url.deleteOverdue(this.config.urlLifetimeMs),

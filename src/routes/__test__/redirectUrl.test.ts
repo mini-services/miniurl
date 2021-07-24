@@ -1,6 +1,7 @@
 import { mockId } from '../../services/storage/__test__/mock.js'
 import { mockCreateApp } from '../../__test__/mockApp.js'
 import { routes } from '../index.js'
+import { jest, expect, test } from '@jest/globals'
 
 test('GET /u/:id route', async () => {
 	const app = await mockCreateApp()
@@ -10,7 +11,7 @@ test('GET /u/:id route', async () => {
 		createdAt: new Date().toISOString(),
 		updatedAt: new Date().toISOString(),
 	}
-	app.storage = { url: { get: jest.fn().mockResolvedValue(storedUrl) } } as any
+	app.storage = { url: { get: jest.fn(() => Promise.resolve(storedUrl)) } } as any
 	app.register(routes)
 
 	const response = await app.inject({

@@ -1,11 +1,9 @@
 import { runApp } from './utils'
-import { describe, it, expect, afterAll, beforeAll } from '@jest/globals'
+import { describe, it, expect, afterAll, beforeAll, jest } from '@jest/globals'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-
-const CUSTOM_ID = 'custom-id'
 
 const testTable: [string, Record<string, string>][] = [
 	[
@@ -16,26 +14,35 @@ const testTable: [string, Record<string, string>][] = [
 		},
 	],
 	['InMemory storage', { STORAGE_DRIVER: 'InMemory' }],
-	[
-		'Postgres storage',
-		{
-			STORAGE_DRIVER: 'Postgres',
-			POSTGRES_STORAGE_DATABASE: 'postgres',
-			POSTGRES_STORAGE_HOST: 'localhost',
-			POSTGRES_STORAGE_USER: 'postgres',
-			POSTGRES_STORAGE_PASSWORD: 'postgres',
-		},
-	],
+	// // TODO: start a Postgres database when testing
+	// [
+	// 	'Postgres storage',
+	// 	{
+	// 		STORAGE_DRIVER: 'Postgres',
+	// 		POSTGRES_STORAGE_DATABASE: 'postgres',
+	// 		POSTGRES_STORAGE_HOST: 'localhost',
+	// 		POSTGRES_STORAGE_USER: 'postgres',
+	// 		POSTGRES_STORAGE_PASSWORD: 'postgres',
+	// 	},
+	// ],
+	// // TODO: start a Redis database when testing
+	// [
+	// 	'Redis storage',
+	// 	{
+	// 		STORAGE_DRIVER: 'Redis',
+	// 		POSTGRES_STORAGE_HOST: 'localhost',
+	// 		POSTGRES_STORAGE_PASSWORD: 'redis',
+	// 	},
+	// ],
 ]
 
-let app: Awaited<ReturnType<typeof runApp>>
 describe.each(testTable)('MiniUrl with %s', (configName, envVariables) => {
+	let app: Awaited<ReturnType<typeof runApp>>
 	beforeAll(async () => {
 		app = await runApp(envVariables)
 	})
 
 	afterAll(async () => {
-		// await app.storage.wipeData({ iUnderstandThatThisIsIrreversible: true })
 		await app.shutdown()
 	})
 
@@ -69,9 +76,12 @@ describe.each(testTable)('MiniUrl with %s', (configName, envVariables) => {
 				url: new URL(saveResponse.body).pathname,
 			})
 
-			expect(getResponse.statusCode).toBe(200)
+			// Successful redirect
+			expect(getResponse.statusCode).toBe(302)
 		})
 		it('Should successfully save and retrieve a URL with a custom id', async () => {
+			const CUSTOM_ID = `custom-id-${configName}`
+
 			const saveResponse = await app.inject({
 				method: 'POST',
 				url: `${app.config.apiPrefix}/url`,
@@ -90,37 +100,40 @@ describe.each(testTable)('MiniUrl with %s', (configName, envVariables) => {
 				url: new URL(saveResponse.body).pathname,
 			})
 
-			expect(getResponse.statusCode).toBe(200)
+			// Successful redirect
+			expect(getResponse.statusCode).toBe(302)
 		})
 	})
 
 	describe('Get url', () => {
 		it('Should successfully retrieve a URL with all details', async () => {
+			const savedUrl = 'https://snir.sh'
 			const saveResponse = await app.inject({
 				method: 'POST',
 				url: `${app.config.apiPrefix}/url`,
 				payload: {
-					url: 'https://snir.sh',
+					url: savedUrl,
 				},
 			})
 
 			expect(saveResponse.statusCode).toBe(200)
 
-			const url = saveResponse.body
-			const splitUrl = url.split('/')
+			const shortUrl = saveResponse.body
+			const splitUrl = shortUrl.split('/')
 			const id = splitUrl[splitUrl.length - 1]
 
 			const getResponse = await app.inject({
 				method: 'GET',
 				url: `${app.config.apiPrefix}/url/${id}`,
 			})
+			const body = JSON.parse(getResponse.body)
 
 			expect(getResponse.statusCode).toBe(200)
-			expect(getResponse.body).toMatchObject({
+			expect(body).toMatchObject({
 				id,
-				url,
+				url: savedUrl,
 			})
-			expect(getResponse.body.createdAt).toMatch
+			expect(body.createdAt).toMatch
 		})
 		it('Should successfully save a URL with a custom id', async () => {
 			const id = 'custom-id'

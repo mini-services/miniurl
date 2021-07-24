@@ -11,9 +11,10 @@ export async function runApp(envVariables: Record<string, string> = {}): Promise
 	}
 
 	const env = Object.assign(envDefaults, envVariables)
+
 	Object.entries(env).forEach(([key, value]) => (process.env[key] = value))
 
-	const config = getConfig()
+	const config = getConfig({ useCache: false })
 	const app = await createApp(config)
 
 	return app

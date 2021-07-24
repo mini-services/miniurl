@@ -21,9 +21,14 @@ export class RedisStorage implements StorageDriver {
 	}
 
 	async initialize(): Promise<void> {
-		await this._client.connect()
+		await this.client.connect()
 	}
 
+	public async wipeData(options: { iUnderstandThatThisIsIrreversible: boolean }): Promise<void> {
+		if (options.iUnderstandThatThisIsIrreversible) {
+			await this.client.flushall()
+		}
+	}
 	url = new (class RedisUrlStorage {
 		constructor(public storage: RedisStorage) {}
 
