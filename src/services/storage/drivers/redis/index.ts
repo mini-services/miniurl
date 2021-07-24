@@ -6,10 +6,10 @@ import cryptoRandomString from 'crypto-random-string'
 import { NotFoundError, OperationFailed } from '../../../../errors/errors.js'
 
 export class RedisStorage implements StorageDriver {
-	private readonly _client: IORedis.Redis
+	private _client: IORedis.Redis
 
 	constructor(private _config: RedisStorageConfig) {
-		this._client = new IORedis(_config.driverConfig)
+		this._client = new IORedis({ ...this._config.driverConfig, lazyConnect: true })
 	}
 
 	get client(): IORedis.Redis {
@@ -17,19 +17,18 @@ export class RedisStorage implements StorageDriver {
 	}
 
 	async shutdown(): Promise<void> {
-		await this._client.disconnect()
+		await this.client.disconnect()
 	}
 
 	async initialize(): Promise<void> {
-		// Connection with the DB is already checked in storage/index using runWithRetries
-		return
+		await this._client.connect()
 	}
 
 	url = new (class RedisUrlStorage {
 		constructor(public storage: RedisStorage) {}
 
 		async get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation> {
-			const rawUrlData = (await this.storage.client.get(id))
+			const rawUrlData = await this.storage.client.get(id)
 			if (!rawUrlData) throw new NotFoundError()
 
 			const urlData = JSON.parse(rawUrlData) as UrlWithInformation
@@ -48,7 +47,7 @@ export class RedisStorage implements StorageDriver {
 			return this.storage.client.del(id)
 		}
 
-		async deleteOverdue(timespanMs: number): Promise<number> {
+		async deleteOverdue(): Promise<number> {
 			// Not in use since Redis has a built-in mechanism to delete records after a period of time
 			return -1
 		}
