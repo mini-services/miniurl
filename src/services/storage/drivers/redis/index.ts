@@ -21,7 +21,7 @@ export class RedisStorage implements StorageDriver {
 	}
 
 	async initialize(): Promise<void> {
-		// Connection with the DBis already checked in storage/index using runWithRetries
+		// Connection with the DB is already checked in storage/index using runWithRetries
 		return
 	}
 
