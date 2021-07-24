@@ -49,7 +49,7 @@ export class RedisStorage implements StorageDriver {
 		}
 
 		async deleteOverdue(timespanMs: number): Promise<number> {
-			// Not in use since Redis has build-in mechanism to delete keys after period of time
+			// Not in use since Redis has a built-in mechanism to delete records after a period of time
 			return -1
 		}
 
