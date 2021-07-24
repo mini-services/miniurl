@@ -3,11 +3,10 @@ import { generateConfig } from './generate.js'
 
 let config: Config
 
-function getConfig(): Config {
-	if (config) return config
+function getConfig({ useCache = true }: { useCache?: boolean } = { useCache: true }): Config {
+	if (config && useCache) return config
 
 	config = generateConfig()
-
 	return config
 }
 

@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals'
+
 export const mockId = '123'
 export const mockSave = jest.fn().mockImplementation(() => ({ id: mockId }))
 

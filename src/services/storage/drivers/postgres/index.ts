@@ -44,7 +44,16 @@ export class PostgresStorage implements StorageDriver {
 		await this.upMigrations()
 	}
 	public async shutdown(): Promise<void> {
-		return
+		await this.db.destroy()
+	}
+	public async wipeData({
+		iUnderstandThatThisIsIrreversible,
+	}: {
+		iUnderstandThatThisIsIrreversible: boolean
+	}): Promise<void> {
+		if (!iUnderstandThatThisIsIrreversible) return
+
+		await this.downMigrations()
 	}
 	private async upMigrations() {
 		// For new migrations, see the contribution guide's common issues section
@@ -91,8 +100,8 @@ export class PostgresStorage implements StorageDriver {
 			return options.withInfo ? urlInfo : storedUrl
 		}
 
-		//All Info associated with that Urls also get deleted, automatically.
-		//https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
+		// All Info associated with that Urls also get deleted, automatically.
+		// https://stackoverflow.com/questions/53859207/deleting-data-from-associated-tables-using-knex-js
 		public async delete(id: string): Promise<void> {
 			await this.storage.db.table<StoredUrl>('urls').where('id', id).delete()
 			return

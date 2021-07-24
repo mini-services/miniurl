@@ -37,7 +37,16 @@ export class SqliteStorage implements StorageDriver {
 		await this.upMigrations()
 	}
 	public async shutdown(): Promise<void> {
-		return
+		await this.db.destroy()
+	}
+	public async wipeData({
+		iUnderstandThatThisIsIrreversible,
+	}: {
+		iUnderstandThatThisIsIrreversible: boolean
+	}): Promise<void> {
+		if (!iUnderstandThatThisIsIrreversible) return
+
+		await this.downMigrations()
 	}
 	private async upMigrations() {
 		// For new migrations, see the contribution guide's common issues section
@@ -45,13 +54,8 @@ export class SqliteStorage implements StorageDriver {
 	}
 	// Unused for now
 	private async downMigrations() {
-		try {
-			await this.db.migrate.rollback({ directory: join(__dirname, './migrations'), tableName: 'migrations' })
-		} catch (e) {
-			// 3F000 is the error code from 'schema does not exist', which will happen if
-			// the schema has already been deleted, so we can safely ignore
-			if (e.code !== '3F000') throw e
-		}
+		await this.db.migrate.rollback({ directory: join(__dirname, './migrations'), tableName: 'migrations' })
+
 		await Promise.all([
 			this.db.schema.dropTableIfExists('migrations'),
 			this.db.schema.dropTableIfExists('migrations_lock'),

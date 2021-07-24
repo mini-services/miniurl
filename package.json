@@ -14,13 +14,13 @@
 		"url": "https://github.com/miniservices/miniurl/issues"
 	},
 	"scripts": {
-		"test": "npm run test:unit && npm run test:e2e",
 		"start": "cross-env npm_package_type=module NODE_ENV=production node --loader ts-node/esm/transpile-only --experimental-specifier-resolution=node ./src/index.ts",
 		"dev": "env-cmd -f .env.development nodemon --watch \"src/**/*.ts\" --exec \"node --loader ts-node/esm --unhandled-rejections=strict --experimental-specifier-resolution=node --trace-warnings\" src/index.ts",
 		"lint": "tsc --noEmit && eslint **/*.ts",
 		"lint:fix": "npm run lint -- --fix",
-		"test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-		"test:e2e": "exit 0",
+		"test": "cross-env npm_package_type=module node --experimental-vm-modules node_modules/jest/bin/jest.js",
+		"test:unit": "npm run test -- --testPathIgnorePatterns e2e",
+		"test:e2e": "npm run test -- e2e",
 		"test:coverage": "codecov"
 	},
 	"keywords": [
@@ -70,16 +70,16 @@
 		"eslint": "^7.17.0",
 		"eslint-config-prettier": "^7.1.0",
 		"eslint-plugin-prettier": "^3.3.1",
-		"jest": "^26.6.3",
+		"jest": "^27.0.6",
 		"lint-staged": "^10.5.3",
 		"nodemon": "^2.0.6",
 		"prettier": "^2.2.1",
 		"source-map-support": "^0.5.19",
-		"ts-jest": "^26.5.3",
+		"ts-jest": "^27.0.4",
 		"yorkie": "^2.0.0"
 	},
 	"gitHooks": {
-		"pre-commit": "env FORCE_COLOR=true lint-staged && npm run test"
+		"pre-commit": "env FORCE_COLOR=true lint-staged && npm run test:unit"
 	},
 	"lint-staged": {
 		"*.ts": [

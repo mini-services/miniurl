@@ -1,12 +1,13 @@
 import { mockCreateApp } from '../../__test__/mockApp'
 import { routes } from '../index'
 import { mockId } from '../../services/storage/__test__/mock'
+import { jest, expect, test } from '@jest/globals'
 
 test('DELETE /url/:id', async () => {
 	const app = await mockCreateApp()
 	app.register(routes)
 
-	app.storage = { url: { delete: jest.fn().mockResolvedValue(true) } } as any
+	app.storage = { url: { delete: jest.fn(() => Promise.resolve(true)) } } as any
 
 	const response = await app.inject({
 		method: 'DELETE',
