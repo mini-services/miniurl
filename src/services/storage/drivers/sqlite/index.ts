@@ -86,6 +86,7 @@ export class SqliteStorage implements StorageDriver {
 						'last_used',
 						'created_at',
 						'updated_at',
+						'request_url',
 					)
 					.where('url_id', id)
 					.join('urls', 'url_information.url_id', 'urls.id')
@@ -115,12 +116,13 @@ export class SqliteStorage implements StorageDriver {
 			return storedUrl
 		}
 
-		public async save({ url, id = '', ip }: UrlRequestData): Promise<StoredUrl> {
+		public async save({ url, id = '', ip, requestUrl }: UrlRequestData): Promise<StoredUrl> {
 			const urlInfo: UrlInformation = {
 				ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
+				requestUrl,
 			}
 
 			if (!url) throw NotFoundError()

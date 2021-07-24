@@ -22,11 +22,7 @@
  
 # Sets either the default postgresql secret name (if deploying) or our own storage secret name
 {{- define "miniurl.storageSecretName" -}}
-{{- if .Values.storage.deploy -}}
-{{- printf "%s-%s" .Release.Name "postgresql" | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
-{{- include "miniurl.appName" . -}}-storage-secret
-{{- end -}}
+{{- tpl .Values.postgresql.existingSecret . }}
 {{- end -}}
 
 {{- define "miniurl.validateStorageConfig" -}}

@@ -91,7 +91,7 @@ export class PostgresStorage implements StorageDriver {
 			} else {
 				urlInfo = await this.storage.db
 					.table<UrlInformation>('url_information')
-					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used')
+					.select('ip', 'url_visit_count', 'info_visit_count', 'last_used', 'request_url')
 					.where('url_id', id)
 					.join('urls', 'url_information.url_id', 'urls.id')
 					.first()
@@ -123,12 +123,13 @@ export class PostgresStorage implements StorageDriver {
 			return storedUrl
 		}
 
-		public async save({ url, id = '', ip }: UrlRequestData): Promise<StoredUrl> {
+		public async save({ url, id = '', ip, requestUrl }: UrlRequestData): Promise<StoredUrl> {
 			const urlInfo: UrlInformation = {
 				ip,
 				urlVisitCount: 0,
 				infoVisitCount: 0,
 				lastUsed: new Date().toISOString(),
+				requestUrl,
 			}
 
 			if (!url) throw NotFoundError()

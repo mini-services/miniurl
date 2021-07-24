@@ -7,6 +7,7 @@ import { InvalidConfigError, GeneralError, BASE_ERROR_NAME } from '../../errors/
 import { runWithRetries } from '../../helpers/runWithRetries.js'
 import { logger } from '../logger/logger.js'
 import { SqliteStorage } from './drivers/sqlite/index.js'
+import { RedisStorage } from './drivers/redis/index.js'
 
 export class Storage implements StorageDriver {
 	_driver: StorageDriver
@@ -22,6 +23,9 @@ export class Storage implements StorageDriver {
 				break
 			case StorageDriverName.Sqlite:
 				this._driver = new SqliteStorage(_config)
+				break
+			case StorageDriverName.Redis:
+				this._driver = new RedisStorage(_config)
 				break
 			default:
 				throw new InvalidConfigError(`Invalid url storage driver selected.`)
@@ -73,7 +77,7 @@ export class Storage implements StorageDriver {
 			}
 		}
 
-		public async delete(id: string): Promise<void> {
+		public async delete(id: string): Promise<void | number> {
 			try {
 				logger.debug(`Running Storage.url.delete with ${id}`)
 				return await this.driver.url.delete(id)

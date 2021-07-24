@@ -26,6 +26,12 @@ export function getMockRawConfig(): RawConfig {
 					filename: './db.sqlite',
 				},
 			},
+			redisDriverConfig: {
+				host: 'localhost',
+				port: '6379',
+				username: 'redis',
+				password: 'redis',
+			},
 		},
 		auth: {
 			driverName: 'BearerToken',
