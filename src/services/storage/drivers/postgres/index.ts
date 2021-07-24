@@ -9,11 +9,14 @@ import camelcaseKeys from 'camelcase-keys'
 import { snakeCase } from 'snake-case'
 import type { StoredUrl, UrlWithInformation, UrlRequestData, UrlInformation } from '../../types/url.js'
 import { PostgresStorageConfig } from '../../types/config.js'
+import { CountersCache } from './types.js'
+import { logger } from '../../../logger/logger.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-
 export class PostgresStorage implements StorageDriver {
 	private db: Knex
+	private countersCache: CountersCache
+	private countersCacheFlushInterval: NodeJS.Timeout
 
 	constructor(private config: PostgresStorageConfig) {
 		this.db = Knex({
@@ -39,11 +42,16 @@ export class PostgresStorage implements StorageDriver {
 		// Generates a random seed for the psuedo_encrypt function found in the first migration
 		process.env.MIGRATIONS_RANDOM_SEED_1 = cryptoRandomString({ length: 6, type: 'numeric' })
 		process.env.MIGRATIONS_RANDOM_SEED_2 = cryptoRandomString({ length: 4, type: 'numeric' })
+
+		this.countersCache = {}
+
+		this.countersCacheFlushInterval = setInterval(this.pushUpdates.bind(this), 10000)
 	}
 	public async initialize(): Promise<void> {
 		await this.upMigrations()
 	}
 	public async shutdown(): Promise<void> {
+		clearInterval(this.countersCacheFlushInterval)
 		return
 	}
 	private async upMigrations() {
@@ -66,6 +74,36 @@ export class PostgresStorage implements StorageDriver {
 		])
 		await this.db.schema.dropSchemaIfExists(this.config.appName)
 	}
+
+	public async pushUpdates(): Promise<void> {
+		const currCounters = this.countersCache
+		this.countersCache = {}
+		try {
+			await this.db.raw(
+				Object.keys(currCounters).reduce((acc, currId) => {
+					const currInfoCount = currCounters[currId].infoCount
+					const currVisitCount = currCounters[currId].visitCount
+					return (
+						acc +
+						`UPDATE url_information SET info_visit_count = info_visit_count + ${currInfoCount}, url_visit_count = url_visit_count + ${currVisitCount} WHERE url_id = '${currId}';`
+					)
+				}, ''),
+			)
+		} catch (err) {
+			logger.error('Update counters failed!', err)
+			// Revert countersCache changes since we failed the update
+			Object.keys(currCounters).forEach((id) => {
+				if (Object.keys(this.countersCache).includes(id)) {
+					this.countersCache[id].visitCount += currCounters[id].visitCount
+					this.countersCache[id].infoCount += currCounters[id].infoCount
+				} else {
+					this.countersCache[id].visitCount = currCounters[id].visitCount
+					this.countersCache[id].infoCount = currCounters[id].infoCount
+				}
+			})
+		}
+	}
+
 	url = new (class PostgresUrlStorage {
 		constructor(public storage: PostgresStorage) {}
 
@@ -138,19 +176,26 @@ export class PostgresStorage implements StorageDriver {
 			return storedUrl
 		}
 
-		public async incVisitCount(id: string): Promise<void> {
-			await this.storage.db
-				.table<UrlInformation>('url_information')
-				.where('url_id', '=', id)
-				.increment('url_visit_count', 1)
+		public incVisitCount(id: string): void {
+			const currCountersCache = this.storage.countersCache
+			if (currCountersCache[id]) currCountersCache[id].visitCount += 1
+			else
+				currCountersCache[id] = {
+					infoCount: 0,
+					visitCount: 1,
+				}
+			this.storage.countersCache = currCountersCache
 		}
 
-		public async incInfoCount(id: string): Promise<void> {
-			await this.storage.db
-				.table<UrlInformation>('url_information')
-				.where('url_id', '=', id)
-				.increment('info_visit_count', 1)
-				.update({ lastUsed: new Date().toISOString() })
+		public incInfoCount(id: string): void {
+			const currCountersCache = this.storage.countersCache
+			if (currCountersCache[id]) currCountersCache[id].infoCount += 1
+			else
+				currCountersCache[id] = {
+					infoCount: 1,
+					visitCount: 0,
+				}
+			this.storage.countersCache = currCountersCache
 		}
 	})(this)
 }
