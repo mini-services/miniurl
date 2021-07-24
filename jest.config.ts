@@ -6,6 +6,7 @@ const config: Config.InitialOptions = {
 	moduleNameMapper: {
 		'^\\.(.*)\\.js$': '.$1',
 	},
+	collectCoverage: true,
 	coverageDirectory: 'coverage',
 	coverageProvider: 'v8',
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
