@@ -29,7 +29,7 @@ export class RedisStorage implements StorageDriver {
 		constructor(public storage: RedisStorage) {}
 
 		async get(id: string, options: { withInfo: boolean }): Promise<StoredUrl | UrlWithInformation> {
-			const rawUrlData = (await this.storage.client.get(id)) as string
+			const rawUrlData = (await this.storage.client.get(id))
 			if (!rawUrlData) throw new NotFoundError()
 
 			const urlData = JSON.parse(rawUrlData) as UrlWithInformation
