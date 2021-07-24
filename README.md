@@ -54,10 +54,10 @@ helm upgrade --install miniurl miniservices/miniurl --set baseRedirectUrl=<YOUR_
 Run MiniUrl's docker image directly.
 
 ```s
-docker run -d --name miniurl -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> -e STORAGE_DRIVER=InMemory -p 80:8000 miniservices/miniurl
+docker run -d --name miniurl -e BASE_REDIRECT_URL=<YOUR_SHORT_URL> -e STORAGE_DRIVER=Sqlite -p 80:8000 miniservices/miniurl
 ```
 
-**NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable database. A working example using Postgres:
+**NOTE** this deployment is NOT production ready since it uses the Sqlite storage driver. To run a production-grade docker deployment, you will need to provide a suitable database. A working example using Postgres:
 
 ```s
 docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres
@@ -81,14 +81,14 @@ Requirements:
 git clone https://github.com/mini-services/miniurl.git
 cd miniurl
 npm install
-npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=InMemory npm start
+npx cross-env BASE_REDIRECT_URL=<YOUR_SHORT_URL> STORAGE_DRIVER=Sqlite npm start
 ```
 
 Node.js troubleshooting:
 
 for Windows OS, it is also possible to use [nvm for Windows](https://github.com/coreybutler/nvm-windows/releases). Refer to the [nvm documentation](https://github.com/coreybutler/nvm-windows/blob/master/README.md).
 
-**NOTE** this deployment is NOT production ready since it uses the InMemory storage driver which is a plain object. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
+**NOTE** this deployment is NOT production ready since it uses the Sqlite storage driver. To run a production-grade docker deployment, you will need to provide a suitable databases (and possibly a process manager such as [pm2](https://github.com/Unitech/pm2)). A working example assuming a Postgres database on `localhost:5432` with username `postgres` and password `postgres`:
 
 ```s
 
@@ -221,15 +221,30 @@ Since MiniUrl follows the best practices including the [12 factor app](https://1
 
 ### Storage
 
-**STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are `InMemory` (for development purposes only) and `Postgres` (for any Knex.js-complaint SQL database).
+**STORAGE_DRIVER** (required) - MiniUrl's storage driver. available options are
+-   `InMemory` (for development purposes only)
+-   `Sqlite` (for development purposes only)
 
-**POSTGRES_STORAGE_HOST** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's host (e.g https://my-database.com)
+    **SQLITE_STORAGE_FILENAME** (default: `./db.sqlite`) - the Sqlite storage path
 
-**POSTGRES_STORAGE_USER** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's username
+-   `Redis`
 
-**POSTGRES_STORAGE_PASSWORD** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's password
+    **REDIS_STORAGE_HOST** (required) - the database host (e.g https://my-redis-database.com)
 
-**POSTGRES_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's name (e.g postgres)
+    **REDIS_STORAGE_PASSWORD** (required) - the Postgres database password
+
+    **REDIS_STORAGE_PORT** (default: 6379) - the database port
+
+    **REDIS_STORAGE_USERNAME** (default: `undefined`) - the database username
+-   `Postgres`
+
+    **POSTGRES_STORAGE_HOST** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's host (e.g https://my-database.com)
+
+    **POSTGRES_STORAGE_USER** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's username
+
+    **POSTGRES_STORAGE_PASSWORD** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's password
+
+    **POSTGRES_STORAGE_DATABASE** (required if STORAGE_DRIVER is `Postgres`) - the Postgres database's name (e.g postgres)
 
 ### Auth
 

@@ -1,5 +1,5 @@
 apiVersion: v2
-version: v0.1.73
+version: v0.1.74
 name: miniurl
 description: MiniUrl is an easy-to-use production-ready url shortener
 home: https://github.com/SnirShechter/miniurl

@@ -53,7 +53,7 @@ function getStorageDriverConfig(
 	storage: RawConfig['storage'],
 	extras: { appName: string; urlLifetimeMs: number; cleanupIntervalMs: number },
 ): StorageConfig {
-	const { Postgres, Sqlite, InMemory } = StorageDriverName
+	const { Postgres, Sqlite, InMemory, Redis } = StorageDriverName
 	if (storage.driverName === Postgres) {
 		return {
 			driverName: Postgres,
@@ -64,6 +64,15 @@ function getStorageDriverConfig(
 		return {
 			driverName: Sqlite,
 			driverConfig: storage.sqliteDriverConfig,
+			...extras,
+		}
+	} else if (storage.driverName === Redis) {
+		return {
+			driverName: Redis,
+			driverConfig: {
+				...storage.redisDriverConfig,
+				port: +storage.redisDriverConfig.port,
+			},
 			...extras,
 		}
 	} else {

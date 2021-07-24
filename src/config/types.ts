@@ -1,5 +1,5 @@
+import { AuthConfig } from '../services/auth/types/config'
 import type { StorageConfig } from '../services/storage/types/config'
-import type { AuthConfig } from '../services/auth/types/config'
 
 export interface RawConfig {
 	port: string
@@ -25,6 +25,12 @@ export interface RawConfig {
 			connection: {
 				filename: string
 			}
+		}
+		redisDriverConfig: {
+			host: string
+			port: string
+			username: string
+			password: string
 		}
 	}
 	auth: {

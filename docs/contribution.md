@@ -50,15 +50,21 @@ This is probably due to Helm not deleting the PersistentVolumeClaims of the data
 
 ### My urls keep getting erased on development mode!
 
-That's OK. The development mode uses the InMemory storage driver, which means that it saves everything inside a simple JS object. On every server restart, that project will be erased and the data will be lost.
+You might be using the InMemory storage driver, which means that it saves everything inside a simple JS object. On every server restart, that project will be erased and the data will be lost.
 
 If you want to persist the data, you can edit the .env.development file and change the storage driver.
 
-### How can I run a local postgres database for development purposes?
+### How can I run a local Postgres database for development purposes?
 
 -   Make sure you have Docker installed
 -   Run `docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres`
--   On .env.development, comment the InMemory Storage section and uncomment the Postgres Storage section
+-   On .env.development, set the STORAGE_DRIVER to Postgres and uncomment the Postgres Storage section
+
+### How can I run a local Redis database for development purposes?
+
+-   Make sure you have Docker installed
+-   Run `docker run -d --name redis -e REDIS_PASSWORD=redis -p 6379:6379 bitnami/redis`
+-   On .env.development, set the STORAGE_DRIVER to Redis and uncomment the Redis Storage section
 
 ## Project structure
 
